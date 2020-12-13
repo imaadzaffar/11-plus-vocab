@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#C4C4C4</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorLightGrey">#B5B5B5</color>
+    <color name="colorGrey">#4E4E4E</color>
+    <color name="colorBlue">#21C6F5</color>
+    <color name="colorBlueStatus">#1AA3CA</color>
+    <color name="colorRed">#F3487F</color>
+    <color name="colorRedStatus">#C43965</color>
+
+    <color name="colorUnselected">#FFFFFF</color>
+<!--    <color name="colorSelected">#C5C5C5</color>-->
+    <color name="colorSelected">#FFDBDB</color>
+    <color name="colorCorrect">#4DC96E</color>
+    <color name="colorCorrectDark">#1F532E</color>
+    <color name="colorIncorrect">#E55454</color>
+    <color name="colorIncorrectDark">#5F2323</color>
+
+    <color name="textOnLight">#4E4E4E</color>
+    <color name="textOnDark">#FFFFFF</color>
+
+    <color name="gradientGreen1">#6CDBC3</color>
+    <color name="gradientGreen2">#19AB8B</color>
+
+    <color name="gradientOrange1">#FEC63B</color>
+    <color name="gradientOrange2">#F19A19</color>
+
+    <color name="gradientBlue1">#21C6F5</color>
+    <color name="gradientBlue2">#2F8AE2</color>
+
+    <color name="gradientRed1">#F3487F</color>
+    <color name="gradientRed2">#BD2F37</color>
+
+    <color name="gradientPurple1">#C02DDA</color>
+    <color name="gradientPurple2">#9C26CE</color>
+
+</resources>
