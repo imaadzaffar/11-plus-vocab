@@ -116,6 +116,7 @@ class TestActivity : AppCompatActivity() {
     }
 
     private fun showNextQuestion() {
+        //TODO: Optimise this
         option1.setTextColor(defaultTextColor)
         option2.setTextColor(defaultTextColor)
         option3.setTextColor(defaultTextColor)
@@ -181,7 +182,7 @@ class TestActivity : AppCompatActivity() {
             if (tag != selectedAnswer) {
                 selectedAnswer = tag
                 selectedButton.background = getDrawable(R.drawable.bg_answer_selected)
-            } else {
+            } else { // deselected option
                 selectedAnswer = 0
                 selectedButton.background = getDrawable(R.drawable.bg_answer_button)
             }
@@ -198,11 +199,12 @@ class TestActivity : AppCompatActivity() {
             }
             mediaPlayer.start()
         } else {
-            val stringId = "test_option$selectedAnswer"
-            val intId = resources.getIdentifier(stringId, "id", "com.zafaris.learnvocab")
-            val incorrect = findViewById<Button>(intId)
-            incorrect.background = getDrawable(R.drawable.bg_answer_incorrect)
-            incorrect.setTextColor(getColor(R.color.colorIncorrectDark))
+            val stringId = "test_option${selectedAnswer}"
+            val intId = resources.getIdentifier(stringId, "id", "com.zafaris.elevenplusvocab")
+            val incorrectOption = findViewById<Button>(intId)
+            incorrectOption.background = getDrawable(R.drawable.bg_answer_incorrect)
+            incorrectOption.setTextColor(getColor(R.color.colorIncorrectDark))
+
             mediaPlayer = MediaPlayer.create(this, R.raw.sfx_incorrect)
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.release()
@@ -213,24 +215,12 @@ class TestActivity : AppCompatActivity() {
     }
 
     private fun showSolution() {
-        when (currentQuestion.answerNo) {
-            1 -> {
-                option1.setTextColor(getColor(R.color.colorCorrectDark))
-                option1.background = getDrawable(R.drawable.bg_answer_correct)
-            }
-            2 -> {
-                option2.setTextColor(getColor(R.color.colorCorrectDark))
-                option2.background = getDrawable(R.drawable.bg_answer_correct)
-            }
-            3 -> {
-                option3.setTextColor(getColor(R.color.colorCorrectDark))
-                option3.background = getDrawable(R.drawable.bg_answer_correct)
-            }
-            4 -> {
-                option4.setTextColor(getColor(R.color.colorCorrectDark))
-                option4.background = getDrawable(R.drawable.bg_answer_correct)
-            }
-        }
+        val stringId = "test_option${currentQuestion.answerNo}"
+        val intId = resources.getIdentifier(stringId, "id", "com.zafaris.elevenplusvocab")
+        val correctOption = findViewById<Button>(intId)
+        correctOption.setTextColor(getColor(R.color.colorCorrectDark))
+        correctOption.background = getDrawable(R.drawable.bg_answer_correct)
+
         if (questionNumber < questionCountTotal) {
             nextButton.text = "Next"
         } else {
@@ -354,82 +344,6 @@ class TestActivity : AppCompatActivity() {
         }
         return tmpWordsList
     }
-
-    /*public List<String> generateWordsListOld (int questionNo, int questionType, Meaning meaning, int answerNo) {
-        List<Integer> typesList = generateRandomList(questionCountTotal, 0, 1);
-        Integer[] answerIndexList = shuffleRandomList(MainActivity.setSize, questionCountTotal); // generate random list of indexes for words in set eg. [3, 15, 7, 23, 12]
-
-        List<String> tmpWordsList = new ArrayList<>();
-        String answerWord;
-
-        // generate correct answer
-        // TODO: Add answer index in words list to answerIndexList[questionNo - 1] = answerIndex
-        //       only if !answerWord.equals("N/A")
-        //       else generate new answer index and check again
-        //       in while loop -
-        //       answerWord = "N/A"
-        //       while (answerWord.equals("N/A")) {}
-        if (questionType == 0) {
-            answerWord = generateSynonym(questionNo, true, meaning);
-        } else {
-            answerWord = generateAntonym(questionNo, true, meaning);
-        }
-
-        for (int i = 0; i < optionCountTotal; i++) {
-            String word = "";
-            boolean uniqueWord = false;
-
-            while (!uniqueWord) {
-
-                // question type is synonym
-                if (questionType == 0) {
-
-                    // correct synonym
-                    if (i + 1 == answerNo) {
-                        word = answerWord;
-                        uniqueWord = true;
-                    }
-
-                    // generate random synonym
-                    else {
-                        word = generateSynonym(questionNo, false, meaning);
-                        // checks: if word is unique, break while loop
-                        if (!tmpWordsList.contains(word) && !word.equals(answerWord) && !word.equals("N/A")) {
-                            uniqueWord = true;
-                        } else {
-                            word = "";
-                        }
-                    }
-                }
-
-                // question type is antonym
-                else {
-
-                    // correct antonym
-                    if (i + 1 == answerNo) {
-                        word = answerWord;
-                        uniqueWord = true;
-                    }
-
-                    // generate random antonym
-                    else {
-                        word = generateAntonym(questionNo, false, meaning);
-                        // checks: if word is unique, break while loop
-                        if (!tmpWordsList.contains(word) && !word.equals(answerWord) && !word.equals("N/A")) {
-                            uniqueWord = true;
-                        } else {
-                            word = "";
-                        }
-                    }
-                }
-            }
-
-            Log.i("Test - Word", word);
-            tmpWordsList.add(word);
-        }
-
-        return tmpWordsList;
-    }*/
 
     private fun generateAnswer(questionNo: Int, questionType: Int): String {
         var answer = "N/A"

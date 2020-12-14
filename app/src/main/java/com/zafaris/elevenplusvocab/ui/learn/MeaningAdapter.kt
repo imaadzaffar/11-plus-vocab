@@ -29,8 +29,6 @@ class MeaningAdapter (val activity: Activity, private var meaningsList: List<Mea
         if (synonyms == "N/A") { //TODO: make text equal to None when N/A
             holder.synonymsTitle?.visibility = View.GONE
             holder.synonymsText?.visibility = View.GONE
-            /*holder.mSynonymsTitle.setText("Synonyms");
-            holder.mSynonymsText.setText("(None)");*/
         } else {
             val synonymsList = synonyms.split(", ").toTypedArray()
             holder.synonymsTitle?.text = "Synonyms (${synonymsList.size}):" //TODO: append no. of synonyms and antonyms
@@ -40,8 +38,6 @@ class MeaningAdapter (val activity: Activity, private var meaningsList: List<Mea
         if (antonyms == "N/A") {
             holder.antonymsTitle?.visibility = View.GONE
             holder.antonymsText?.visibility = View.GONE
-            /*holder.mAntonymsTitle.setText("Antonyms");
-            holder.mAntonymsText.setText("(None)");*/
         } else {
             val antonymsList = antonyms.split(", ").toTypedArray()
             holder.antonymsTitle?.text = "Antonyms (${antonymsList.size}):"

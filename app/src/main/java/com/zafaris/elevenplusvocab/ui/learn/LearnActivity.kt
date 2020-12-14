@@ -101,6 +101,80 @@ class LearnActivity : AppCompatActivity() {
         buildMeaningsRv()
     }
 
+    private fun buildWordsRv() {
+        wordsRv = findViewById(R.id.learn_wordsRv)
+        wordsRv.setHasFixedSize(true)
+        wordsLayoutManager = LinearLayoutManager(this)
+        wordsAdapter = WordsAdapter(wordsList)
+        wordsAdapter.onItemClick = { word, position -> goToWordsRv(position) }
+        wordsRv.layoutManager = wordsLayoutManager
+        wordsRv.adapter = wordsAdapter
+        wordsRv.addItemDecoration(
+                object : DividerItemDecoration(applicationContext, VERTICAL) {
+                    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                        val position = parent.getChildAdapterPosition(view)
+                        // hide the divider for the last child
+                        if (position == parent.adapter!!.itemCount - 1) {
+                            outRect.setEmpty()
+                        } else {
+                            super.getItemOffsets(outRect, view, parent, state)
+                        }
+                    }
+                }
+        )
+    }
+
+    private fun goToWordsRv(position: Int) {
+        wordNumber = position
+        wordsPreview = false
+        if (position == 0) {
+            firstWord = true
+        }
+        wordsLayoutManager.smoothScrollToPosition(wordsRv, null, 0)
+        bottomText.visibility = View.VISIBLE
+        meaningsLayout.visibility = View.VISIBLE
+        wordsLayout.visibility = View.GONE
+        previousButton.visibility = View.VISIBLE
+        Log.i("Learn - Word number", wordNumber.toString())
+        currentWord = wordsList[wordNumber]
+        wordText.text = currentWord.word
+        typeText.text = currentWord.type
+        updateMeaningsRv()
+        bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(setSize)
+    }
+
+    private fun buildMeaningsRv() {
+        meaningsRv = findViewById(R.id.learn_meaningsRv)
+        meaningsRv.setHasFixedSize(true)
+        meaningLayoutManager = LinearLayoutManager(this)
+        meaningAdapter = MeaningAdapter(this, currentMeanings)
+        meaningsRv.layoutManager = meaningLayoutManager
+        meaningsRv.adapter = meaningAdapter
+        meaningsRv.addItemDecoration(
+                object : DividerItemDecoration(applicationContext, VERTICAL) {
+                    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                        // hide the divider for the last child
+                        if (parent.getChildAdapterPosition(view) == state.itemCount - 1) {
+                            outRect.setEmpty()
+                        } else {
+                            super.getItemOffsets(outRect, view, parent, state)
+                        }
+                    }
+                }
+        )
+    }
+
+    private fun updateMeaningsRv() {
+        meaningAdapter.updateList(currentWord.meanings)
+        for (i in currentWord.meanings.indices) {
+            val (definition, example, synonyms, antonyms) = currentWord.meanings[i]
+            Log.i("Learn - Meaning", definition)
+            Log.i("Learn - Meaning", example)
+            Log.i("Learn - Meaning", synonyms)
+            Log.i("Learn - Meaning", antonyms)
+        }
+    }
+
     fun nextWord(view: View?) {
         if (wordsPreview) {
             wordNumber = 0
@@ -171,81 +245,6 @@ class LearnActivity : AppCompatActivity() {
         wordsLayout.visibility = View.VISIBLE
         meaningsLayout.visibility = View.GONE
         previousButton.visibility = View.INVISIBLE
-    }
-
-    private fun buildWordsRv() {
-        wordsRv = findViewById(R.id.learn_wordsRv)
-        wordsRv.setHasFixedSize(true)
-        wordsLayoutManager = LinearLayoutManager(this)
-        wordsAdapter = WordsAdapter(wordsList)
-        wordsAdapter.onItemClick = { word, position -> goToWordsRv(position) }
-        wordsRv.layoutManager = wordsLayoutManager
-        wordsRv.adapter = wordsAdapter
-        wordsRv.addItemDecoration(
-                object : DividerItemDecoration(applicationContext, VERTICAL) {
-                    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                        val position = parent.getChildAdapterPosition(view)
-                        // hide the divider for the last child
-                        if (position == parent.adapter!!.itemCount - 1) {
-                            outRect.setEmpty()
-                        } else {
-                            super.getItemOffsets(outRect, view, parent, state)
-                        }
-                    }
-                }
-        )
-    }
-
-    private fun goToWordsRv(position: Int) {
-        wordNumber = position
-        wordsPreview = false
-        if (position == 0) {
-            firstWord = true
-        }
-        wordsLayoutManager.smoothScrollToPosition(wordsRv, null, 0)
-        bottomText.visibility = View.VISIBLE
-        meaningsLayout.visibility = View.VISIBLE
-        wordsLayout.visibility = View.GONE
-        previousButton.visibility = View.VISIBLE
-        Log.i("Learn - Word number", wordNumber.toString())
-        currentWord = wordsList[wordNumber]
-        wordText.text = currentWord.word
-        typeText.text = currentWord.type
-        updateMeaningsRv()
-        bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(setSize)
-    }
-
-    private fun buildMeaningsRv() {
-        meaningsRv = findViewById(R.id.learn_meaningsRv)
-        meaningsRv.setHasFixedSize(true)
-        meaningLayoutManager = LinearLayoutManager(this)
-        meaningAdapter = MeaningAdapter(this, currentMeanings)
-        meaningsRv.layoutManager = meaningLayoutManager
-        meaningsRv.adapter = meaningAdapter
-        meaningsRv.addItemDecoration(
-                object : DividerItemDecoration(applicationContext, VERTICAL) {
-                    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                        val position = parent.getChildAdapterPosition(view)
-                        // hide the divider for the last child
-                        if (position == parent.adapter!!.itemCount - 1) {
-                            outRect.setEmpty()
-                        } else {
-                            super.getItemOffsets(outRect, view, parent, state)
-                        }
-                    }
-                }
-        )
-    }
-
-    private fun updateMeaningsRv() {
-        meaningAdapter.updateList(currentWord.meanings)
-        for (i in currentWord.meanings.indices) {
-            val (definition, example, synonyms, antonyms) = currentWord.meanings[i]
-            Log.i("Learn - Meaning", definition)
-            Log.i("Learn - Meaning", example)
-            Log.i("Learn - Meaning", synonyms)
-            Log.i("Learn - Meaning", antonyms)
-        }
     }
 
     fun goToTest(view: View?) {

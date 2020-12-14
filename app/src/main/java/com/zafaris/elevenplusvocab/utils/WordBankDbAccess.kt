@@ -24,7 +24,7 @@ class WordBankDbAccess private constructor(context: Context) {
         db.close()
     }
 
-    // query for word info by passing word number
+    // query for word info by passing set number
     fun getWordsList(setNumber: Int): List<Word> {
         val wordsList: MutableList<Word> = ArrayList()
         c = db.rawQuery("SELECT * FROM " + WordBank.TABLE_NAME +
@@ -38,19 +38,22 @@ class WordBankDbAccess private constructor(context: Context) {
             Log.i("DbAccess - Word", word)
             Log.i("DbAccess - Type", type)
             val definitions = c.getString(c.getColumnIndex(WordBank.COLUMN_DEFINITION))
-            val definitionsList: List<String> = ArrayList(listOf(*definitions.split(" \\+ ").toTypedArray())) // split definitions string to list
-            Log.i("DbAccess - Definitions", definitionsList.toString())
+            val definitionsList: List<String> = definitions.split(" + ")
+            Log.i("DbAccess - Definitions", definitions)
+
             val examples = c.getString(c.getColumnIndex(WordBank.COLUMN_EXAMPLE))
-            val examplesList: List<String> = ArrayList(listOf(*examples.split(" \\+ ").toTypedArray())) // split examples string to list
+            val examplesList: List<String> = examples.split(" + ")
             Log.i("DbAccess - Examples", examplesList.toString())
+
             val synonyms = c.getString(c.getColumnIndex(WordBank.COLUMN_SYNONYMS))
-            val synonymsList: List<String> = ArrayList(listOf(*synonyms.split(" \\+ ").toTypedArray())) // split synonyms string to list
+            val synonymsList: List<String> = synonyms.split(" + ")
             Log.i("DbAccess - Synonyms", synonymsList.toString())
+
             val antonyms = c.getString(c.getColumnIndex(WordBank.COLUMN_ANTONYMS))
-            val antonymsList: List<String> = ArrayList(listOf(*antonyms.split(" \\+ ").toTypedArray())) // split antonyms string to list
+            val antonymsList: List<String> = antonyms.split(" + ")
             Log.i("DbAccess - Antonyms", antonymsList.toString())
 
-            val meaningsList: MutableList<Meaning> = ArrayList() // list of meanings
+            val meaningsList: MutableList<Meaning> = ArrayList()
             for (i in definitionsList.indices) { // add meanings to list
                 val tmpMeaning = Meaning(
                         definitionsList[i],

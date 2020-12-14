@@ -4,8 +4,7 @@ import android.provider.BaseColumns;
 
 public final class WordBankContract {
 
-    private WordBankContract() {
-    }
+    private WordBankContract() { }
 
     public static class WordBank implements BaseColumns {
         public static final String TABLE_NAME = "words";

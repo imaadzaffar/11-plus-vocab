@@ -54,14 +54,10 @@ class MainActivity : AppCompatActivity() {
 
         // first time
         if (prefs.getBoolean("firstTime", true)) {
-            Log.i("firstTime",
-                    prefs.getBoolean("firstTime", true).toString())
             prefs.edit().putInt("setSize", setSize).apply()
             prefs.edit().putBoolean("firstTime", false).apply()
             // not first time
         } else {
-            Log.i("firstTime",
-                    prefs.getBoolean("firstTime", true).toString())
             setSize = prefs.getInt("setSize", 1)
         }
 
