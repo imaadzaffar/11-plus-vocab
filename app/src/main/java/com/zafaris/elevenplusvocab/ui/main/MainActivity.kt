@@ -25,6 +25,9 @@ import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.ui.learn.LearnActivity
 import com.zafaris.elevenplusvocab.ui.settings.SettingsActivity
 import com.zafaris.elevenplusvocab.ui.test.TestActivity
+import com.zafaris.elevenplusvocab.utils.NO_OF_FREE_SETS
+import com.zafaris.elevenplusvocab.utils.NO_OF_TOTAL_SETS
+import com.zafaris.elevenplusvocab.utils.SET_SIZE
 import com.zafaris.elevenplusvocab.utils.WordBankDbAccess
 import java.util.*
 
@@ -50,30 +53,16 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = "Home"
-        val prefs = getSharedPreferences("com.zafaris.learnvocab", Context.MODE_PRIVATE)
 
-        // first time
-        if (prefs.getBoolean("firstTime", true)) {
-            prefs.edit().putInt("setSize", setSize).apply()
-            prefs.edit().putBoolean("firstTime", false).apply()
-            // not first time
-        } else {
-            setSize = prefs.getInt("setSize", 1)
-        }
-
-        //SharedPreferences settingsPref = PreferenceManager.getDefaultSharedPreferences(this);
-        //Boolean switchPref = settingsPref.getBoolean(SettingsActivity.KEY_PREF_REMINDER_SWITCH, false);
-        //Toast.makeText(this, switchPref.toString(), Toast.LENGTH_SHORT).show();
         db = WordBankDbAccess.getInstance(applicationContext)
         db.open()
-        val noOfSets = db.getNoOfSets(setSize)
+        val noOfSets = db.getNoOfSets(SET_SIZE)
         db.close()
         setList = ArrayList()
-        //setList.clear();
+
         Log.i("noOfSets", noOfSets.toString())
-        for (i in 1..25) { //TODO: Uncomment this when word bank completed
-            //for (int i = 1; i <= noOfSets; i++) {
-            if (i <= 2) {
+        for (i in 1..NO_OF_TOTAL_SETS) { //TODO: Uncomment this when word bank completed
+            if (i <= NO_OF_FREE_SETS) {
                 setList.add(Set(i, isSetCompleted = false, isSetLocked = false))
             } else {
                 setList.add(Set(i, isSetCompleted = false, isSetLocked = true))
@@ -177,13 +166,11 @@ class MainActivity : AppCompatActivity() {
         learnButton = popupDialog.findViewById(R.id.learnButton)
         testButton = popupDialog.findViewById(R.id.testButton)
         statsButton = popupDialog.findViewById(R.id.statsButton)
-        val title = StringBuilder("Set ")
-        title.append(clickedSet)
-        title.append(" completed")
+        val title = "Set $clickedSet completed"
         popupTitle.text = title
-        learnButton.setOnClickListener(View.OnClickListener { goToActivity(LearnActivity()) })
-        testButton.setOnClickListener(View.OnClickListener { goToActivity(TestActivity()) })
-        statsButton.setOnClickListener(View.OnClickListener { goToActivity(LearnActivity()) }) //TODO: Intent to Stats Activity
+        learnButton.setOnClickListener { goToActivity(LearnActivity()) }
+        testButton.setOnClickListener { goToActivity(TestActivity()) }
+        statsButton.setOnClickListener { goToActivity(LearnActivity()) } //TODO: Intent to Stats Activity
         popupDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupDialog.show()
     }
@@ -196,8 +183,8 @@ class MainActivity : AppCompatActivity() {
         val title = StringBuilder("Set ")
         title.append(clickedSet)
         popupTitle.text = title
-        learnButton.setOnClickListener(View.OnClickListener { goToActivity(LearnActivity()) })
-        testButton.setOnClickListener(View.OnClickListener { goToActivity(TestActivity()) })
+        learnButton.setOnClickListener { goToActivity(LearnActivity()) }
+        testButton.setOnClickListener { goToActivity(TestActivity()) }
         popupDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupDialog.show()
     }
@@ -216,7 +203,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        var setSize: Int = 25
         lateinit var setList: ArrayList<Set>
         lateinit var setAdapter: SetAdapter
     }

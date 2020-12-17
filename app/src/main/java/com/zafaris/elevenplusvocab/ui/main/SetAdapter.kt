@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.ui.main.SetAdapter.SetViewHolder
+import com.zafaris.elevenplusvocab.utils.SET_SIZE
 import java.util.*
 
 class SetAdapter (private val setsList: ArrayList<Set>) : RecyclerView.Adapter<SetViewHolder>() {
@@ -27,9 +28,9 @@ class SetAdapter (private val setsList: ArrayList<Set>) : RecyclerView.Adapter<S
         setNoText.append(setNo)
         holder.mSetNoText.text = setNoText
         val setWordsText = StringBuilder("Words ")
-        setWordsText.append(position * MainActivity.setSize + 1)
+        setWordsText.append(position * SET_SIZE + 1)
         setWordsText.append(" - ")
-        setWordsText.append((position + 1) * MainActivity.setSize)
+        setWordsText.append((position + 1) * SET_SIZE)
         setWordsText.append("")
         holder.mSetWordsText.text = setWordsText
 

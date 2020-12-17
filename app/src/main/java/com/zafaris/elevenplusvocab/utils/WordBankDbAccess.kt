@@ -28,7 +28,7 @@ class WordBankDbAccess private constructor(context: Context) {
     fun getWordsList(setNumber: Int): List<Word> {
         val wordsList: MutableList<Word> = ArrayList()
         c = db.rawQuery("SELECT * FROM " + WordBank.TABLE_NAME +
-                " WHERE " + WordBank.COLUMN_SET + " = " + setNumber, null) //TODO: Change for different setSize
+                " WHERE " + WordBank.COLUMN_SET + " = " + setNumber, null) //TODO: Change for different SET_SIZE
         c.moveToFirst()
         do {
             val id = c.getInt(c.getColumnIndex(WordBank.COLUMN_ID))
@@ -77,13 +77,13 @@ class WordBankDbAccess private constructor(context: Context) {
         return wordsList
     }
 
-    fun getNoOfSets(setSize: Int): Int {
+    fun getNoOfSets(SET_SIZE: Int): Int {
         c = db.rawQuery("SELECT * FROM " + WordBank.TABLE_NAME, null)
         c.moveToLast()
         val lastWordNo = c.getInt(c.getColumnIndex(WordBank.COLUMN_NUMBER))
-        Log.i("setSize", setSize.toString())
+        Log.i("SET_SIZE", SET_SIZE.toString())
         Log.i("lastWordNo", lastWordNo.toString())
-        return lastWordNo / setSize
+        return lastWordNo / SET_SIZE
     }
 
     companion object {

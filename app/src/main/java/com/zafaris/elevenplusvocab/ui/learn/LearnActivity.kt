@@ -17,6 +17,7 @@ import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.ui.main.MainActivity
 import com.zafaris.elevenplusvocab.ui.main.Set
 import com.zafaris.elevenplusvocab.ui.test.TestActivity
+import com.zafaris.elevenplusvocab.utils.SET_SIZE
 import com.zafaris.elevenplusvocab.utils.Word
 import com.zafaris.elevenplusvocab.utils.WordBankDbAccess
 
@@ -26,7 +27,6 @@ class LearnActivity : AppCompatActivity() {
     private lateinit var currentMeanings: List<Meaning>
     private lateinit var currentWord: Word
 
-    private var setSize = 0
     private var setNumber = 0
     private var wordNumber = 0
     private var wordsPreview = false
@@ -67,7 +67,6 @@ class LearnActivity : AppCompatActivity() {
 
         setNumber = 1 //TODO: Delete this once all sets have been added
         wordNumber = 0
-        setSize = MainActivity.setSize
         wordsPreview = true
         firstWord = false
 
@@ -140,7 +139,7 @@ class LearnActivity : AppCompatActivity() {
         wordText.text = currentWord.word
         typeText.text = currentWord.type
         updateMeaningsRv()
-        bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(setSize)
+        bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(SET_SIZE)
     }
 
     private fun buildMeaningsRv() {
@@ -182,11 +181,11 @@ class LearnActivity : AppCompatActivity() {
             firstWord = true
             wordsLayoutManager.smoothScrollToPosition(wordsRv, null, 0)
             bottomText.visibility = View.VISIBLE
-            bottomText.text = StringBuilder("1 / ").append(setSize)
+            bottomText.text = StringBuilder("1 / ").append(SET_SIZE)
             wordsLayout.visibility = View.GONE
             meaningsLayout.visibility = View.VISIBLE
             previousButton.visibility = View.VISIBLE
-        } else if (wordNumber == setSize - 1) {
+        } else if (wordNumber == SET_SIZE - 1) {
             wordNumber++
             bottomText.visibility = View.INVISIBLE
             nextButton.visibility = View.INVISIBLE
@@ -199,7 +198,7 @@ class LearnActivity : AppCompatActivity() {
             wordText.text = currentWord.word
             typeText.text = currentWord.type
             updateMeaningsRv()
-            bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(setSize)
+            bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(SET_SIZE)
             if (firstWord) {
                 firstWord = false
             }
@@ -216,7 +215,7 @@ class LearnActivity : AppCompatActivity() {
             wordsLayout.visibility = View.VISIBLE
             meaningsLayout.visibility = View.GONE
             previousButton.visibility = View.GONE
-        } else if (wordNumber == setSize) {
+        } else if (wordNumber == SET_SIZE) {
             wordNumber--
             bottomText.visibility = View.VISIBLE
             nextButton.visibility = View.VISIBLE
@@ -229,7 +228,7 @@ class LearnActivity : AppCompatActivity() {
             wordText.text = currentWord.word
             typeText.text = currentWord.type
             updateMeaningsRv()
-            bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(setSize)
+            bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(SET_SIZE)
             if (wordNumber == 0) {
                 firstWord = true
                 //previousButton.setEnabled(false);

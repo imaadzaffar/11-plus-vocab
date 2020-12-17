@@ -1,10 +1,11 @@
-package com.zafaris.elevenplusvocab;
+package com.zafaris.elevenplusvocab.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 
+import com.zafaris.elevenplusvocab.R;
 import com.zafaris.elevenplusvocab.ui.main.MainActivity;
 
 import gr.net.maroulis.library.EasySplashScreen;

@@ -19,8 +19,7 @@ import com.muddzdev.styleabletoast.StyleableToast
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.ui.learn.Meaning
 import com.zafaris.elevenplusvocab.ui.main.MainActivity
-import com.zafaris.elevenplusvocab.utils.Word
-import com.zafaris.elevenplusvocab.utils.WordBankDbAccess
+import com.zafaris.elevenplusvocab.utils.*
 import kotlin.collections.ArrayList
 
 class TestActivity : AppCompatActivity() {
@@ -48,8 +47,6 @@ class TestActivity : AppCompatActivity() {
     private lateinit var currentQuestion: Question
     private var setNumber = 0
     private var questionNumber = 0
-    private var questionCountTotal = 0
-    private var optionCountTotal = 0
     private var answerWord: String = ""
     private lateinit var randomWord: Word
     private lateinit var randomMeaning: Meaning
@@ -70,7 +67,6 @@ class TestActivity : AppCompatActivity() {
         window.statusBarColor = getColor(R.color.colorRedStatus)
         setSupportActionBar(toolbar)
         supportActionBar!!.title = "Test: Set $setNumber"
-        //getSupportActionBar().setSubtitle(new StringBuilder("Set ").append(setNumber));
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         setNumber = 1 //TODO: Delete this once all sets have been added
         testLayout = findViewById(R.id.test_testLayout)
@@ -93,15 +89,13 @@ class TestActivity : AppCompatActivity() {
         option3 = findViewById(R.id.test_option3)
         option4 = findViewById(R.id.test_option4)
         defaultTextColor = option1.textColors
-        questionCountTotal = 10
-        optionCountTotal = 4
         questionNumber = 0
         selectedAnswer = 0
         answeredState = false
         generateAllQuestions()
         currentQuestion = questionsList[0]
         showNextQuestion()
-        nextButton.setOnClickListener(View.OnClickListener {
+        nextButton.setOnClickListener {
             if (!answeredState) {
                 if (selectedAnswer != 0) {
                     checkAnswer()
@@ -112,7 +106,7 @@ class TestActivity : AppCompatActivity() {
             } else {
                 showNextQuestion()
             }
-        })
+        }
     }
 
     private fun showNextQuestion() {
@@ -125,7 +119,7 @@ class TestActivity : AppCompatActivity() {
         option2.background = getDrawable(R.drawable.bg_answer_button)
         option3.background = getDrawable(R.drawable.bg_answer_button)
         option4.background = getDrawable(R.drawable.bg_answer_button)
-        if (questionNumber < questionCountTotal) {
+        if (questionNumber < NO_OF_QUESTIONS) {
             currentQuestion = questionsList[questionNumber]
             selectedAnswer = 0
             Log.i("Test - questionNumber", questionNumber.toString())
@@ -155,12 +149,12 @@ class TestActivity : AppCompatActivity() {
             option2.text = currentQuestion!!.option2
             option3.text = currentQuestion!!.option3
             option4.text = currentQuestion!!.option4
-            bottomText.text = "${(questionNumber + 1)} / $questionCountTotal"
+            bottomText.text = "${(questionNumber + 1)} / $NO_OF_QUESTIONS"
             answeredState = false
             nextButton.text = "Check"
             questionNumber++
         } else {
-            scoreText.text = "$score / $questionCountTotal"
+            scoreText.text = "$score / $NO_OF_QUESTIONS"
             testLayout.visibility = View.GONE
             finishLayout.visibility = View.VISIBLE
             bottomLayout.visibility = View.GONE
@@ -221,7 +215,7 @@ class TestActivity : AppCompatActivity() {
         correctOption.setTextColor(getColor(R.color.colorCorrectDark))
         correctOption.background = getDrawable(R.drawable.bg_answer_correct)
 
-        if (questionNumber < questionCountTotal) {
+        if (questionNumber < NO_OF_QUESTIONS) {
             nextButton.text = "Next"
         } else {
             nextButton.text = "Finish"
@@ -253,8 +247,8 @@ class TestActivity : AppCompatActivity() {
         wordsList = db.getWordsList(setNumber)
         db.close()
         var tmpQuestionNo = 1
-        answerIndexList = shuffleRandomList(MainActivity.setSize, questionCountTotal) // generate random list of indexes for words in set eg. [3, 15, 7, 23, 12]
-        val questionTypeList = generateRandomList(questionCountTotal, 0, 1)
+        answerIndexList = shuffleRandomList(SET_SIZE, NO_OF_QUESTIONS) // generate random list of indexes for words in set eg. [3, 15, 7, 23, 12]
+        val questionTypeList = generateRandomList(NO_OF_QUESTIONS, 0, 1)
 
         // generate list for either synonym or antonym
         //List<Integer> randomTypes = generateRandomList(optionsCountTotal, 0,  1);
@@ -263,7 +257,7 @@ class TestActivity : AppCompatActivity() {
         for (answerIndex in answerIndexList) {
             val questionType = questionTypeList[tmpQuestionNo - 1]
             Log.i("Test - questionNo", tmpQuestionNo.toString())
-            val answerNo = 1 + (Math.random() * optionCountTotal).toInt()
+            val answerNo = 1 + (Math.random() * NO_OF_OPTIONS).toInt()
             Log.i("Test - answerNo", answerNo.toString())
 
             // generate correct answer
@@ -297,8 +291,8 @@ class TestActivity : AppCompatActivity() {
 
     private fun generateOptionsList(questionType: Int, answerNo: Int): List<String> {
         val tmpWordsList: MutableList<String> = ArrayList()
-        var word: String = "N/A"
-        for (i in 1 until (optionCountTotal + 1)) {
+        var word = "N/A"
+        for (i in 1 until (NO_OF_OPTIONS + 1)) {
             var uniqueWord = false
             while (!uniqueWord) {
 
@@ -375,7 +369,7 @@ class TestActivity : AppCompatActivity() {
             // check if answer
             if (answer == "N/A") {
                 do {
-                    answerIndex = (Math.random() * MainActivity.setSize).toInt()
+                    answerIndex = (Math.random() * SET_SIZE).toInt()
                     Log.i("Test - answerIndex loop", answerIndexList.contains(answerIndex).toString())
                 } while (answerIndexList.contains(answerIndex))
                 answerIndexList[questionNo - 1] = answerIndex
@@ -398,7 +392,7 @@ class TestActivity : AppCompatActivity() {
 
             // generate random index, that is not the same as the answer index
             do {
-                tmpWordIndex = (Math.random() * MainActivity.setSize).toInt()
+                tmpWordIndex = (Math.random() * SET_SIZE).toInt()
             } while (answerIndexList.contains(tmpWordIndex))
             val tmpMeanings = wordsList[tmpWordIndex].meanings
             var tmpMeaning: Meaning
@@ -427,7 +421,7 @@ class TestActivity : AppCompatActivity() {
 
             // generate random index, that is not the same as the answer index
             do {
-                tmpWordIndex = (Math.random() * MainActivity.setSize).toInt()
+                tmpWordIndex = (Math.random() * SET_SIZE).toInt()
             } while (answerIndexList.contains(tmpWordIndex))
             val tmpMeanings = wordsList[tmpWordIndex].meanings
             var tmpMeaning: Meaning
