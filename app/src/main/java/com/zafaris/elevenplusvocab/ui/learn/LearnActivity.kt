@@ -1,61 +1,59 @@
 package com.zafaris.elevenplusvocab.ui.learn
 
 import android.content.Intent
-import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DefaultItemAnimator
+import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.ui.main.MainActivity
 import com.zafaris.elevenplusvocab.ui.main.Set
 import com.zafaris.elevenplusvocab.ui.test.TestActivity
-import com.zafaris.elevenplusvocab.utils.SET_SIZE
 import com.zafaris.elevenplusvocab.utils.Word
 import com.zafaris.elevenplusvocab.utils.WordBankDbAccess
+import java.util.ArrayList
 
-class LearnActivity : AppCompatActivity() {
+class LearnActivity : AppCompatActivity(), CardStackListener {
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
-    private lateinit var currentMeanings: List<Meaning>
-    private lateinit var currentWord: Word
-
     private var setNumber = 0
-    private var wordNumber = 0
-    private var wordsPreview = false
-    private var firstWord = false
 
-    private lateinit var wordsLayout: ConstraintLayout
-    private lateinit var meaningsLayout: ConstraintLayout
-    private lateinit var finishLayout: ConstraintLayout
-    private lateinit var wordsRv: RecyclerView
-    private lateinit var meaningsRv: RecyclerView
-    private lateinit var wordText: TextView
-    private lateinit var typeText: TextView
-    private lateinit var bottomText: TextView
-    private lateinit var finishTitle: TextView
-    private lateinit var nextButton: ImageView
-    private lateinit var previousButton: ImageView
+    private val cardStackView by lazy { findViewById<CardStackView>(R.id.learn_card_stack_view) }
+    private val manager by lazy { CardStackLayoutManager(this, this) }
+    private val adapter by lazy { CardStackAdapter(createWords()) }
 
-    private lateinit var wordsAdapter: WordsAdapter
-    private lateinit var meaningAdapter: MeaningAdapter
-    private lateinit var wordsLayoutManager: RecyclerView.LayoutManager
-    private lateinit var meaningLayoutManager: RecyclerView.LayoutManager
+    private val finishLayout by lazy { findViewById<ConstraintLayout>(R.id.learn_finishLayout) }
+    private val finishTitle by lazy { findViewById<TextView>(R.id.learn_finishTitle) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_learn)
         val intent = intent
         setNumber = intent.getIntExtra("setNumber", 0)
+        toolbar()
 
-        // change toolbar colour and status bar colour
+//        finishLayout.visibility = View.GONE
+        finishTitle.text = "Finished Set $setNumber"
+
+        // open database and get wordsList
+        db = WordBankDbAccess.getInstance(applicationContext)
+        db.open()
+        wordsList = db.getWordsList(setNumber)
+        db.close()
+
+        setupCardStackView()
+        setupButtons()
+    }
+
+    private fun toolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.context.setTheme(R.style.ToolbarThemeDark)
         toolbar.setBackgroundColor(getColor(R.color.colorBlue))
@@ -64,186 +62,67 @@ class LearnActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.title = "Learn: Set $setNumber"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        setNumber = 1 //TODO: Delete this once all sets have been added
-        wordNumber = 0
-        wordsPreview = true
-        firstWord = false
-
-        wordsLayout = findViewById(R.id.learn_wordsLayout)
-        wordsLayout.visibility = View.VISIBLE
-        meaningsLayout = findViewById(R.id.learn_meaningsLayout)
-        meaningsLayout.visibility = View.GONE
-        finishLayout = findViewById(R.id.learn_finishLayout)
-        finishLayout.visibility = View.GONE
-
-        wordText = findViewById(R.id.learn_wordText)
-        typeText = findViewById(R.id.learn_typeText)
-        bottomText = findViewById(R.id.learn_bottomText)
-        finishTitle = findViewById(R.id.learn_finishTitle)
-        finishTitle.text = "Finished Set $setNumber"
-        nextButton = findViewById(R.id.learn_nextButton)
-        previousButton = findViewById(R.id.learn_previousButton)
-
-        // open database and get wordsList
-        db = WordBankDbAccess.getInstance(applicationContext)
-        db.open()
-        wordsList = db.getWordsList(setNumber)
-        db.close()
-        currentWord = wordsList[wordNumber]
-        currentMeanings = currentWord.meanings
-        wordText.text = currentWord.word
-        typeText.text = currentWord.type
-        bottomText.visibility = View.INVISIBLE
-        previousButton.visibility = View.INVISIBLE
-        buildWordsRv()
-        buildMeaningsRv()
     }
 
-    private fun buildWordsRv() {
-        wordsRv = findViewById(R.id.learn_wordsRv)
-        wordsRv.setHasFixedSize(true)
-        wordsLayoutManager = LinearLayoutManager(this)
-        wordsAdapter = WordsAdapter(wordsList)
-        wordsAdapter.onItemClick = { word, position -> goToWordsRv(position) }
-        wordsRv.layoutManager = wordsLayoutManager
-        wordsRv.adapter = wordsAdapter
-        wordsRv.addItemDecoration(
-                object : DividerItemDecoration(applicationContext, VERTICAL) {
-                    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                        val position = parent.getChildAdapterPosition(view)
-                        // hide the divider for the last child
-                        if (position == parent.adapter!!.itemCount - 1) {
-                            outRect.setEmpty()
-                        } else {
-                            super.getItemOffsets(outRect, view, parent, state)
-                        }
-                    }
-                }
-        )
+    private fun setupCardStackView() {
+        initialize()
     }
 
-    private fun goToWordsRv(position: Int) {
-        wordNumber = position
-        wordsPreview = false
-        if (position == 0) {
-            firstWord = true
+    private fun setupButtons() {
+        val backButton = findViewById<View>(R.id.learn_back_button)
+        backButton.setOnClickListener {
+            val rewindSetting = RewindAnimationSetting.Builder()
+                    .setDirection(Direction.Left)
+                    .setDuration(Duration.Normal.duration)
+                    .setInterpolator(DecelerateInterpolator())
+                    .build()
+            manager.setRewindAnimationSetting(rewindSetting)
+            cardStackView.rewind()
         }
-        wordsLayoutManager.smoothScrollToPosition(wordsRv, null, 0)
-        bottomText.visibility = View.VISIBLE
-        meaningsLayout.visibility = View.VISIBLE
-        wordsLayout.visibility = View.GONE
-        previousButton.visibility = View.VISIBLE
-        Log.i("Learn - Word number", wordNumber.toString())
-        currentWord = wordsList[wordNumber]
-        wordText.text = currentWord.word
-        typeText.text = currentWord.type
-        updateMeaningsRv()
-        bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(SET_SIZE)
-    }
 
-    private fun buildMeaningsRv() {
-        meaningsRv = findViewById(R.id.learn_meaningsRv)
-        meaningsRv.setHasFixedSize(true)
-        meaningLayoutManager = LinearLayoutManager(this)
-        meaningAdapter = MeaningAdapter(this, currentMeanings)
-        meaningsRv.layoutManager = meaningLayoutManager
-        meaningsRv.adapter = meaningAdapter
-        meaningsRv.addItemDecoration(
-                object : DividerItemDecoration(applicationContext, VERTICAL) {
-                    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                        // hide the divider for the last child
-                        if (parent.getChildAdapterPosition(view) == state.itemCount - 1) {
-                            outRect.setEmpty()
-                        } else {
-                            super.getItemOffsets(outRect, view, parent, state)
-                        }
-                    }
-                }
-        )
-    }
-
-    private fun updateMeaningsRv() {
-        meaningAdapter.updateList(currentWord.meanings)
-        for (i in currentWord.meanings.indices) {
-            val (definition, example, synonyms, antonyms) = currentWord.meanings[i]
-            Log.i("Learn - Meaning", definition)
-            Log.i("Learn - Meaning", example)
-            Log.i("Learn - Meaning", synonyms)
-            Log.i("Learn - Meaning", antonyms)
+        val nextButton = findViewById<View>(R.id.learn_next_button)
+        nextButton.setOnClickListener {
+            val swipeSetting = SwipeAnimationSetting.Builder()
+                    .setDirection(Direction.Left)
+                    .setDuration(Duration.Normal.duration)
+                    .setInterpolator(AccelerateInterpolator())
+                    .build()
+            manager.setSwipeAnimationSetting(swipeSetting)
+            cardStackView.swipe()
         }
     }
 
-    fun nextWord(view: View?) {
-        if (wordsPreview) {
-            wordNumber = 0
-            wordsPreview = false
-            firstWord = true
-            wordsLayoutManager.smoothScrollToPosition(wordsRv, null, 0)
-            bottomText.visibility = View.VISIBLE
-            bottomText.text = StringBuilder("1 / ").append(SET_SIZE)
-            wordsLayout.visibility = View.GONE
-            meaningsLayout.visibility = View.VISIBLE
-            previousButton.visibility = View.VISIBLE
-        } else if (wordNumber == SET_SIZE - 1) {
-            wordNumber++
-            bottomText.visibility = View.INVISIBLE
-            nextButton.visibility = View.INVISIBLE
-            meaningsLayout.visibility = View.GONE
-            finishLayout.visibility = View.VISIBLE
-        } else {
-            wordNumber++
-            Log.i("Learn - Word number", wordNumber.toString())
-            currentWord = wordsList[wordNumber]
-            wordText.text = currentWord.word
-            typeText.text = currentWord.type
-            updateMeaningsRv()
-            bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(SET_SIZE)
-            if (firstWord) {
-                firstWord = false
+    private fun initialize() {
+        manager.setStackFrom(StackFrom.Right)
+        manager.setVisibleCount(3)
+        manager.setTranslationInterval(8.0f)
+        manager.setScaleInterval(0.95f)
+        manager.setSwipeThreshold(0.3f)
+        manager.setMaxDegree(20.0f)
+        manager.setDirections(Direction.HORIZONTAL)
+        manager.setCanScrollHorizontal(true)
+        manager.setCanScrollVertical(false)
+        manager.setSwipeableMethod(SwipeableMethod.Automatic)
+        manager.setOverlayInterpolator(LinearInterpolator())
+        cardStackView.layoutManager = manager
+        cardStackView.adapter = adapter
+        cardStackView.itemAnimator.apply {
+            if (this is DefaultItemAnimator) {
+                supportsChangeAnimations = false
             }
         }
-        Log.i("wordNumber", wordNumber.toString())
     }
 
-    fun previousWord(view: View?) {
-        if (firstWord) {
-            wordsPreview = true
-            firstWord = false
-            wordsLayoutManager.smoothScrollToPosition(wordsRv, null, 0)
-            bottomText.visibility = View.INVISIBLE
-            wordsLayout.visibility = View.VISIBLE
-            meaningsLayout.visibility = View.GONE
-            previousButton.visibility = View.GONE
-        } else if (wordNumber == SET_SIZE) {
-            wordNumber--
-            bottomText.visibility = View.VISIBLE
-            nextButton.visibility = View.VISIBLE
-            finishLayout.visibility = View.GONE
-            meaningsLayout.visibility = View.VISIBLE
-        } else {
-            wordNumber--
-            Log.i("Learn - Word number", wordNumber.toString())
-            currentWord = wordsList[wordNumber]
-            wordText.text = currentWord.word
-            typeText.text = currentWord.type
-            updateMeaningsRv()
-            bottomText.text = StringBuilder((wordNumber + 1).toString()).append(" / ").append(SET_SIZE)
-            if (wordNumber == 0) {
-                firstWord = true
-                //previousButton.setEnabled(false);
-            }
-        }
-        Log.i("wordNumber", wordNumber.toString())
-    }
+    private fun createWords(): List<Word> {
+        val testWord1 = Word(id = 1, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
+        val testWord2 = Word(id = 2, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
+        val testWord3 = Word(id = 3, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
 
-    fun backToWordsList(view: View?) {
-        wordsPreview = true
-        firstWord = false
-        bottomText.visibility = View.INVISIBLE
-        wordsLayout.visibility = View.VISIBLE
-        meaningsLayout.visibility = View.GONE
-        previousButton.visibility = View.INVISIBLE
+        val words = ArrayList<Word>()
+        words.add(testWord1)
+        words.add(testWord2)
+        words.add(testWord3)
+        return words
     }
 
     fun goToTest(view: View?) {
@@ -258,5 +137,41 @@ class LearnActivity : AppCompatActivity() {
         val intent = Intent(this@LearnActivity, MainActivity::class.java)
         intent.putExtra("setNumber", setNumber)
         startActivity(intent)
+    }
+
+    override fun onCardDragging(direction: Direction?, ratio: Float) {
+        Log.d("CardStackView", "onCardDragging: d = ${direction?.name}, r = $ratio")
+    }
+
+    override fun onCardSwiped(direction: Direction?) {
+        Log.d("CardStackView", "onCardSwiped: p = ${manager.topPosition}, d = $direction")
+    }
+
+    override fun onCardRewound() {
+        Log.d("CardStackView", "onCardRewound: ${manager.topPosition}")
+    }
+
+    override fun onCardCanceled() {
+        Log.d("CardStackView", "onCardCanceled: ${manager.topPosition}")
+    }
+
+    override fun onCardAppeared(view: View?, position: Int) {
+        val textView = view?.findViewById<TextView>(R.id.card_wordText)
+        Log.d("CardStackView", "onCardAppeared: ($position) ${textView?.text}")
+
+        if (position == wordsList.size - 1) {
+            cardStackView.visibility = View.VISIBLE
+            Log.d("CardStackView Visibile", "VISIBLE")
+        }
+    }
+
+    override fun onCardDisappeared(view: View?, position: Int) {
+        val textView = view?.findViewById<TextView>(R.id.card_wordText)
+        Log.d("CardStackView", "onCardDisappeared: ($position) ${textView?.text}")
+
+        if (position == wordsList.size - 1) {
+            cardStackView.visibility = View.GONE
+            Log.d("CardStackView Visibile", "GONE")
+        }
     }
 }
