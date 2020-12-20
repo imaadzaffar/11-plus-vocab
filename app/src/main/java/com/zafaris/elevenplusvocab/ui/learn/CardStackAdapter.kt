@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.utils.Word
@@ -23,11 +23,25 @@ class CardStackAdapter(private var words: List<Word> = emptyList()) : RecyclerVi
         holder.type.text = item.type
         holder.definition.text = item.meanings[0].definition
         holder.example.text = item.meanings[0].example
-        holder.synonyms.text = item.meanings[0].synonyms
-        holder.antonyms.text = item.meanings[0].antonyms
-//        holder.itemView.setOnClickListener { v ->
-//            Toast.makeText(v.context, "${item.id}. ${item.word}", Toast.LENGTH_SHORT).show()
-//        }
+        
+        val synonyms = item.meanings[0].synonyms
+        if (synonyms == "N/A") {
+            holder.synonymsCard.visibility = View.INVISIBLE
+        } else {
+            val size = synonyms.split(", ").size
+            holder.synonymsCard.visibility = View.VISIBLE
+            holder.synonymsTitle.text = "Synonyms ($size):"
+            holder.synonymsText.text = item.meanings[0].synonyms
+        }
+        val antonyms = item.meanings[0].antonyms
+        if (antonyms == "N/A") {
+            holder.antonymsCard.visibility = View.INVISIBLE
+        } else {
+            val size = antonyms.split(", ").size
+            holder.antonymsCard.visibility = View.VISIBLE
+            holder.antonymsTitle.text = "Antonyms ($size):"
+            holder.antonymsText.text = item.meanings[0].antonyms
+        }
     }
 
     override fun getItemCount(): Int {
@@ -48,8 +62,12 @@ class CardStackAdapter(private var words: List<Word> = emptyList()) : RecyclerVi
         val type: TextView = view.findViewById(R.id.card_typeText)
         val definition: TextView = view.findViewById(R.id.card_definitionText)
         val example: TextView = view.findViewById(R.id.card_exampleText)
-        var synonyms: TextView = view.findViewById(R.id.card_synonymsText)
-        var antonyms: TextView = view.findViewById(R.id.card_antonymsText)
+        val synonymsCard: CardView = view.findViewById(R.id.card_synonymsCard)
+        val synonymsTitle: TextView = view.findViewById(R.id.card_synonymsTitle)
+        val synonymsText: TextView = view.findViewById(R.id.card_synonymsText)
+        val antonymsCard: CardView = view.findViewById(R.id.card_antonymsCard)
+        val antonymsTitle: TextView = view.findViewById(R.id.card_antonymsTitle)
+        val antonymsText: TextView = view.findViewById(R.id.card_antonymsText)
     }
 
 }

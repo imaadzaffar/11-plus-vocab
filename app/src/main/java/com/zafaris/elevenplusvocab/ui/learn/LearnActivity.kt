@@ -23,12 +23,12 @@ import java.util.ArrayList
 
 class LearnActivity : AppCompatActivity(), CardStackListener {
     private lateinit var db: WordBankDbAccess
-    private lateinit var wordsList: ArrayList<Word>
+    private lateinit var wordsList: List<Word>
     private var setNumber = 0
 
     private val cardStackView by lazy { findViewById<CardStackView>(R.id.learn_card_stack_view) }
     private val manager by lazy { CardStackLayoutManager(this, this) }
-    private val adapter by lazy { CardStackAdapter(createWords()) }
+    private val adapter by lazy { CardStackAdapter(getWords()) }
 
     private val finishLayout by lazy { findViewById<ConstraintLayout>(R.id.learn_finishLayout) }
     private val finishTitle by lazy { findViewById<TextView>(R.id.learn_finishTitle) }
@@ -65,6 +65,9 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
     private fun setupButtons() {
         val backButton = findViewById<View>(R.id.learn_back_button)
         backButton.setOnClickListener {
+            if (cardStackView.visibility == View.GONE) {
+                cardStackView.visibility = View.VISIBLE
+            }
             val rewindSetting = RewindAnimationSetting.Builder()
                     .setDirection(Direction.Left)
                     .setDuration(Duration.Normal.duration)
@@ -76,6 +79,9 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
 
         val nextButton = findViewById<View>(R.id.learn_next_button)
         nextButton.setOnClickListener {
+            if (manager.topPosition == wordsList.size - 1) {
+                cardStackView.visibility = View.GONE
+            }
             val swipeSetting = SwipeAnimationSetting.Builder()
                     .setDirection(Direction.Left)
                     .setDuration(Duration.Normal.duration)
@@ -107,21 +113,12 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
         }
     }
 
-    private fun createWords(): List<Word> {
+    private fun getWords(): List<Word> {
         // open database and get wordsList
         db = WordBankDbAccess.getInstance(applicationContext)
         db.open()
-        wordsList = db.getWordsList(setNumber) as ArrayList<Word>
+        wordsList = db.getWordsList(setNumber)
         db.close()
-
-        val word1 = Word(id = 1, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
-        val word2 = Word(id = 2, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
-        val word3 = Word(id = 3, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
-
-        wordsList = arrayListOf()
-        wordsList.add(word1)
-        wordsList.add(word2)
-        wordsList.add(word3)
         return wordsList
     }
 
