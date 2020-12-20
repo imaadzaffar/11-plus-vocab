@@ -23,7 +23,7 @@ import java.util.ArrayList
 
 class LearnActivity : AppCompatActivity(), CardStackListener {
     private lateinit var db: WordBankDbAccess
-    private lateinit var wordsList: List<Word>
+    private lateinit var wordsList: ArrayList<Word>
     private var setNumber = 0
 
     private val cardStackView by lazy { findViewById<CardStackView>(R.id.learn_card_stack_view) }
@@ -42,12 +42,6 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
 
 //        finishLayout.visibility = View.GONE
         finishTitle.text = "Finished Set $setNumber"
-
-        // open database and get wordsList
-        db = WordBankDbAccess.getInstance(applicationContext)
-        db.open()
-        wordsList = db.getWordsList(setNumber)
-        db.close()
 
         setupCardStackView()
         setupButtons()
@@ -114,15 +108,21 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
     }
 
     private fun createWords(): List<Word> {
-        val testWord1 = Word(id = 1, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
-        val testWord2 = Word(id = 2, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
-        val testWord3 = Word(id = 3, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
+        // open database and get wordsList
+        db = WordBankDbAccess.getInstance(applicationContext)
+        db.open()
+        wordsList = db.getWordsList(setNumber) as ArrayList<Word>
+        db.close()
 
-        val words = ArrayList<Word>()
-        words.add(testWord1)
-        words.add(testWord2)
-        words.add(testWord3)
-        return words
+        val word1 = Word(id = 1, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
+        val word2 = Word(id = 2, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
+        val word3 = Word(id = 3, set = 1, word = "test", type = "noun", meanings = listOf(Meaning(definition = "This is the definition of test", example = "This is an example sentence for test", synonyms = "example, example, example", antonyms = "example, example, example")))
+
+        wordsList = arrayListOf()
+        wordsList.add(word1)
+        wordsList.add(word2)
+        wordsList.add(word3)
+        return wordsList
     }
 
     fun goToTest(view: View?) {
@@ -158,20 +158,10 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
     override fun onCardAppeared(view: View?, position: Int) {
         val textView = view?.findViewById<TextView>(R.id.card_wordText)
         Log.d("CardStackView", "onCardAppeared: ($position) ${textView?.text}")
-
-        if (position == wordsList.size - 1) {
-            cardStackView.visibility = View.VISIBLE
-            Log.d("CardStackView Visibile", "VISIBLE")
-        }
     }
 
     override fun onCardDisappeared(view: View?, position: Int) {
         val textView = view?.findViewById<TextView>(R.id.card_wordText)
         Log.d("CardStackView", "onCardDisappeared: ($position) ${textView?.text}")
-
-        if (position == wordsList.size - 1) {
-            cardStackView.visibility = View.GONE
-            Log.d("CardStackView Visibile", "GONE")
-        }
     }
 }

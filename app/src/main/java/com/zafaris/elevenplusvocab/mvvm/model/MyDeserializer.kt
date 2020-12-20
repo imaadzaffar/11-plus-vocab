@@ -6,6 +6,7 @@ import com.zafaris.elevenplusvocab.ui.learn.Meaning
 import com.zafaris.elevenplusvocab.utils.Word
 import org.json.JSONException
 import java.lang.reflect.Type
+import kotlin.jvm.Throws
 
 class MyDeserializer : JsonDeserializer<Word> {
 
