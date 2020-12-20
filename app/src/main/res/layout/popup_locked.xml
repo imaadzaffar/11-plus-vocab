@@ -4,57 +4,108 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:elevation="4dp">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="264dp"
-        android:layout_height="236dp"
-        android:background="@drawable/bg_popup"
-        android:orientation="vertical"
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:elevation="4dp"
+        app:cardCornerRadius="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:elevation="4dp" >
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/popupTitle"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Set 1 locked"
-            android:textAlignment="center"
-            android:textColor="@color/textOnLight"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/learnButton"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/btn_locked"
-            android:text="Learn"
-            android:textColor="@color/textOnDark"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            <Button
+                android:id="@+id/unlockButton"
+                android:layout_width="250dp"
+                android:layout_height="65dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/btn_green"
+                android:text="UNLOCK"
+                android:textColor="@color/textOnDark"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/unlockText" />
 
-        <Button
-            android:id="@+id/testButton"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/btn_locked"
-            android:text="Test"
-            android:textColor="@color/textOnDark"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/unlockText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="- Unlock all 20 sets\n- Add your own words\n- Detailed statistics for tests\n- Help to support us"
+                android:textColor="@color/textOnLight"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/unlockHeader"
+                app:layout_constraintTop_toBottomOf="@id/unlockHeader" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/unlockHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="Pay to unlock this set + more!"
+                android:textColor="@color/textOnLight"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/constraintLayout" />
+
+            <TextView
+                android:id="@+id/noThanksButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:padding="8dp"
+                android:text="No Thanks"
+                android:textColor="@color/textOnLight"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/unlockButton"
+                app:layout_constraintStart_toStartOf="@id/unlockButton"
+                app:layout_constraintTop_toBottomOf="@id/unlockButton" />
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gradient_orange"
+                android:padding="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@id/popupTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Set 1 locked"
+                    android:textColor="@color/textOnDark"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

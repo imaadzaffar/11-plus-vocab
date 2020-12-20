@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var learnButton: Button
     private lateinit var testButton: Button
     private lateinit var statsButton: Button
+    private lateinit var unlockButton: Button
     private lateinit var setRv: RecyclerView
 
     private var clickedSet = 0
@@ -145,17 +146,17 @@ class MainActivity : AppCompatActivity() {
     private fun showPopupLocked() {
         popupDialog.setContentView(R.layout.popup_locked)
         popupTitle = popupDialog.findViewById(R.id.popupTitle)
-        learnButton = popupDialog.findViewById(R.id.learnButton)
-        testButton = popupDialog.findViewById(R.id.testButton)
-        val title = StringBuilder("Set ")
-        title.append(clickedSet)
-        title.append(" locked")
-        popupTitle.setText(title)
-        learnButton.setOnClickListener(View.OnClickListener {
-            Toast.makeText(this@MainActivity, "Set is locked!", Toast.LENGTH_SHORT).show()
+        unlockButton = popupDialog.findViewById(R.id.unlockButton)
+        val title = "Set $clickedSet locked"
+        popupTitle.text = title
+        unlockButton.setOnClickListener {
+            Toast.makeText(this@MainActivity, "Unlock sets", Toast.LENGTH_SHORT).show()
             //TODO: Show locked message and ask for payment
-        })
-        testButton.setOnClickListener(View.OnClickListener { Toast.makeText(this@MainActivity, "Set is locked!", Toast.LENGTH_SHORT).show() })
+        }
+        val noThanksButton = popupDialog.findViewById<TextView>(R.id.noThanksButton)
+        noThanksButton.setOnClickListener {
+            popupDialog.dismiss()
+        }
         popupDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupDialog.show()
     }
@@ -180,8 +181,7 @@ class MainActivity : AppCompatActivity() {
         popupTitle = popupDialog.findViewById(R.id.popupTitle)
         learnButton = popupDialog.findViewById(R.id.learnButton)
         testButton = popupDialog.findViewById(R.id.testButton)
-        val title = StringBuilder("Set ")
-        title.append(clickedSet)
+        val title = "Set $clickedSet"
         popupTitle.text = title
         learnButton.setOnClickListener { goToActivity(LearnActivity()) }
         testButton.setOnClickListener { goToActivity(TestActivity()) }

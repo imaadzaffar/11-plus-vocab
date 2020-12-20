@@ -8,7 +8,7 @@
                 android:color="@color/colorLightGrey" />
 
             <corners
-                android:radius="26dp" />
+                android:radius="40dp" />
         </shape>
     </item>
 </ripple>
