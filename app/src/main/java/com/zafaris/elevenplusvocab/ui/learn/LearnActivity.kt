@@ -145,15 +145,10 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
         finishTitle.text = "Finished Set $setNumber!"
 
         val testButton = finishDialog.findViewById<Button>(R.id.learn_testButton)
-        testButton.setOnClickListener {
-            val intent = Intent(this@LearnActivity, TestActivity::class.java)
-            startActivity(intent)
-        }
+        testButton.setOnClickListener { goToTest() }
         val homeButton = finishDialog.findViewById<Button>(R.id.learn_homeButton)
-        homeButton.setOnClickListener {
-            val intent = Intent(this@LearnActivity, MainActivity::class.java)
-            startActivity(intent)
-        }
+        homeButton.setOnClickListener { goToHome() }
+
         finishDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         finishDialog.show()
     }
@@ -166,13 +161,13 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
         mediaPlayer.start()
     }
 
-    fun goToTest(view: View?) {
+    private fun goToTest() {
         val intent = Intent(this@LearnActivity, TestActivity::class.java)
         intent.putExtra("setNumber", setNumber)
         startActivity(intent)
     }
 
-    fun goToHome(view: View?) {
+    private fun goToHome() {
         MainActivity.setList[setNumber - 1] = Set(setNumber, isSetCompleted = true, isSetLocked = false)
         MainActivity.setAdapter.notifyDataSetChanged()
         val intent = Intent(this@LearnActivity, MainActivity::class.java)

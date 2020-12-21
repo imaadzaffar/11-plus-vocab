@@ -441,7 +441,7 @@ class TestActivity : AppCompatActivity() {
         return antonym
     }
 
-    fun goToHome(view: View?) {
+    private fun goToHome() {
         val intent = Intent(this@TestActivity, MainActivity::class.java)
         intent.putExtra("setNumber", setNumber)
         startActivity(intent)
