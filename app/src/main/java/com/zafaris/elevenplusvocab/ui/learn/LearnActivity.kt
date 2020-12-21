@@ -12,12 +12,9 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
@@ -67,7 +64,24 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
     }
 
     private fun setupCardStackView() {
-        initialize()
+        manager.setStackFrom(StackFrom.Right)
+        manager.setVisibleCount(3)
+        manager.setTranslationInterval(8.0f)
+        manager.setScaleInterval(0.95f)
+        manager.setSwipeThreshold(0.3f)
+        manager.setMaxDegree(20.0f)
+        manager.setDirections(Direction.HORIZONTAL)
+        manager.setCanScrollHorizontal(true)
+        manager.setCanScrollVertical(false)
+        manager.setSwipeableMethod(SwipeableMethod.Automatic)
+        manager.setOverlayInterpolator(LinearInterpolator())
+        cardStackView.layoutManager = manager
+        cardStackView.adapter = adapter
+        cardStackView.itemAnimator.apply {
+            if (this is DefaultItemAnimator) {
+                supportsChangeAnimations = false
+            }
+        }
     }
 
     private fun setupButtons() {
@@ -104,27 +118,6 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
                 }
             }
 
-        }
-    }
-
-    private fun initialize() {
-        manager.setStackFrom(StackFrom.Right)
-        manager.setVisibleCount(3)
-        manager.setTranslationInterval(8.0f)
-        manager.setScaleInterval(0.95f)
-        manager.setSwipeThreshold(0.3f)
-        manager.setMaxDegree(20.0f)
-        manager.setDirections(Direction.HORIZONTAL)
-        manager.setCanScrollHorizontal(true)
-        manager.setCanScrollVertical(false)
-        manager.setSwipeableMethod(SwipeableMethod.Automatic)
-        manager.setOverlayInterpolator(LinearInterpolator())
-        cardStackView.layoutManager = manager
-        cardStackView.adapter = adapter
-        cardStackView.itemAnimator.apply {
-            if (this is DefaultItemAnimator) {
-                supportsChangeAnimations = false
-            }
         }
     }
 
