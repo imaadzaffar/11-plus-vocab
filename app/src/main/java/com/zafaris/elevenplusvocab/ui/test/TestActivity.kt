@@ -1,7 +1,10 @@
 package com.zafaris.elevenplusvocab.ui.test
 
+import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.SpannableString
@@ -11,10 +14,10 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import com.muddzdev.styleabletoast.StyleableToast
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.ui.learn.Meaning
@@ -24,16 +27,13 @@ import kotlin.collections.ArrayList
 
 class TestActivity : AppCompatActivity() {
     private lateinit var db: WordBankDbAccess
+
     private lateinit var testLayout: ConstraintLayout
-    private lateinit var finishLayout: ConstraintLayout
-    private lateinit var bottomLayout: ConstraintLayout
     private lateinit var wordText: TextView
     private lateinit var typeText: TextView
     private lateinit var exampleText: TextView
     private lateinit var questionText: TextView
     private lateinit var bottomText: TextView
-    private lateinit var finishTitle: TextView
-    private lateinit var scoreText: TextView
     private lateinit var option1: Button
     private lateinit var option2: Button
     private lateinit var option3: Button
@@ -45,44 +45,37 @@ class TestActivity : AppCompatActivity() {
     private lateinit var wordsList: List<Word>
     private lateinit var questionsList: MutableList<Question>
     private lateinit var currentQuestion: Question
+
     private var setNumber = 0
     private var questionNumber = 0
     private var answerWord: String = ""
+
     private lateinit var randomWord: Word
     private lateinit var randomMeaning: Meaning
+
     private var score = 0
     private var selectedAnswer = 0
+
     private lateinit var answerIndexList: MutableList<Int>
     private var answeredState = false
+    
+    private lateinit var scoreDialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
+
         val intent = intent
         setNumber = intent.getIntExtra("setNumber", 0)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.context.setTheme(R.style.ToolbarThemeDark)
-        toolbar.setBackgroundColor(getColor(R.color.colorRed))
-        toolbar.setTitleTextColor(getColor(R.color.textOnDark))
-        window.statusBarColor = getColor(R.color.colorRedStatus)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.title = "Test: Set $setNumber"
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        setNumber = 1 //TODO: Delete this once all sets have been added
+
+        setupToolbar()
+
         testLayout = findViewById(R.id.test_testLayout)
-        testLayout.visibility = View.VISIBLE
-        finishLayout = findViewById(R.id.test_finishLayout)
-        finishLayout.visibility = View.GONE
-        bottomLayout = findViewById(R.id.test_bottomLayout)
-        bottomLayout.visibility = View.VISIBLE
         wordText = findViewById(R.id.test_wordText)
         typeText = findViewById(R.id.test_typeText)
         exampleText = findViewById(R.id.test_exampleText)
         bottomText = findViewById(R.id.test_bottomText)
         questionText = findViewById(R.id.test_questionText)
-        finishTitle = findViewById(R.id.test_finishTitle)
-        finishTitle.text = "Results for Set $setNumber"
-        scoreText = findViewById(R.id.test_scoreText)
         nextButton = findViewById(R.id.test_nextButton)
         option1 = findViewById(R.id.test_option1)
         option2 = findViewById(R.id.test_option2)
@@ -92,6 +85,7 @@ class TestActivity : AppCompatActivity() {
         questionNumber = 0
         selectedAnswer = 0
         answeredState = false
+
         generateAllQuestions()
         currentQuestion = questionsList[0]
         showNextQuestion()
@@ -100,7 +94,7 @@ class TestActivity : AppCompatActivity() {
                 if (selectedAnswer != 0) {
                     checkAnswer()
                 } else {
-                    Toast.makeText(this@TestActivity, "Please select an answer", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this@TestActivity, "Please select an answer", Toast.LENGTH_SHORT).show()
                     StyleableToast.makeText(this@TestActivity, "Please select an answer", R.style.errorToast).show()
                 }
             } else {
@@ -109,16 +103,43 @@ class TestActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupToolbar() {
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar.context.setTheme(R.style.ToolbarThemeDark)
+        toolbar.setBackgroundColor(getColor(R.color.colorRed))
+        toolbar.setTitleTextColor(getColor(R.color.textOnDark))
+        window.statusBarColor = getColor(R.color.colorRedStatus)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.title = "Test: Set $setNumber"
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun showScoreDialog() {
+        scoreDialog = Dialog(this)
+
+        scoreDialog.setContentView(R.layout.popup_score_test)
+        val scoreTitle = scoreDialog.findViewById<TextView>(R.id.test_scoreTitle)
+        scoreTitle.text = "Score for Set $setNumber"
+        val scoreText = scoreDialog.findViewById<TextView>(R.id.test_scoreText)
+        scoreText.text = "$score / $NO_OF_QUESTIONS"
+
+        val homeButton = scoreDialog.findViewById<Button>(R.id.test_homeButton)
+        homeButton.setOnClickListener { goToHome() }
+
+        scoreDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        scoreDialog.show()
+    }
+
     private fun showNextQuestion() {
         //TODO: Optimise this
         option1.setTextColor(defaultTextColor)
         option2.setTextColor(defaultTextColor)
         option3.setTextColor(defaultTextColor)
         option4.setTextColor(defaultTextColor)
-        option1.background = getDrawable(R.drawable.bg_answer_button)
-        option2.background = getDrawable(R.drawable.bg_answer_button)
-        option3.background = getDrawable(R.drawable.bg_answer_button)
-        option4.background = getDrawable(R.drawable.bg_answer_button)
+        option1.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
+        option2.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
+        option3.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
+        option4.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
         if (questionNumber < NO_OF_QUESTIONS) {
             currentQuestion = questionsList[questionNumber]
             selectedAnswer = 0
@@ -134,6 +155,7 @@ class TestActivity : AppCompatActivity() {
             val underlineSpan = UnderlineSpan()
             val startIndex = exampleString.indexOf(word)
             val endIndex = startIndex + word.length
+            //TODO: Fix underline
             exampleSentence.setSpan(underlineSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
             exampleText.text = exampleSentence
 
@@ -145,19 +167,16 @@ class TestActivity : AppCompatActivity() {
             } else {
                 questionText.text = "Choose the opposite word:"
             }
-            option1.text = currentQuestion!!.option1
-            option2.text = currentQuestion!!.option2
-            option3.text = currentQuestion!!.option3
-            option4.text = currentQuestion!!.option4
+            option1.text = currentQuestion.option1
+            option2.text = currentQuestion.option2
+            option3.text = currentQuestion.option3
+            option4.text = currentQuestion.option4
             bottomText.text = "${(questionNumber + 1)} / $NO_OF_QUESTIONS"
             answeredState = false
             nextButton.text = "Check"
             questionNumber++
         } else {
-            scoreText.text = "$score / $NO_OF_QUESTIONS"
-            testLayout.visibility = View.GONE
-            finishLayout.visibility = View.VISIBLE
-            bottomLayout.visibility = View.GONE
+            showScoreDialog()
         }
     }
 
@@ -167,18 +186,18 @@ class TestActivity : AppCompatActivity() {
             option2.setTextColor(defaultTextColor)
             option3.setTextColor(defaultTextColor)
             option4.setTextColor(defaultTextColor)
-            option1.background = getDrawable(R.drawable.bg_answer_button)
-            option2.background = getDrawable(R.drawable.bg_answer_button)
-            option3.background = getDrawable(R.drawable.bg_answer_button)
-            option4.background = getDrawable(R.drawable.bg_answer_button)
+            option1.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
+            option2.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
+            option3.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
+            option4.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
             val selectedButton = view as Button
             val tag = Integer.valueOf(selectedButton.tag.toString())
             if (tag != selectedAnswer) {
                 selectedAnswer = tag
-                selectedButton.background = getDrawable(R.drawable.bg_answer_selected)
+                selectedButton.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_selected)
             } else { // deselected option
                 selectedAnswer = 0
-                selectedButton.background = getDrawable(R.drawable.bg_answer_button)
+                selectedButton.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
             }
         }
     }
@@ -196,7 +215,7 @@ class TestActivity : AppCompatActivity() {
             val stringId = "test_option${selectedAnswer}"
             val intId = resources.getIdentifier(stringId, "id", "com.zafaris.elevenplusvocab")
             val incorrectOption = findViewById<Button>(intId)
-            incorrectOption.background = getDrawable(R.drawable.bg_answer_incorrect)
+            incorrectOption.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_incorrect)
             incorrectOption.setTextColor(getColor(R.color.colorIncorrectDark))
 
             mediaPlayer = MediaPlayer.create(this, R.raw.sfx_incorrect)
@@ -213,7 +232,7 @@ class TestActivity : AppCompatActivity() {
         val intId = resources.getIdentifier(stringId, "id", "com.zafaris.elevenplusvocab")
         val correctOption = findViewById<Button>(intId)
         correctOption.setTextColor(getColor(R.color.colorCorrectDark))
-        correctOption.background = getDrawable(R.drawable.bg_answer_correct)
+        correctOption.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_correct)
 
         if (questionNumber < NO_OF_QUESTIONS) {
             nextButton.text = "Next"
@@ -222,20 +241,19 @@ class TestActivity : AppCompatActivity() {
         }
     }
 
-    private fun shuffleRandomList(end: Int, size: Int): MutableList<Int> { // end = 25, size = 10
+    private fun shuffleRandomList(): MutableList<Int> { // end = 25, size = 10
         val tmpList: MutableList<Int> = ArrayList()
-        for (i in 0 until end) {
+        for (i in 0 until SET_SIZE) {
             tmpList.add(i)
         }
         tmpList.shuffle()
-        return tmpList.subList(0, size)
+        return tmpList.subList(0, NO_OF_QUESTIONS)
     }
 
-    private fun generateRandomList(size: Int, min: Int, max: Int): MutableList<Int> {
+    private fun generateRandomList(): List<Int> {
         val randomList: MutableList<Int> = ArrayList()
-        for (i in 0 until size) {
-            val randomNumber = min + (Math.random() * (max - min + 1)).toInt()
-            randomList.add(randomNumber)
+        for (i in 0 until NO_OF_QUESTIONS) {
+            randomList.add(Math.random().toInt())
         }
         return randomList
     }
@@ -247,11 +265,8 @@ class TestActivity : AppCompatActivity() {
         wordsList = db.getWordsList(setNumber)
         db.close()
         var tmpQuestionNo = 1
-        answerIndexList = shuffleRandomList(SET_SIZE, NO_OF_QUESTIONS) // generate random list of indexes for words in set eg. [3, 15, 7, 23, 12]
-        val questionTypeList = generateRandomList(NO_OF_QUESTIONS, 0, 1)
-
-        // generate list for either synonym or antonym
-        //List<Integer> randomTypes = generateRandomList(optionsCountTotal, 0,  1);
+        answerIndexList = shuffleRandomList()
+        val questionTypeList = generateRandomList()
 
         // for each word index in random list of indexes, generate a question
         for (answerIndex in answerIndexList) {
@@ -272,7 +287,7 @@ class TestActivity : AppCompatActivity() {
             Log.i("Test - option3", optionsList[2])
             Log.i("Test - option4", optionsList[3])
 
-            //TODO: save indexes to a list and generate unique words
+            //TODO: save indices to a list and generate unique words
             val tmpQuestion = Question(
                     randomWord.word,
                     randomWord.type,
@@ -296,44 +311,38 @@ class TestActivity : AppCompatActivity() {
             var uniqueWord = false
             while (!uniqueWord) {
 
-                // question type is synonym
-                if (questionType == 0) {
+                // answer number
+                if (i == answerNo) {
+                    word = answerWord
+                    uniqueWord = true
+                    Log.d("Test - correct word", uniqueWord.toString())
 
-                    // correct synonym
-                    if (i == answerNo) {
-                        word = answerWord
-                        uniqueWord = true
-                        Log.i("Test - correct Synonym", uniqueWord.toString())
-                    } else {
-                        word = generateSynonym()
-                        // checks: if word is unique, break while loop
-                        if (!tmpWordsList.contains(word)) {
-                            uniqueWord = true
-                        } else {
-                            word = "N/A"
-                        }
-                        Log.i("Test - generateSynonym", uniqueWord.toString())
-                    }
-                } else {
+                // synonym question type
+                } else if (questionType == 0) {
+                    word = generateSynonym()
 
-                    // correct antonym
-                    if (i == answerNo) {
-                        word = answerWord
+                    // checks: if word is unique, break while loop
+                    if (!tmpWordsList.contains(word)) {
                         uniqueWord = true
-                        Log.i("Test - correct Antonym", uniqueWord.toString())
                     } else {
-                        word = generateAntonym()
-                        // checks: if word is unique, break while loop
-                        if (!tmpWordsList.contains(word)) {
-                            uniqueWord = true
-                        } else {
-                            word = "N/A"
-                        }
-                        Log.i("Test - generateAntonym", uniqueWord.toString())
+                        word = "N/A"
                     }
+                    Log.d("Test - generateSynonym", uniqueWord.toString())
+
+                // antonym question type
+                } else if (questionType == 1) {
+                    word = generateAntonym()
+
+                    // checks: if word is unique, break while loop
+                    if (!tmpWordsList.contains(word)) {
+                        uniqueWord = true
+                    } else {
+                        word = "N/A"
+                    }
+                    Log.d("Test - generateAntonym", uniqueWord.toString())
                 }
             }
-            Log.i("Test - Word", word)
+            Log.d("Test - Word", word)
             tmpWordsList.add(word)
         }
         return tmpWordsList
@@ -354,7 +363,6 @@ class TestActivity : AppCompatActivity() {
                 tmpMeaningList[0]
             }
 
-            // synonym
             answer = if (questionType == 0) {
                 val synonymsList: Array<String> = tmpMeaning.synonyms.split(", ").toTypedArray()
                 val tmpSynonymIndex = (Math.random() * synonymsList.size).toInt()
@@ -364,13 +372,13 @@ class TestActivity : AppCompatActivity() {
                 val tmpAntonymIndex = (Math.random() * antonymsList.size).toInt()
                 antonymsList[tmpAntonymIndex]
             }
-            Log.i("Test - answerWord", answer)
+            Log.d("Test - answer", answer)
 
             // check if answer
             if (answer == "N/A") {
                 do {
                     answerIndex = (Math.random() * SET_SIZE).toInt()
-                    Log.i("Test - answerIndex loop", answerIndexList.contains(answerIndex).toString())
+                    Log.d("Test - answerIndex loop", answerIndexList.contains(answerIndex).toString())
                 } while (answerIndexList.contains(answerIndex))
                 answerIndexList[questionNo - 1] = answerIndex
             } else {
@@ -379,7 +387,7 @@ class TestActivity : AppCompatActivity() {
                 emptyWord = false
             }
         }
-        Log.i("Test - answer escaped", answer)
+        Log.d("Test - answer escaped", answer)
         return answer
     }
 
@@ -393,7 +401,7 @@ class TestActivity : AppCompatActivity() {
             // generate random index, that is not the same as the answer index
             do {
                 tmpWordIndex = (Math.random() * SET_SIZE).toInt()
-            } while (answerIndexList.contains(tmpWordIndex))
+            } while (tmpWordIndex == answerIndexList[0])
             val tmpMeanings = wordsList[tmpWordIndex].meanings
             var tmpMeaning: Meaning
             tmpMeaning = if (tmpMeanings.size > 1) {
@@ -422,7 +430,7 @@ class TestActivity : AppCompatActivity() {
             // generate random index, that is not the same as the answer index
             do {
                 tmpWordIndex = (Math.random() * SET_SIZE).toInt()
-            } while (answerIndexList.contains(tmpWordIndex))
+            } while (tmpWordIndex == answerIndexList[0])
             val tmpMeanings = wordsList[tmpWordIndex].meanings
             var tmpMeaning: Meaning
             tmpMeaning = if (tmpMeanings.size > 1) {
