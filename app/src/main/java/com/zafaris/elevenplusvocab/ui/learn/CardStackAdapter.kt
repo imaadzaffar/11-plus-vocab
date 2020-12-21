@@ -3,7 +3,9 @@ package com.zafaris.elevenplusvocab.ui.learn
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
@@ -21,6 +23,12 @@ class CardStackAdapter(private var words: List<Word> = emptyList()) : RecyclerVi
         holder.id.text = item.id.toString()
         holder.word.text = item.word
         holder.type.text = item.type
+
+        holder.audioButton.setOnClickListener { v ->
+            //TODO: Add audio sound for word
+            Toast.makeText(v.context, "Play audio for word", Toast.LENGTH_SHORT).show()
+        }
+
         holder.definition.text = item.meanings[0].definition
         holder.example.text = item.meanings[0].example
         
@@ -48,18 +56,11 @@ class CardStackAdapter(private var words: List<Word> = emptyList()) : RecyclerVi
         return words.size
     }
 
-    fun setWords(words: List<Word>) {
-        this.words = words
-    }
-
-    fun getWords(): List<Word> {
-        return words
-    }
-
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val id: TextView = view.findViewById(R.id.card_idText)
         val word: TextView = view.findViewById(R.id.card_wordText)
         val type: TextView = view.findViewById(R.id.card_typeText)
+        val audioButton: ImageButton = view.findViewById(R.id.card_audioButton)
         val definition: TextView = view.findViewById(R.id.card_definitionText)
         val example: TextView = view.findViewById(R.id.card_exampleText)
         val synonymsCard: CardView = view.findViewById(R.id.card_synonymsCard)

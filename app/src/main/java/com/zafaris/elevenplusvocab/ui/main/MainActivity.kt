@@ -32,7 +32,6 @@ import com.zafaris.elevenplusvocab.utils.WordBankDbAccess
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var popupDialog: Dialog
     private lateinit var popupTitle: TextView
     private lateinit var learnButton: Button
@@ -124,11 +123,7 @@ class MainActivity : AppCompatActivity() {
         setRv.adapter = setAdapter
         setAdapter.onItemClick = { set, position ->
             clickedSet = position + 1
-            mediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.sfx_menu_click)
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.release()
-            }
-            mediaPlayer.start()
+            playMenuClickSound()
             when {
                 setList[position].isSetLocked -> {
                     showPopupLocked()
@@ -190,16 +185,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun goToActivity(activity: Activity) {
-        mediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.sfx_menu_click)
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.release()
-        }
-        mediaPlayer.start()
+        playMenuClickSound()
         popupDialog.dismiss()
         val intent = Intent(this@MainActivity, activity::class.java)
         intent.putExtra("setNumber", clickedSet)
         startActivity(intent)
         setLayoutManager.smoothScrollToPosition(setRv, null, 0)
+    }
+
+    private fun playMenuClickSound() {
+        mediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.sfx_menu_click)
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.release()
+        }
+        mediaPlayer.start()
     }
 
     companion object {

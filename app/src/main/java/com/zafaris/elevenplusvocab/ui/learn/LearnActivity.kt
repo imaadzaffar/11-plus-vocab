@@ -1,13 +1,20 @@
 package com.zafaris.elevenplusvocab.ui.learn
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +26,6 @@ import com.zafaris.elevenplusvocab.ui.main.Set
 import com.zafaris.elevenplusvocab.ui.test.TestActivity
 import com.zafaris.elevenplusvocab.utils.Word
 import com.zafaris.elevenplusvocab.utils.WordBankDbAccess
-import java.util.ArrayList
 
 class LearnActivity : AppCompatActivity(), CardStackListener {
     private lateinit var db: WordBankDbAccess
@@ -30,24 +36,26 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
     private val manager by lazy { CardStackLayoutManager(this, this) }
     private val adapter by lazy { CardStackAdapter(getWords()) }
 
-    private val finishLayout by lazy { findViewById<ConstraintLayout>(R.id.learn_finishLayout) }
-    private val finishTitle by lazy { findViewById<TextView>(R.id.learn_finishTitle) }
+    private val backButton by lazy { findViewById<View>(R.id.learn_back_button) }
+    private val nextButton by lazy { findViewById<View>(R.id.learn_next_button) }
+
+    private lateinit var finishDialog: Dialog
+
+    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_learn)
+
         val intent = intent
         setNumber = intent.getIntExtra("setNumber", 0)
-        toolbar()
 
-//        finishLayout.visibility = View.GONE
-        finishTitle.text = "Finished Set $setNumber"
-
+        setupToolbar()
         setupCardStackView()
         setupButtons()
     }
 
-    private fun toolbar() {
+    private fun setupToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.context.setTheme(R.style.ToolbarThemeDark)
         toolbar.setBackgroundColor(getColor(R.color.colorBlue))
@@ -63,32 +71,39 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
     }
 
     private fun setupButtons() {
-        val backButton = findViewById<View>(R.id.learn_back_button)
+        val rewindSetting = RewindAnimationSetting.Builder()
+                .setDirection(Direction.Left)
+                .setDuration(Duration.Normal.duration)
+                .setInterpolator(DecelerateInterpolator())
+                .build()
+        manager.setRewindAnimationSetting(rewindSetting)
+
         backButton.setOnClickListener {
-            if (cardStackView.visibility == View.GONE) {
-                cardStackView.visibility = View.VISIBLE
-            }
-            val rewindSetting = RewindAnimationSetting.Builder()
-                    .setDirection(Direction.Left)
-                    .setDuration(Duration.Normal.duration)
-                    .setInterpolator(DecelerateInterpolator())
-                    .build()
-            manager.setRewindAnimationSetting(rewindSetting)
+            playButtonClickSound()
             cardStackView.rewind()
+            if (manager.topPosition == 0) {
+                backButton.visibility = View.INVISIBLE
+            }
         }
 
-        val nextButton = findViewById<View>(R.id.learn_next_button)
+        val swipeSetting = SwipeAnimationSetting.Builder()
+                .setDirection(Direction.Left)
+                .setDuration(Duration.Normal.duration)
+                .setInterpolator(AccelerateInterpolator())
+                .build()
+        manager.setSwipeAnimationSetting(swipeSetting)
+
         nextButton.setOnClickListener {
+            playButtonClickSound()
             if (manager.topPosition == wordsList.size - 1) {
-                cardStackView.visibility = View.GONE
+                showFinishDialog()
+            } else {
+                cardStackView.swipe()
+                if (manager.topPosition == 0) {
+                    backButton.visibility = View.VISIBLE
+                }
             }
-            val swipeSetting = SwipeAnimationSetting.Builder()
-                    .setDirection(Direction.Left)
-                    .setDuration(Duration.Normal.duration)
-                    .setInterpolator(AccelerateInterpolator())
-                    .build()
-            manager.setSwipeAnimationSetting(swipeSetting)
-            cardStackView.swipe()
+
         }
     }
 
@@ -120,6 +135,35 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
         wordsList = db.getWordsList(setNumber)
         db.close()
         return wordsList
+    }
+
+    private fun showFinishDialog() {
+        finishDialog = Dialog(this)
+
+        finishDialog.setContentView(R.layout.popup_finish_learn)
+        val finishTitle = finishDialog.findViewById<TextView>(R.id.learn_finishTitle)
+        finishTitle.text = "Finished Set $setNumber!"
+
+        val testButton = finishDialog.findViewById<Button>(R.id.learn_testButton)
+        testButton.setOnClickListener {
+            val intent = Intent(this@LearnActivity, TestActivity::class.java)
+            startActivity(intent)
+        }
+        val homeButton = finishDialog.findViewById<Button>(R.id.learn_homeButton)
+        homeButton.setOnClickListener {
+            val intent = Intent(this@LearnActivity, MainActivity::class.java)
+            startActivity(intent)
+        }
+        finishDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        finishDialog.show()
+    }
+
+    private fun playButtonClickSound() {
+        mediaPlayer = MediaPlayer.create(this@LearnActivity, R.raw.sfx_menu_click)
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.release()
+        }
+        mediaPlayer.start()
     }
 
     fun goToTest(view: View?) {

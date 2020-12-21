@@ -29,7 +29,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/btn_blue"
-                android:text="LEARN"
+                android:text="Learn"
                 android:textColor="@color/textOnDark"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -45,7 +45,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/btn_red"
-                android:text="TEST"
+                android:text="Test"
                 android:textColor="@color/textOnDark"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -54,7 +54,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/learnButton" />
 
             <Button
-                android:id="@id/statsButton"
+                android:id="@+id/statsButton"
                 android:layout_width="250dp"
                 android:layout_height="65dp"
                 android:layout_marginStart="16dp"
@@ -62,7 +62,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="24dp"
                 android:background="@drawable/btn_purple"
-                android:text="STATS"
+                android:text="Stats"
                 android:textColor="@color/textOnDark"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -99,67 +99,4 @@
 
     </androidx.cardview.widget.CardView>
 
-    <LinearLayout
-        android:layout_width="264dp"
-        android:layout_height="324dp"
-        android:background="@drawable/bg_popup"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <Button
-            android:id="@+id/learnButton"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/btn_blue"
-            android:text="Learn"
-            android:textColor="@color/textOnDark"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/testButton"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/btn_red"
-            android:text="Test"
-            android:textColor="@color/textOnDark"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/statsButton"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/btn_green"
-            android:text="Stats"
-            android:textColor="@color/textOnDark"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/popupTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Set 1 completed"
-            android:textAlignment="center"
-            android:textColor="@color/textOnLight"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

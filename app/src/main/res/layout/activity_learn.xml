@@ -15,80 +15,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/learn_finishLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/learn_button_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        tools:visibility="visible"
-        android:clipChildren="false">
-
-        <Button
-            android:id="@+id/learn_testButton"
-            android:layout_width="232dp"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="28dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/btn_red"
-            android:onClick="goToTest"
-            android:text="Test"
-            android:textColor="@color/textOnDark"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/learn_finishTitle" />
-
-        <TextView
-            android:id="@+id/learn_homeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="16dp"
-            android:clickable="true"
-            android:onClick="goToHome"
-            android:padding="10dp"
-            android:text="Back to Home"
-            android:textColor="@color/textOnLight"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/learn_testButton" />
-
-        <TextView
-            android:id="@+id/learn_finishTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Finished Set 1"
-            android:textColor="@color/textOnLight"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.yuyakaido.android.cardstackview.CardStackView
-        android:id="@+id/learn_card_stack_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:padding="8dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/learn_button_container"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/learn_button_container"
         android:layout_width="wrap_content"
         android:layout_height="80dp"
@@ -102,27 +28,27 @@
             android:id="@+id/learn_back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="24dp"
             android:layout_marginBottom="8dp"
             android:src="@drawable/ic_icon_arrow_left"
-            android:tint="#FFFFFF"
+            android:visibility="invisible"
             app:backgroundTint="@color/gradientOrange1"
             app:fabSize="auto"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/learn_next_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:rippleColor="@color/gradientOrange2" />
+            app:rippleColor="@color/gradientOrange2"
+            tools:visibility="visible" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/learn_next_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="24dp"
             android:layout_marginBottom="8dp"
             android:src="@drawable/ic_icon_arrow_right"
-            android:tint="#FFFFFF"
             app:backgroundTint="@color/gradientOrange1"
             app:fabSize="auto"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -132,5 +58,15 @@
             app:rippleColor="@color/gradientOrange2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.yuyakaido.android.cardstackview.CardStackView
+        android:id="@+id/learn_card_stack_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/learn_button_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
