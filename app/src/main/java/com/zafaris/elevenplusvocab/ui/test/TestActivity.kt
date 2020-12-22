@@ -194,7 +194,7 @@ class TestActivity : AppCompatActivity(), CardStackListener {
         }
     }
 
-    private fun shuffleRandomList(): MutableList<Int> { // end = 25, size = 10
+    private fun generateAnswerIndexList(): MutableList<Int> { // end = 25, size = 10
         val tmpList: MutableList<Int> = ArrayList()
         for (i in 0 until SET_SIZE) {
             tmpList.add(i)
@@ -203,10 +203,10 @@ class TestActivity : AppCompatActivity(), CardStackListener {
         return tmpList.subList(0, NO_OF_QUESTIONS)
     }
 
-    private fun generateRandomList(): List<Int> {
+    private fun generateQuestionTypeList(): List<Int> {
         val randomList: MutableList<Int> = ArrayList()
         for (i in 0 until NO_OF_QUESTIONS) {
-            randomList.add(Math.random().toInt())
+            randomList.add((0..1).random())
         }
         return randomList
     }
@@ -222,8 +222,8 @@ class TestActivity : AppCompatActivity(), CardStackListener {
         questionsList = ArrayList()
 
         var tmpQuestionNo = 1
-        answerIndexList = shuffleRandomList()
-        val questionTypeList = generateRandomList()
+        answerIndexList = generateAnswerIndexList()
+        val questionTypeList = generateQuestionTypeList()
 
         // for each word index in random list of indexes, generate a question
         for (answerIndex in answerIndexList) {
