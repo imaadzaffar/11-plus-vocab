@@ -16,7 +16,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
-import com.muddzdev.styleabletoast.StyleableToast
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.ui.learn.Meaning
@@ -31,7 +30,7 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
     private var questionNo = 0
     private var answerWord = ""
     private var answeredState = false
-    private var finishedState = false
+    private var completedState = false
     private lateinit var answerIndexList: MutableList<Int>
     private lateinit var questionsList: MutableList<Question>
     private lateinit var randomWord: Word
@@ -98,7 +97,7 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
     }
 
     override fun onOptionClick(userAnswerNo: Int) {
-        if (!answeredState && !finishedState) {
+        if (!answeredState && !completedState) {
             answeredState = true
             val currentQuestion = questionsList[questionNo]
             currentQuestion.userAnswerNo = userAnswerNo
@@ -138,10 +137,13 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
         scoreDialog = Dialog(this)
 
         scoreDialog.setContentView(R.layout.popup_score_test)
-        val scoreTitle = scoreDialog.findViewById<TextView>(R.id.test_scoreTitle)
+        val scoreTitle = scoreDialog.findViewById<TextView>(R.id.test_scorePopupTitle)
         scoreTitle.text = "Score for Set $setNumber"
         val scoreText = scoreDialog.findViewById<TextView>(R.id.test_scoreText)
         scoreText.text = "$score / $NO_OF_QUESTIONS"
+
+        val viewQuestionsButton = scoreDialog.findViewById<Button>(R.id.test_viewQuestionsButton)
+        viewQuestionsButton.setOnClickListener { viewQuestionsButtonClick() }
 
         val homeButton = scoreDialog.findViewById<Button>(R.id.test_homeButton)
         homeButton.setOnClickListener { goToHome() }
@@ -164,24 +166,40 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
     private fun nextButtonClick() {
         playSound(R.raw.sfx_menu_click)
 
-        if (!answeredState && !finishedState) {
+        if (!answeredState && !completedState) {
             //StyleableToast.makeText(this@TestActivity, "Please select an answer", R.style.errorToast).show()
         } else {
             answeredState = false
-            // finished test
+            // completed test
             if (manager.topPosition == questionsList.size - 1) {
-                finishedState = true
-                backButton.visibility = View.VISIBLE
-                showScoreDialog()
+                onTestComplete()
             } else {
                 cardStackView.swipe()
                 questionNo = manager.topPosition + 1
-                if (manager.topPosition == 0 && finishedState) {
+                if (manager.topPosition == 0 && completedState) {
                     backButton.visibility = View.VISIBLE
                 }
             }
             Log.d("questionNo", questionNo.toString())
         }
+    }
+
+    private fun onTestComplete() {
+        completedState = true
+        backButton.visibility = View.VISIBLE
+        showScoreDialog()
+    }
+
+    private fun viewQuestionsButtonClick() {
+        scoreDialog.dismiss()
+        manager.smoothScrollToPosition(cardStackView, null, 0)
+    }
+
+    private fun getWords() {
+        db = WordBankDbAccess.getInstance(applicationContext)
+        db.open()
+        wordsList = db.getWordsList(setNumber)
+        db.close()
     }
 
     private fun generateAnswerIndexList(): MutableList<Int> { // end = 25, size = 10
@@ -199,13 +217,6 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
             randomList.add((0..1).random())
         }
         return randomList
-    }
-
-    private fun getWords() {
-        db = WordBankDbAccess.getInstance(applicationContext)
-        db.open()
-        wordsList = db.getWordsList(setNumber)
-        db.close()
     }
 
     private fun generateAllQuestions() {
