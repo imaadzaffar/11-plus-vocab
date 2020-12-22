@@ -35,7 +35,6 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
 
     private val backButton by lazy { findViewById<View>(R.id.learn_back_button) }
     private val nextButton by lazy { findViewById<View>(R.id.learn_next_button) }
-
     private lateinit var finishDialog: Dialog
 
     private lateinit var mediaPlayer: MediaPlayer

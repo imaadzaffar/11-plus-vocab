@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.utils.Word
 
-class WordsCardStackAdapter(private var words: List<Word> = emptyList()) : RecyclerView.Adapter<WordsCardStackAdapter.ViewHolder>() {
+class WordsCardStackAdapter(
+        private val words: List<Word> = emptyList()
+) : RecyclerView.Adapter<WordsCardStackAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
