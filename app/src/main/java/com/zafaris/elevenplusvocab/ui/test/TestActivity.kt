@@ -15,7 +15,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.muddzdev.styleabletoast.StyleableToast
 import com.yuyakaido.android.cardstackview.*
@@ -24,15 +23,14 @@ import com.zafaris.elevenplusvocab.ui.learn.Meaning
 import com.zafaris.elevenplusvocab.ui.main.MainActivity
 import com.zafaris.elevenplusvocab.utils.*
 
-class TestActivity : AppCompatActivity(), CardStackListener {
+class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackAdapter.OnItemClickListener {
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
     private var setNumber = 0
     private var score = 0
     private var questionNo = 0
-    private var selectedAnswer = 0
     private var answerWord = ""
-    private var answeredState = true //TODO: Properly change
+    private var answeredState = false
     private var finishedState = false
     private lateinit var answerIndexList: MutableList<Int>
     private lateinit var questionsList: MutableList<Question>
@@ -45,7 +43,6 @@ class TestActivity : AppCompatActivity(), CardStackListener {
 
     private val backButton by lazy { findViewById<View>(R.id.test_back_button) }
     private val nextButton by lazy { findViewById<View>(R.id.test_next_button) }
-
     private lateinit var scoreDialog: Dialog
 
     private lateinit var mediaPlayer: MediaPlayer
@@ -64,9 +61,6 @@ class TestActivity : AppCompatActivity(), CardStackListener {
 
         setupCardStackView()
         setupButtons()
-
-        questionNo = 0
-        selectedAnswer = 0
     }
 
     private fun setupToolbar() {
@@ -81,7 +75,7 @@ class TestActivity : AppCompatActivity(), CardStackListener {
     }
 
     private fun setupCardStackView() {
-        adapter = QuestionsCardStackAdapter(questionsList)
+        adapter = QuestionsCardStackAdapter(questionsList, this)
 
         manager.setStackFrom(StackFrom.Right)
         manager.setVisibleCount(3)
@@ -103,6 +97,23 @@ class TestActivity : AppCompatActivity(), CardStackListener {
         }
     }
 
+    override fun onOptionClick(userAnswerNo: Int) {
+        if (!answeredState && !finishedState) {
+            answeredState = true
+            val currentQuestion = questionsList[questionNo]
+            currentQuestion.userAnswerNo = userAnswerNo
+            currentQuestion.isAnswered = true
+            adapter.notifyItemChanged(questionNo)
+
+            if (userAnswerNo == currentQuestion.answerNo) {
+                playSound(R.raw.sfx_correct)
+                score++
+            } else {
+                playSound(R.raw.sfx_incorrect)
+            }
+        }
+    }
+
     private fun setupButtons() {
         val rewindSetting = RewindAnimationSetting.Builder()
                 .setDirection(Direction.Left)
@@ -111,9 +122,7 @@ class TestActivity : AppCompatActivity(), CardStackListener {
                 .build()
         manager.setRewindAnimationSetting(rewindSetting)
 
-        backButton.setOnClickListener {
-            backButtonClick()
-        }
+        backButton.setOnClickListener { backButtonClick() }
 
         val swipeSetting = SwipeAnimationSetting.Builder()
                 .setDirection(Direction.Left)
@@ -122,9 +131,7 @@ class TestActivity : AppCompatActivity(), CardStackListener {
                 .build()
         manager.setSwipeAnimationSetting(swipeSetting)
 
-        nextButton.setOnClickListener {
-            nextButtonClick()
-        }
+        nextButton.setOnClickListener { nextButtonClick() }
     }
 
     private fun showScoreDialog() {
@@ -147,6 +154,8 @@ class TestActivity : AppCompatActivity(), CardStackListener {
         playSound(R.raw.sfx_menu_click)
 
         cardStackView.rewind()
+        questionNo = manager.topPosition
+        Log.d("questionNo", questionNo.toString())
         if (manager.topPosition == 0) {
             backButton.visibility = View.INVISIBLE
         }
@@ -155,42 +164,23 @@ class TestActivity : AppCompatActivity(), CardStackListener {
     private fun nextButtonClick() {
         playSound(R.raw.sfx_menu_click)
 
-        if (!answeredState) {
+        if (!answeredState && !finishedState) {
             //StyleableToast.makeText(this@TestActivity, "Please select an answer", R.style.errorToast).show()
-        } else if (manager.topPosition == questionsList.size - 1) {
-            finishedState = true
-            backButton.visibility = View.VISIBLE
-            showScoreDialog()
         } else {
-            cardStackView.swipe()
-            if (manager.topPosition == 0 && finishedState) {
+            answeredState = false
+            // finished test
+            if (manager.topPosition == questionsList.size - 1) {
+                finishedState = true
                 backButton.visibility = View.VISIBLE
+                showScoreDialog()
+            } else {
+                cardStackView.swipe()
+                questionNo = manager.topPosition + 1
+                if (manager.topPosition == 0 && finishedState) {
+                    backButton.visibility = View.VISIBLE
+                }
             }
-        }
-    }
-
-    private fun showAnswer() {
-        val currentQuestion = questionsList[questionNo]
-        answeredState = true
-
-        val correctStringId = "test_option${currentQuestion.answerNo}"
-        val correctIntId = resources.getIdentifier(correctStringId, "id", "com.zafaris.elevenplusvocab")
-        val correctOption = findViewById<Button>(correctIntId)
-        correctOption.setTextColor(getColor(R.color.colorCorrectDark))
-        correctOption.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_correct)
-
-        if (selectedAnswer == currentQuestion.answerNo) {
-            score++
-
-            playSound(R.raw.sfx_correct)
-        } else {
-            val incorrectStringId = "test_option${selectedAnswer}"
-            val incorrectIntId = resources.getIdentifier(incorrectStringId, "id", "com.zafaris.elevenplusvocab")
-            val incorrectOption = findViewById<Button>(incorrectIntId)
-            incorrectOption.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_incorrect)
-            incorrectOption.setTextColor(getColor(R.color.colorIncorrectDark))
-
-            playSound(R.raw.sfx_incorrect)
+            Log.d("questionNo", questionNo.toString())
         }
     }
 
@@ -228,21 +218,21 @@ class TestActivity : AppCompatActivity(), CardStackListener {
         // for each word index in random list of indexes, generate a question
         for (answerIndex in answerIndexList) {
             val questionType = questionTypeList[tmpQuestionNo - 1]
-            Log.i("Test - questionNo", tmpQuestionNo.toString())
+            Log.d("Test - tmpQuestionNo", tmpQuestionNo.toString())
             val answerNo = 1 + (Math.random() * NO_OF_OPTIONS).toInt()
-            Log.i("Test - answerNo", answerNo.toString())
+            Log.d("Test - answerNo", answerNo.toString())
 
             // generate correct answer
             answerWord = generateAnswer(tmpQuestionNo, questionType)
-            Log.i("Test - word", randomWord.word)
-            Log.i("Test - type", randomWord.type)
-            Log.i("Test - example", randomMeaning.example)
-            Log.i("Test - questionType", questionType.toString())
-            val optionsList = generateOptionsList(questionType, answerNo)
-            Log.i("Test - option1", optionsList[0])
-            Log.i("Test - option2", optionsList[1])
-            Log.i("Test - option3", optionsList[2])
-            Log.i("Test - option4", optionsList[3])
+            Log.d("Test - word", randomWord.word)
+            Log.d("Test - type", randomWord.type)
+            Log.d("Test - example", randomMeaning.example)
+            Log.d("Test - questionType", questionType.toString())
+            val optionsList = generateOptionsList(answerIndex, answerNo, questionType)
+            Log.d("Test - option1", optionsList[0])
+            Log.d("Test - option2", optionsList[1])
+            Log.d("Test - option3", optionsList[2])
+            Log.d("Test - option4", optionsList[3])
 
             //TODO: save indices to a list and generate unique words
             val tmpQuestion = Question(
@@ -261,50 +251,6 @@ class TestActivity : AppCompatActivity(), CardStackListener {
             questionsList.add(tmpQuestion)
             tmpQuestionNo++
         }
-    }
-
-    private fun generateOptionsList(questionType: Int, answerNo: Int): List<String> {
-        val tmpWordsList: MutableList<String> = ArrayList()
-        var word = "N/A"
-        for (i in 1 until (NO_OF_OPTIONS + 1)) {
-            var uniqueWord = false
-            while (!uniqueWord) {
-
-                // answer number
-                if (i == answerNo) {
-                    word = answerWord
-                    uniqueWord = true
-                    Log.d("Test - correct word", uniqueWord.toString())
-
-                // synonym question type
-                } else if (questionType == 0) {
-                    word = generateSynonym()
-
-                    // checks: if word is unique, break while loop
-                    if (!tmpWordsList.contains(word)) {
-                        uniqueWord = true
-                    } else {
-                        word = "N/A"
-                    }
-                    Log.d("Test - generateSynonym", uniqueWord.toString())
-
-                // antonym question type
-                } else if (questionType == 1) {
-                    word = generateAntonym()
-
-                    // checks: if word is unique, break while loop
-                    if (!tmpWordsList.contains(word)) {
-                        uniqueWord = true
-                    } else {
-                        word = "N/A"
-                    }
-                    Log.d("Test - generateAntonym", uniqueWord.toString())
-                }
-            }
-            Log.d("Test - Word", word)
-            tmpWordsList.add(word)
-        }
-        return tmpWordsList
     }
 
     private fun generateAnswer(questionNo: Int, questionType: Int): String {
@@ -350,38 +296,41 @@ class TestActivity : AppCompatActivity(), CardStackListener {
         return answer
     }
 
-    private fun generateSynonym(): String {
-        var synonym = "N/A"
-        var synonymsList: Array<String>
-        var emptyWord = true
-        while (emptyWord) {
-            var tmpWordIndex: Int
+    private fun generateOptionsList(answerIndex: Int, answerNo: Int, questionType: Int): List<String> {
+        val tmpWordsList: MutableList<String> = ArrayList()
+        var word = "N/A"
+        for (i in 1..NO_OF_OPTIONS) {
+            var uniqueWord = false
 
-            // generate random index, that is not the same as the answer index
-            do {
-                tmpWordIndex = (Math.random() * SET_SIZE).toInt()
-            } while (tmpWordIndex == answerIndexList[0])
-            val tmpMeanings = wordsList[tmpWordIndex].meanings
-            var tmpMeaning: Meaning
-            tmpMeaning = if (tmpMeanings.size > 1) {
-                val tmpMeaningIndex = (Math.random() * tmpMeanings.size).toInt()
-                tmpMeanings[tmpMeaningIndex]
-            } else {
-                tmpMeanings[0]
+            while (!uniqueWord) {
+
+                // answer number
+                if (i == answerNo) {
+                    word = answerWord
+                    uniqueWord = true
+                    Log.d("Test - correct word", uniqueWord.toString())
+                } else {
+                    word = generateOption(answerIndex, questionType)
+
+                    // checks if word is unique, breaks while loop
+                    if (!tmpWordsList.contains(word)) {
+                        uniqueWord = true
+                    } else {
+                        word = "N/A"
+                    }
+                    Log.d("Test - generateOption", uniqueWord.toString())
+                }
             }
-            synonymsList = tmpMeaning.synonyms.split(", ").toTypedArray()
-            val tmpSynonymIndex = (Math.random() * synonymsList.size).toInt()
-            synonym = synonymsList[tmpSynonymIndex]
-            if (synonym != "N/A") {
-                emptyWord = false
-            }
+
+            Log.d("Test - Word", word)
+            tmpWordsList.add(word)
         }
-        return synonym
+        return tmpWordsList
     }
 
-    private fun generateAntonym(): String {
-        var antonym = "N/A"
-        var antonymsList: Array<String>
+    private fun generateOption(answerIndex: Int, questionType: Int): String {
+        var option = "N/A"
+        var tmpList: Array<String>
         var emptyWord = true
         while (emptyWord) {
             var tmpWordIndex: Int
@@ -389,23 +338,32 @@ class TestActivity : AppCompatActivity(), CardStackListener {
             // generate random index, that is not the same as the answer index
             do {
                 tmpWordIndex = (Math.random() * SET_SIZE).toInt()
-            } while (tmpWordIndex == answerIndexList[0])
+            } while (tmpWordIndex == answerIndex)
             val tmpMeanings = wordsList[tmpWordIndex].meanings
             var tmpMeaning: Meaning
+
             tmpMeaning = if (tmpMeanings.size > 1) {
                 val tmpMeaningIndex = (Math.random() * tmpMeanings.size).toInt()
                 tmpMeanings[tmpMeaningIndex]
             } else {
                 tmpMeanings[0]
             }
-            antonymsList = tmpMeaning.antonyms.split(", ").toTypedArray()
-            val tmpAntonymIndex = (Math.random() * antonymsList.size).toInt()
-            antonym = antonymsList[tmpAntonymIndex]
-            if (antonym != "N/A") {
+
+            tmpList =
+                // synonym
+                if (questionType == 0) {
+                    tmpMeaning.synonyms.split(", ").toTypedArray()
+                // antonym
+                } else {
+                    tmpMeaning.antonyms.split(", ").toTypedArray()
+                }
+            val tmpOptionIndex = (Math.random() * tmpList.size).toInt()
+            option = tmpList[tmpOptionIndex]
+            if (option != "N/A") {
                 emptyWord = false
             }
         }
-        return antonym
+        return option
     }
 
     private fun playSound(resourceId: Int) {

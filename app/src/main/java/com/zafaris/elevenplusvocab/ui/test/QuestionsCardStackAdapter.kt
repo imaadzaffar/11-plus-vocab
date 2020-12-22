@@ -5,11 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
 
-class QuestionsCardStackAdapter(private var questions: List<Question> = emptyList()) : RecyclerView.Adapter<QuestionsCardStackAdapter.ViewHolder>() {
+class QuestionsCardStackAdapter(
+        private val questions: List<Question> = emptyList(),
+        private val listener: OnItemClickListener
+) : RecyclerView.Adapter<QuestionsCardStackAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, itemViewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -28,25 +31,39 @@ class QuestionsCardStackAdapter(private var questions: List<Question> = emptyLis
         holder.questionText.text = questionString
         holder.example.text = item.example
 
-        holder.option1.setOnClickListener { v -> optionClick(v, 1) }
         holder.option1.text = item.option1
-        holder.option2.setOnClickListener { v -> optionClick(v, 2) }
         holder.option2.text = item.option2
-        holder.option3.setOnClickListener { v -> optionClick(v, 3) }
         holder.option3.text = item.option3
-        holder.option4.setOnClickListener { v -> optionClick(v, 4) }
         holder.option4.text = item.option4
-    }
 
-    private fun optionClick(v: View, optionNo: Int) {
-        Toast.makeText(v.context, "Option $optionNo clicked", Toast.LENGTH_SHORT).show()
+        if (item.isAnswered) {
+            when (item.answerNo) {
+                1 -> holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_green)
+                2 -> holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_green)
+                3 -> holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_green)
+                4 -> holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_green)
+            }
+            if (item.userAnswerNo != item.answerNo) {
+                when (item.userAnswerNo) {
+                    1 -> holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_red)
+                    2 -> holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_red)
+                    3 -> holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_red)
+                    4 -> holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_red)
+                }
+            }
+        } else {
+            holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_blue)
+            holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_blue)
+            holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_blue)
+            holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_blue)
+        }
     }
 
     override fun getItemCount(): Int {
         return questions.size
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val questionNo: TextView = itemView.findViewById(R.id.card_test_questionNoText)
         val questionType: TextView = itemView.findViewById(R.id.card_test_questionTypeText)
         val questionText: TextView = itemView.findViewById(R.id.card_test_questionText)
@@ -55,6 +72,22 @@ class QuestionsCardStackAdapter(private var questions: List<Question> = emptyLis
         val option2: Button = itemView.findViewById(R.id.card_test_option2)
         val option3: Button = itemView.findViewById(R.id.card_test_option3)
         val option4: Button = itemView.findViewById(R.id.card_test_option4)
+
+        init {
+            option1.setOnClickListener(this)
+            option2.setOnClickListener(this)
+            option3.setOnClickListener(this)
+            option4.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            val optionNo = Integer.parseInt(v?.tag.toString())
+            listener.onOptionClick(optionNo)
+        }
+    }
+
+    interface OnItemClickListener {
+        fun onOptionClick(userAnswerNo: Int)
     }
 
 }
