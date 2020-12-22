@@ -9,8 +9,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
+import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.ui.main.SetAdapter.SetViewHolder
-import com.zafaris.elevenplusvocab.utils.SET_SIZE
+import com.zafaris.elevenplusvocab.util.SET_SIZE
 import java.util.*
 
 class SetAdapter (private val setsList: ArrayList<Set>) : RecyclerView.Adapter<SetViewHolder>() {
@@ -18,7 +19,7 @@ class SetAdapter (private val setsList: ArrayList<Set>) : RecyclerView.Adapter<S
     var onItemClick: ((Set, Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_set, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.home_item_set, parent, false)
         return SetViewHolder(itemView)
     }
 
@@ -37,15 +38,15 @@ class SetAdapter (private val setsList: ArrayList<Set>) : RecyclerView.Adapter<S
         // Set locked
         when {
             isSetLocked -> {
-                holder.mSetBackground.background = ContextCompat.getDrawable(holder.mSetBackground.context, R.drawable.set_locked)
+                holder.mSetBackground.background = ContextCompat.getDrawable(holder.mSetBackground.context, R.drawable.home_set_locked)
                 holder.mSetIcon.setImageResource(R.drawable.ic_icon_locked)
             }
             isSetCompleted -> {
-                holder.mSetBackground.background = ContextCompat.getDrawable(holder.mSetBackground.context, R.drawable.set_completed)
+                holder.mSetBackground.background = ContextCompat.getDrawable(holder.mSetBackground.context, R.drawable.home_set_completed)
                 holder.mSetIcon.setImageResource(R.drawable.ic_icon_completed)
             }
             else -> {
-                holder.mSetBackground.background = ContextCompat.getDrawable(holder.mSetBackground.context, R.drawable.set_play)
+                holder.mSetBackground.background = ContextCompat.getDrawable(holder.mSetBackground.context, R.drawable.home_set_play)
                 holder.mSetIcon.setImageResource(R.drawable.ic_icon_play)
             }
         }

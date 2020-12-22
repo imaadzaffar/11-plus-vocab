@@ -1,4 +1,4 @@
-package com.zafaris.elevenplusvocab.utils
+package com.zafaris.elevenplusvocab.util
 
 const val SET_SIZE = 10
 const val NO_OF_TOTAL_SETS = 20

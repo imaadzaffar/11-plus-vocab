@@ -1,4 +1,4 @@
-package com.zafaris.elevenplusvocab.utils;
+package com.zafaris.elevenplusvocab.util;
 
 import android.provider.BaseColumns;
 

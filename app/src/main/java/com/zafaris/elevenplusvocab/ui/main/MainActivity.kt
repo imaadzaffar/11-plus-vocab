@@ -3,7 +3,6 @@ package com.zafaris.elevenplusvocab.ui.main
 import android.app.Activity
 import android.app.Dialog
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -13,7 +12,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -22,13 +20,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
+import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.ui.learn.LearnActivity
 import com.zafaris.elevenplusvocab.ui.settings.SettingsActivity
 import com.zafaris.elevenplusvocab.ui.test.TestActivity
-import com.zafaris.elevenplusvocab.utils.NO_OF_FREE_SETS
-import com.zafaris.elevenplusvocab.utils.NO_OF_TOTAL_SETS
-import com.zafaris.elevenplusvocab.utils.SET_SIZE
-import com.zafaris.elevenplusvocab.utils.WordBankDbAccess
+import com.zafaris.elevenplusvocab.util.NO_OF_FREE_SETS
+import com.zafaris.elevenplusvocab.util.NO_OF_TOTAL_SETS
+import com.zafaris.elevenplusvocab.util.SET_SIZE
+import com.zafaris.elevenplusvocab.util.WordBankDbAccess
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -140,7 +139,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showPopupLocked() {
-        popupDialog.setContentView(R.layout.popup_locked)
+        popupDialog.setContentView(R.layout.home_popup_locked)
         popupTitle = popupDialog.findViewById(R.id.popupTitle)
         unlockButton = popupDialog.findViewById(R.id.unlockButton)
         val title = "Set $clickedSet locked"
@@ -158,7 +157,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showPopupCompleted() {
-        popupDialog.setContentView(R.layout.popup_completed)
+        popupDialog.setContentView(R.layout.home_popup_completed)
         popupTitle = popupDialog.findViewById(R.id.popupTitle)
         learnButton = popupDialog.findViewById(R.id.learnButton)
         testButton = popupDialog.findViewById(R.id.testButton)
@@ -173,7 +172,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showPopupPlay() {
-        popupDialog.setContentView(R.layout.popup_play)
+        popupDialog.setContentView(R.layout.home_popup_play)
         popupTitle = popupDialog.findViewById(R.id.popupTitle)
         learnButton = popupDialog.findViewById(R.id.learnButton)
         testButton = popupDialog.findViewById(R.id.testButton)

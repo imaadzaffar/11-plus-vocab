@@ -1,8 +1,9 @@
-package com.zafaris.elevenplusvocab.mvvm.model
+package com.zafaris.elevenplusvocab.data.api
 
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.GsonBuilder
-import com.zafaris.elevenplusvocab.utils.Word
+import com.zafaris.elevenplusvocab.util.MyDeserializer
+import com.zafaris.elevenplusvocab.data.model.Word
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

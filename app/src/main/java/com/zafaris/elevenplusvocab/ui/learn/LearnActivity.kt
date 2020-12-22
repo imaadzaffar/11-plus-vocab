@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.ui.main.MainActivity
-import com.zafaris.elevenplusvocab.ui.main.Set
+import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.ui.test.TestActivity
-import com.zafaris.elevenplusvocab.utils.Word
-import com.zafaris.elevenplusvocab.utils.WordBankDbAccess
+import com.zafaris.elevenplusvocab.data.model.Word
+import com.zafaris.elevenplusvocab.util.WordBankDbAccess
 
 class LearnActivity : AppCompatActivity(), CardStackListener {
     private lateinit var db: WordBankDbAccess
@@ -131,7 +131,7 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
     private fun showFinishDialog() {
         finishDialog = Dialog(this)
 
-        finishDialog.setContentView(R.layout.popup_finish_learn)
+        finishDialog.setContentView(R.layout.learn_popup_finish)
         val finishTitle = finishDialog.findViewById<TextView>(R.id.learn_finishTitle)
         finishTitle.text = "Finished Set $setNumber!"
 

@@ -69,7 +69,7 @@
                     android:id="@+id/test_scoreLayoutCard"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/gradient_red">
+                    android:background="@drawable/bg_gradient_red">
 
                     <TextView
                         android:id="@+id/test_scoreText"
@@ -106,7 +106,7 @@
                 android:id="@+id/test_scoreLayoutTop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/gradient_orange"
+                android:background="@drawable/bg_gradient_orange"
                 android:padding="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

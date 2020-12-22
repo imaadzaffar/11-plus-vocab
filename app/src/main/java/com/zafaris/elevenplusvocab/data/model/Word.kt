@@ -1,4 +1,4 @@
-package com.zafaris.elevenplusvocab.utils
+package com.zafaris.elevenplusvocab.data.model
 
 import com.zafaris.elevenplusvocab.ui.learn.Meaning
 

@@ -18,9 +18,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
+import com.zafaris.elevenplusvocab.data.model.Question
+import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.ui.learn.Meaning
 import com.zafaris.elevenplusvocab.ui.main.MainActivity
-import com.zafaris.elevenplusvocab.utils.*
+import com.zafaris.elevenplusvocab.util.*
 
 class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackAdapter.OnItemClickListener {
     private lateinit var db: WordBankDbAccess
@@ -136,7 +138,7 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
     private fun showScoreDialog() {
         scoreDialog = Dialog(this)
 
-        scoreDialog.setContentView(R.layout.popup_score_test)
+        scoreDialog.setContentView(R.layout.test_popup_score)
         val scoreTitle = scoreDialog.findViewById<TextView>(R.id.test_scorePopupTitle)
         scoreTitle.text = "Score for Set $setNumber"
         val scoreText = scoreDialog.findViewById<TextView>(R.id.test_scoreText)

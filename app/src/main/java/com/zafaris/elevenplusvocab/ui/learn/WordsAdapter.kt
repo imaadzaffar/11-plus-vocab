@@ -7,26 +7,25 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.ui.learn.WordsAdapter.WordsViewHolder
-import com.zafaris.elevenplusvocab.utils.Word
+import com.zafaris.elevenplusvocab.data.model.Word
 
-class WordsAdapter(private val wordsList: List<Word>) : RecyclerView.Adapter<WordsViewHolder>() {
+class WordsAdapter(private val words: List<Word>) : RecyclerView.Adapter<WordsViewHolder>() {
 
     var onItemClick: ((Word, Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordsViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_word, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.wordslist_item_word, parent, false)
         return WordsViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: WordsViewHolder, position: Int) {
-        val currentWord = wordsList[position]
-        holder.idText.text = "${currentWord.id}."
-        holder.wordText.text = currentWord.word
-        //holder.mWordText.setText(new StringBuilder(String.valueOf(id)).append(". ").append(word));
+        val item = words[position]
+        holder.idText.text = "${item.id}."
+        holder.wordText.text = item.word
     }
 
     override fun getItemCount(): Int {
-        return wordsList.size
+        return words.size
     }
 
     inner class WordsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -35,7 +34,7 @@ class WordsAdapter(private val wordsList: List<Word>) : RecyclerView.Adapter<Wor
 
         init {
             itemView.setOnClickListener {
-                onItemClick?.invoke(wordsList[adapterPosition], adapterPosition)
+                onItemClick?.invoke(words[adapterPosition], adapterPosition)
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.zafaris.elevenplusvocab.ui.main
+package com.zafaris.elevenplusvocab.data.model
 
 data class Set(
         val setNo: Int,

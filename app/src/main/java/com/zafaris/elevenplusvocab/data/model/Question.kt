@@ -1,4 +1,4 @@
-package com.zafaris.elevenplusvocab.ui.test
+package com.zafaris.elevenplusvocab.data.model
 
 data class Question(
     var word: String,

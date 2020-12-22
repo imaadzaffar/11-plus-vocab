@@ -1,6 +1,6 @@
-package com.zafaris.elevenplusvocab.mvvm.model
+package com.zafaris.elevenplusvocab.data.api
 
-import com.zafaris.elevenplusvocab.utils.Word
+import com.zafaris.elevenplusvocab.data.model.Word
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

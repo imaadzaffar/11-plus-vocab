@@ -1,12 +1,13 @@
-package com.zafaris.elevenplusvocab.utils
+package com.zafaris.elevenplusvocab.util
 
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.ui.learn.Meaning
-import com.zafaris.elevenplusvocab.utils.WordBankContract.WordBank
+import com.zafaris.elevenplusvocab.util.WordBankContract.WordBank
 import java.util.*
 
 class WordBankDbAccess private constructor(context: Context) {

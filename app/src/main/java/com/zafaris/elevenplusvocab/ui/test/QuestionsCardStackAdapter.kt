@@ -3,12 +3,12 @@ package com.zafaris.elevenplusvocab.ui.test
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.zafaris.elevenplusvocab.R
+import com.zafaris.elevenplusvocab.data.model.Question
 
 class QuestionsCardStackAdapter(
         private val questions: List<Question> = emptyList(),
@@ -17,7 +17,7 @@ class QuestionsCardStackAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, itemViewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflater.inflate(R.layout.card_test_question, parent, false))
+        return ViewHolder(inflater.inflate(R.layout.test_card_question, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -40,50 +40,50 @@ class QuestionsCardStackAdapter(
         if (item.isAnswered) {
             when (item.answerNo) {
                 1 -> {
-                    holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_green)
+                    holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_green)
                     holder.option1.setIconResource(R.drawable.ic_icon_correct)
                 }
                 2 -> {
-                    holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_green)
+                    holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_green)
                     holder.option2.setIconResource(R.drawable.ic_icon_correct)
                 }
                 3 -> {
-                    holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_green)
+                    holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_green)
                     holder.option3.setIconResource(R.drawable.ic_icon_correct)
                 }
                 4 -> {
-                    holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_green)
+                    holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_green)
                     holder.option4.setIconResource(R.drawable.ic_icon_correct)
                 }
             }
             if (item.userAnswerNo != item.answerNo) {
                 when (item.userAnswerNo) {
                     1 -> {
-                        holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_red)
+                        holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_red)
                         holder.option1.setIconResource(R.drawable.ic_icon_incorrect)
                     }
                     2 -> {
-                        holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_red)
+                        holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_red)
                         holder.option2.setIconResource(R.drawable.ic_icon_incorrect)
                     }
                     3 -> {
-                        holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_red)
+                        holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_red)
                         holder.option3.setIconResource(R.drawable.ic_icon_incorrect)
                     }
                     4 -> {
-                        holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_red)
+                        holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_red)
                         holder.option4.setIconResource(R.drawable.ic_icon_incorrect)
                     }
                 }
             }
         } else {
-            holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_blue)
+            holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_blue)
             holder.option1.icon = null
-            holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_blue)
+            holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_blue)
             holder.option2.icon = null
-            holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_blue)
+            holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_blue)
             holder.option3.icon = null
-            holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.btn_blue)
+            holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_blue)
             holder.option4.icon = null
         }
     }

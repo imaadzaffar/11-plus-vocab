@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
-import com.zafaris.elevenplusvocab.utils.Word
+import com.zafaris.elevenplusvocab.data.model.Word
 
 class WordsCardStackAdapter(
         private val words: List<Word> = emptyList()
@@ -17,7 +17,7 @@ class WordsCardStackAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflater.inflate(R.layout.card_learn_word, parent, false))
+        return ViewHolder(inflater.inflate(R.layout.learn_card_word, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
