@@ -31,7 +31,7 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
 
     private val cardStackView by lazy { findViewById<CardStackView>(R.id.learn_card_stack_view) }
     private val manager by lazy { CardStackLayoutManager(this, this) }
-    private val adapter by lazy { CardStackAdapter(getWords()) }
+    private val adapter by lazy { WordsCardStackAdapter( getWords()) }
 
     private val backButton by lazy { findViewById<View>(R.id.learn_back_button) }
     private val nextButton by lazy { findViewById<View>(R.id.learn_next_button) }
@@ -117,7 +117,6 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
                     backButton.visibility = View.VISIBLE
                 }
             }
-
         }
     }
 
