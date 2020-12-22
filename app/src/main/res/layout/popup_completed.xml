@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
@@ -28,6 +26,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
+                app:backgroundTint="@null"
                 android:background="@drawable/btn_blue"
                 android:text="Learn"
                 android:textColor="@color/textOnDark"
@@ -44,6 +43,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
+                app:backgroundTint="@null"
                 android:background="@drawable/btn_red"
                 android:text="Test"
                 android:textColor="@color/textOnDark"
@@ -61,6 +61,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="24dp"
+                app:backgroundTint="@null"
                 android:background="@drawable/btn_purple"
                 android:text="Stats"
                 android:textColor="@color/textOnDark"

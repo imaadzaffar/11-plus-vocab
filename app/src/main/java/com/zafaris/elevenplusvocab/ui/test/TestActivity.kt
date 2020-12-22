@@ -193,6 +193,7 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
     private fun viewQuestionsButtonClick() {
         scoreDialog.dismiss()
         manager.smoothScrollToPosition(cardStackView, null, 0)
+        backButton.visibility = View.INVISIBLE
     }
 
     private fun getWords() {
