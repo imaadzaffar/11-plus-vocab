@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:clipToPadding="false">
 
     <include
         android:id="@+id/toolbar"
@@ -14,180 +15,57 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/test_testLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:id="@+id/test_button_container"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/test_option1"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_margin="16dp"
-            android:background="@drawable/bg_answer_button"
-            android:onClick="optionClick"
-            android:stateListAnimator="@null"
-            android:tag="1"
-            android:text="example"
-            android:textAllCaps="false"
-            android:textColor="@color/textOnLight"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/test_questionText"
-            app:layout_constraintTop_toBottomOf="@+id/test_questionText" />
-
-        <Button
-            android:id="@+id/test_option2"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_margin="16dp"
-            android:background="@drawable/bg_answer_button"
-            android:onClick="optionClick"
-            android:stateListAnimator="@null"
-            android:tag="2"
-            android:text="example"
-            android:textAllCaps="false"
-            android:textColor="@color/textOnLight"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/test_questionText"
-            app:layout_constraintTop_toBottomOf="@+id/test_option1" />
-
-        <Button
-            android:id="@+id/test_option3"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_margin="16dp"
-            android:background="@drawable/bg_answer_correct"
-            android:onClick="optionClick"
-            android:stateListAnimator="@null"
-            android:tag="3"
-            android:text="example"
-            android:textAllCaps="false"
-            android:textColor="@color/textOnLight"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/test_questionText"
-            app:layout_constraintTop_toBottomOf="@+id/test_option2" />
-
-        <Button
-            android:id="@+id/test_option4"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_margin="16dp"
-            android:background="@drawable/bg_answer_incorrect"
-            android:onClick="optionClick"
-            android:stateListAnimator="@null"
-            android:tag="4"
-            android:text="example"
-            android:textAllCaps="false"
-            android:textColor="@color/textOnLight"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/test_questionText"
-            app:layout_constraintTop_toBottomOf="@+id/test_option3" />
-
-        <ImageView
-            android:id="@+id/test_audioIcon"
-            android:layout_width="37dp"
-            android:layout_height="37dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:padding="3dp"
-            app:tint="@color/colorGrey"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/test_back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_icon_arrow_left"
+            android:visibility="invisible"
+            app:backgroundTint="@color/gradientOrange1"
+            app:fabSize="auto"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/test_next_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_icon_audio" />
+            app:rippleColor="@color/gradientOrange2" />
 
-        <TextView
-            android:id="@+id/test_wordText"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/test_next_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/nunito_black"
-            android:text="example"
-            android:textColor="@color/colorRed"
-            android:textSize="24sp"
-            app:layout_constraintStart_toEndOf="@+id/test_audioIcon"
-            app:layout_constraintTop_toTopOf="@+id/test_audioIcon" />
-
-        <TextView
-            android:id="@+id/test_typeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="type"
-            android:textColor="@color/textOnLight"
-            android:textSize="14sp"
-            android:textStyle="italic"
-            app:layout_constraintStart_toStartOf="@+id/test_wordText"
-            app:layout_constraintTop_toBottomOf="@+id/test_wordText" />
-
-        <TextView
-            android:id="@+id/test_exampleText"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="“Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod”"
-            android:textColor="@color/textOnLight"
-            android:textSize="16sp"
-            android:textStyle="italic"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_icon_arrow_right"
+            app:backgroundTint="@color/gradientOrange1"
+            app:fabSize="auto"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/test_typeText" />
-
-        <TextView
-            android:id="@+id/test_questionText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:text="Choose the most similar word:"
-            android:textColor="@color/colorRed"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/test_exampleText" />
+            app:layout_constraintStart_toEndOf="@+id/test_back_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:rippleColor="@color/gradientOrange2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/test_bottomLayout"
+    <com.yuyakaido.android.cardstackview.CardStackView
+        android:id="@+id/test_card_stack_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <Button
-            android:id="@+id/test_nextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/bg_outline_red"
-            android:stateListAnimator="@null"
-            android:text="Next"
-            android:textColor="@color/colorRed"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/test_bottomText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="1 / 5"
-            android:textColor="@color/textOnLight"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/test_button_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,64 +2,53 @@ package com.zafaris.elevenplusvocab.ui.test
 
 import android.app.Dialog
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.View
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DefaultItemAnimator
 import com.muddzdev.styleabletoast.StyleableToast
+import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.ui.learn.Meaning
 import com.zafaris.elevenplusvocab.ui.main.MainActivity
 import com.zafaris.elevenplusvocab.utils.*
-import kotlin.collections.ArrayList
 
-class TestActivity : AppCompatActivity() {
+class TestActivity : AppCompatActivity(), CardStackListener {
     private lateinit var db: WordBankDbAccess
-
-    private lateinit var testLayout: ConstraintLayout
-    private lateinit var wordText: TextView
-    private lateinit var typeText: TextView
-    private lateinit var exampleText: TextView
-    private lateinit var questionText: TextView
-    private lateinit var bottomText: TextView
-    private lateinit var option1: Button
-    private lateinit var option2: Button
-    private lateinit var option3: Button
-    private lateinit var option4: Button
-    private lateinit var nextButton: Button
-
-    private lateinit var defaultTextColor: ColorStateList
-    private lateinit var mediaPlayer: MediaPlayer
     private lateinit var wordsList: List<Word>
-    private lateinit var questionsList: MutableList<Question>
-    private lateinit var currentQuestion: Question
-
     private var setNumber = 0
-    private var questionNumber = 0
-    private var answerWord: String = ""
-
+    private var score = 0
+    private var questionNo = 0
+    private var selectedAnswer = 0
+    private var answerWord = ""
+    private var answeredState = true //TODO: Properly change
+    private var finishedState = false
+    private lateinit var answerIndexList: MutableList<Int>
+    private lateinit var questionsList: MutableList<Question>
     private lateinit var randomWord: Word
     private lateinit var randomMeaning: Meaning
 
-    private var score = 0
-    private var selectedAnswer = 0
+    private val cardStackView by lazy { findViewById<CardStackView>(R.id.test_card_stack_view) }
+    private val manager by lazy { CardStackLayoutManager(this, this) }
+    private lateinit var adapter: QuestionsCardStackAdapter
 
-    private lateinit var answerIndexList: MutableList<Int>
-    private var answeredState = false
-    
+    private val backButton by lazy { findViewById<View>(R.id.test_back_button) }
+    private val nextButton by lazy { findViewById<View>(R.id.test_next_button) }
+
     private lateinit var scoreDialog: Dialog
+
+    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,37 +59,14 @@ class TestActivity : AppCompatActivity() {
 
         setupToolbar()
 
-        testLayout = findViewById(R.id.test_testLayout)
-        wordText = findViewById(R.id.test_wordText)
-        typeText = findViewById(R.id.test_typeText)
-        exampleText = findViewById(R.id.test_exampleText)
-        bottomText = findViewById(R.id.test_bottomText)
-        questionText = findViewById(R.id.test_questionText)
-        nextButton = findViewById(R.id.test_nextButton)
-        option1 = findViewById(R.id.test_option1)
-        option2 = findViewById(R.id.test_option2)
-        option3 = findViewById(R.id.test_option3)
-        option4 = findViewById(R.id.test_option4)
-        defaultTextColor = option1.textColors
-        questionNumber = 0
-        selectedAnswer = 0
-        answeredState = false
-
+        getWords()
         generateAllQuestions()
-        currentQuestion = questionsList[0]
-        showNextQuestion()
-        nextButton.setOnClickListener {
-            if (!answeredState) {
-                if (selectedAnswer != 0) {
-                    checkAnswer()
-                } else {
-                    //Toast.makeText(this@TestActivity, "Please select an answer", Toast.LENGTH_SHORT).show()
-                    StyleableToast.makeText(this@TestActivity, "Please select an answer", R.style.errorToast).show()
-                }
-            } else {
-                showNextQuestion()
-            }
-        }
+
+        setupCardStackView()
+        setupButtons()
+
+        questionNo = 0
+        selectedAnswer = 0
     }
 
     private fun setupToolbar() {
@@ -112,6 +78,53 @@ class TestActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.title = "Test: Set $setNumber"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun setupCardStackView() {
+        adapter = QuestionsCardStackAdapter(questionsList)
+
+        manager.setStackFrom(StackFrom.Right)
+        manager.setVisibleCount(3)
+        manager.setTranslationInterval(8.0f)
+        manager.setScaleInterval(0.95f)
+        manager.setSwipeThreshold(0.3f)
+        manager.setMaxDegree(20.0f)
+        manager.setDirections(Direction.HORIZONTAL)
+        manager.setCanScrollHorizontal(true)
+        manager.setCanScrollVertical(false)
+        manager.setSwipeableMethod(SwipeableMethod.Automatic)
+        manager.setOverlayInterpolator(LinearInterpolator())
+        cardStackView.layoutManager = manager
+        cardStackView.adapter = adapter
+        cardStackView.itemAnimator.apply {
+            if (this is DefaultItemAnimator) {
+                supportsChangeAnimations = false
+            }
+        }
+    }
+
+    private fun setupButtons() {
+        val rewindSetting = RewindAnimationSetting.Builder()
+                .setDirection(Direction.Left)
+                .setDuration(Duration.Normal.duration)
+                .setInterpolator(DecelerateInterpolator())
+                .build()
+        manager.setRewindAnimationSetting(rewindSetting)
+
+        backButton.setOnClickListener {
+            backButtonClick()
+        }
+
+        val swipeSetting = SwipeAnimationSetting.Builder()
+                .setDirection(Direction.Left)
+                .setDuration(Duration.Normal.duration)
+                .setInterpolator(AccelerateInterpolator())
+                .build()
+        manager.setSwipeAnimationSetting(swipeSetting)
+
+        nextButton.setOnClickListener {
+            nextButtonClick()
+        }
     }
 
     private fun showScoreDialog() {
@@ -130,114 +143,54 @@ class TestActivity : AppCompatActivity() {
         scoreDialog.show()
     }
 
-    private fun showNextQuestion() {
-        //TODO: Optimise this
-        option1.setTextColor(defaultTextColor)
-        option2.setTextColor(defaultTextColor)
-        option3.setTextColor(defaultTextColor)
-        option4.setTextColor(defaultTextColor)
-        option1.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
-        option2.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
-        option3.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
-        option4.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
-        if (questionNumber < NO_OF_QUESTIONS) {
-            currentQuestion = questionsList[questionNumber]
-            selectedAnswer = 0
-            Log.i("Test - questionNumber", questionNumber.toString())
-            Log.i("Test - word", currentQuestion.word)
-            Log.i("Test - type", currentQuestion.type)
-            Log.i("Test - example", currentQuestion.example)
-            val word = currentQuestion.word
-            wordText.text = word
-            typeText.text = currentQuestion.type
-            val exampleString = currentQuestion.example
-            val exampleSentence = SpannableString(exampleString)
-            val underlineSpan = UnderlineSpan()
-            val startIndex = exampleString.indexOf(word)
-            val endIndex = startIndex + word.length
-            //TODO: Fix underline
-            exampleSentence.setSpan(underlineSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
-            exampleText.text = exampleSentence
+    private fun backButtonClick() {
+        playSound(R.raw.sfx_menu_click)
 
-            // set synonym text
-            if (currentQuestion.questionType == 0) {
-                questionText.text = "Choose the most similar word:"
-
-                // set antonym text
-            } else {
-                questionText.text = "Choose the opposite word:"
-            }
-            option1.text = currentQuestion.option1
-            option2.text = currentQuestion.option2
-            option3.text = currentQuestion.option3
-            option4.text = currentQuestion.option4
-            bottomText.text = "${(questionNumber + 1)} / $NO_OF_QUESTIONS"
-            answeredState = false
-            nextButton.text = "Check"
-            questionNumber++
-        } else {
-            showScoreDialog()
+        cardStackView.rewind()
+        if (manager.topPosition == 0) {
+            backButton.visibility = View.INVISIBLE
         }
     }
 
-    fun optionClick(view: View) {
+    private fun nextButtonClick() {
+        playSound(R.raw.sfx_menu_click)
+
         if (!answeredState) {
-            option1.setTextColor(defaultTextColor)
-            option2.setTextColor(defaultTextColor)
-            option3.setTextColor(defaultTextColor)
-            option4.setTextColor(defaultTextColor)
-            option1.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
-            option2.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
-            option3.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
-            option4.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
-            val selectedButton = view as Button
-            val tag = Integer.valueOf(selectedButton.tag.toString())
-            if (tag != selectedAnswer) {
-                selectedAnswer = tag
-                selectedButton.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_selected)
-            } else { // deselected option
-                selectedAnswer = 0
-                selectedButton.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_button)
-            }
-        }
-    }
-
-    private fun checkAnswer() {
-        answeredState = true
-        if (selectedAnswer == currentQuestion.answerNo) {
-            score++
-            mediaPlayer = MediaPlayer.create(this, R.raw.sfx_correct)
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.release()
-            }
-            mediaPlayer.start()
+            //StyleableToast.makeText(this@TestActivity, "Please select an answer", R.style.errorToast).show()
+        } else if (manager.topPosition == questionsList.size - 1) {
+            finishedState = true
+            backButton.visibility = View.VISIBLE
+            showScoreDialog()
         } else {
-            val stringId = "test_option${selectedAnswer}"
-            val intId = resources.getIdentifier(stringId, "id", "com.zafaris.elevenplusvocab")
-            val incorrectOption = findViewById<Button>(intId)
-            incorrectOption.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_incorrect)
-            incorrectOption.setTextColor(getColor(R.color.colorIncorrectDark))
-
-            mediaPlayer = MediaPlayer.create(this, R.raw.sfx_incorrect)
-            if (mediaPlayer.isPlaying) {
-                mediaPlayer.release()
+            cardStackView.swipe()
+            if (manager.topPosition == 0 && finishedState) {
+                backButton.visibility = View.VISIBLE
             }
-            mediaPlayer.start()
         }
-        showSolution()
     }
 
-    private fun showSolution() {
-        val stringId = "test_option${currentQuestion.answerNo}"
-        val intId = resources.getIdentifier(stringId, "id", "com.zafaris.elevenplusvocab")
-        val correctOption = findViewById<Button>(intId)
+    private fun showAnswer() {
+        val currentQuestion = questionsList[questionNo]
+        answeredState = true
+
+        val correctStringId = "test_option${currentQuestion.answerNo}"
+        val correctIntId = resources.getIdentifier(correctStringId, "id", "com.zafaris.elevenplusvocab")
+        val correctOption = findViewById<Button>(correctIntId)
         correctOption.setTextColor(getColor(R.color.colorCorrectDark))
         correctOption.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_correct)
 
-        if (questionNumber < NO_OF_QUESTIONS) {
-            nextButton.text = "Next"
+        if (selectedAnswer == currentQuestion.answerNo) {
+            score++
+
+            playSound(R.raw.sfx_correct)
         } else {
-            nextButton.text = "Finish"
+            val incorrectStringId = "test_option${selectedAnswer}"
+            val incorrectIntId = resources.getIdentifier(incorrectStringId, "id", "com.zafaris.elevenplusvocab")
+            val incorrectOption = findViewById<Button>(incorrectIntId)
+            incorrectOption.background = ContextCompat.getDrawable(this@TestActivity, R.drawable.bg_answer_incorrect)
+            incorrectOption.setTextColor(getColor(R.color.colorIncorrectDark))
+
+            playSound(R.raw.sfx_incorrect)
         }
     }
 
@@ -258,12 +211,16 @@ class TestActivity : AppCompatActivity() {
         return randomList
     }
 
-    private fun generateAllQuestions() {
-        questionsList = ArrayList()
+    private fun getWords() {
         db = WordBankDbAccess.getInstance(applicationContext)
         db.open()
         wordsList = db.getWordsList(setNumber)
         db.close()
+    }
+
+    private fun generateAllQuestions() {
+        questionsList = ArrayList()
+
         var tmpQuestionNo = 1
         answerIndexList = shuffleRandomList()
         val questionTypeList = generateRandomList()
@@ -297,7 +254,9 @@ class TestActivity : AppCompatActivity() {
                     optionsList[1],
                     optionsList[2],
                     optionsList[3],
-                    answerNo
+                    answerNo,
+                    0,
+                    false
             )
             questionsList.add(tmpQuestion)
             tmpQuestionNo++
@@ -449,9 +408,43 @@ class TestActivity : AppCompatActivity() {
         return antonym
     }
 
+    private fun playSound(resourceId: Int) {
+        mediaPlayer = MediaPlayer.create(this@TestActivity, resourceId)
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.release()
+        }
+        mediaPlayer.start()
+    }
+
     private fun goToHome() {
         val intent = Intent(this@TestActivity, MainActivity::class.java)
         intent.putExtra("setNumber", setNumber)
         startActivity(intent)
+    }
+
+    override fun onCardDragging(direction: Direction?, ratio: Float) {
+        Log.d("CardStackView", "onCardDragging: d = ${direction?.name}, r = $ratio")
+    }
+
+    override fun onCardSwiped(direction: Direction?) {
+        Log.d("CardStackView", "onCardSwiped: p = ${manager.topPosition}, d = $direction")
+    }
+
+    override fun onCardRewound() {
+        Log.d("CardStackView", "onCardRewound: ${manager.topPosition}")
+    }
+
+    override fun onCardCanceled() {
+        Log.d("CardStackView", "onCardCanceled: ${manager.topPosition}")
+    }
+
+    override fun onCardAppeared(view: View?, position: Int) {
+        val textView = view?.findViewById<TextView>(R.id.card_test_questionText)
+        Log.d("CardStackView", "onCardAppeared: ($position) ${textView?.text}")
+    }
+
+    override fun onCardDisappeared(view: View?, position: Int) {
+        val textView = view?.findViewById<TextView>(R.id.card_test_questionText)
+        Log.d("CardStackView", "onCardDisappeared: ($position) ${textView?.text}")
     }
 }

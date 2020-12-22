@@ -9,5 +9,7 @@ data class Question(
     var option2: String,
     var option3: String,
     var option4: String,
-    var answerNo: Int
+    var answerNo: Int,
+    var userAnswerNo: Int,
+    var isAnswered: Boolean
 )
