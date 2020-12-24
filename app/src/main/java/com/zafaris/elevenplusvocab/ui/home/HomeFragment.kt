@@ -26,22 +26,22 @@ import com.zafaris.elevenplusvocab.util.WordBankDbAccess
 import java.util.*
 
 class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
+    private lateinit var navController: NavController
+
+    private lateinit var db: WordBankDbAccess
+
+    private lateinit var setRv: RecyclerView
+    private lateinit var setLayoutManager: GridLayoutManager
+    private var clickedSet = 0
+
     private lateinit var popupDialog: Dialog
     private lateinit var popupTitle: TextView
     private lateinit var learnButton: Button
     private lateinit var testButton: Button
     private lateinit var statsButton: Button
     private lateinit var unlockButton: Button
-    private lateinit var setRv: RecyclerView
 
-    private lateinit var db: WordBankDbAccess
-
-    private lateinit var setLayoutManager: GridLayoutManager
-
-    private var clickedSet = 0
     private lateinit var mediaPlayer: MediaPlayer
-
-    private lateinit var navController: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -49,25 +49,29 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
 
         navController = this.findNavController()
 
+        popupDialog = Dialog(requireContext())
+        setRv = view.findViewById(R.id.setRv)
+
+        generateDummySets()
+        buildSetRv()
+
+        return view
+    }
+
+    private fun generateDummySets() {
         db = WordBankDbAccess.getInstance(requireContext())
         db.open()
         val noOfSets = db.getNoOfSets(SET_SIZE)
         db.close()
         setList = ArrayList()
 
-        Log.i("noOfSets", noOfSets.toString())
-        for (i in 1..NO_OF_TOTAL_SETS) { //TODO: Uncomment this when word bank completed
+        for (i in 1..NO_OF_TOTAL_SETS) {
             if (i <= NO_OF_FREE_SETS) {
                 setList.add(Set(setNo = i))
             } else {
                 setList.add(Set(setNo = i, isSetLocked = true))
             }
         }
-        popupDialog = Dialog(requireContext())
-        setRv = view.findViewById(R.id.setRv)
-        buildSetRv()
-
-        return view
     }
 
     private fun buildSetRv() {

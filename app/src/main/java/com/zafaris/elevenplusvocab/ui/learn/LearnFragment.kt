@@ -24,6 +24,8 @@ import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.util.WordBankDbAccess
 
 class LearnFragment : Fragment(), CardStackListener {
+    private lateinit var navController: NavController
+
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
     private var setNumber = 1
@@ -37,8 +39,6 @@ class LearnFragment : Fragment(), CardStackListener {
     private lateinit var finishDialog: Dialog
 
     private lateinit var mediaPlayer: MediaPlayer
-
-    private lateinit var navController: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view =  inflater.inflate(R.layout.fragment_learn, container, false)

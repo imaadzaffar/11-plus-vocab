@@ -26,9 +26,12 @@ import com.zafaris.elevenplusvocab.data.model.Meaning
 import com.zafaris.elevenplusvocab.util.*
 
 class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.OnItemClickListener {
+    private lateinit var navController: NavController
+
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
     private var setNumber = 1
+
     private var score = 0
     private var questionNo = 0
     private var answerWord = ""
@@ -48,8 +51,6 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     private lateinit var scoreDialog: Dialog
 
     private lateinit var mediaPlayer: MediaPlayer
-
-    private lateinit var navController: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view =  inflater.inflate(R.layout.fragment_test, container, false)
