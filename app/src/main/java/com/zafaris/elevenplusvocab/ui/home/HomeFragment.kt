@@ -25,7 +25,7 @@ import com.zafaris.elevenplusvocab.util.SET_SIZE
 import com.zafaris.elevenplusvocab.util.WordBankDbAccess
 import java.util.*
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     private lateinit var popupDialog: Dialog
     private lateinit var popupTitle: TextView
     private lateinit var learnButton: Button
@@ -58,9 +58,9 @@ class HomeFragment : Fragment() {
         Log.i("noOfSets", noOfSets.toString())
         for (i in 1..NO_OF_TOTAL_SETS) { //TODO: Uncomment this when word bank completed
             if (i <= NO_OF_FREE_SETS) {
-                setList.add(Set(i, isSetCompleted = false, isSetLocked = false))
+                setList.add(Set(setNo = i))
             } else {
-                setList.add(Set(i, isSetCompleted = false, isSetLocked = true))
+                setList.add(Set(setNo = i, isSetLocked = true))
             }
         }
         popupDialog = Dialog(requireContext())

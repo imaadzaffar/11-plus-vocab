@@ -22,7 +22,7 @@ import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Question
 import com.zafaris.elevenplusvocab.data.model.Word
-import com.zafaris.elevenplusvocab.ui.learn.Meaning
+import com.zafaris.elevenplusvocab.data.model.Meaning
 import com.zafaris.elevenplusvocab.util.*
 
 class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.OnItemClickListener {
@@ -254,9 +254,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
                     optionsList[1],
                     optionsList[2],
                     optionsList[3],
-                    answerNo,
-                    0,
-                    false
+                    answerNo
             )
             questionsList.add(tmpQuestion)
             tmpQuestionNo++

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import com.zafaris.elevenplusvocab.data.model.Word
-import com.zafaris.elevenplusvocab.ui.learn.Meaning
+import com.zafaris.elevenplusvocab.data.model.Meaning
 import com.zafaris.elevenplusvocab.util.WordBankContract.WordBank
 import java.util.*
 

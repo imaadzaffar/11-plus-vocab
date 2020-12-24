@@ -3,7 +3,7 @@ package com.zafaris.elevenplusvocab.util
 import android.util.Log
 import com.google.gson.*
 import com.zafaris.elevenplusvocab.data.model.Word
-import com.zafaris.elevenplusvocab.ui.learn.Meaning
+import com.zafaris.elevenplusvocab.data.model.Meaning
 import org.json.JSONException
 import java.lang.reflect.Type
 import kotlin.jvm.Throws
