@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Word
-import com.zafaris.elevenplusvocab.ui.test.TestFragmentDirections
 import com.zafaris.elevenplusvocab.util.WordBankDbAccess
 
 class LearnFragment : Fragment(), CardStackListener {
@@ -146,11 +145,15 @@ class LearnFragment : Fragment(), CardStackListener {
         playButtonClickSound()
         finishDialog.dismiss()
 
-        val action = when (destination) {
-            "test" -> LearnFragmentDirections.actionLearnFragmentToTestFragment(setNo)
-            else -> LearnFragmentDirections.actionLearnFragmentToHomeFragment()
+        if (destination == "home") {
+            findNavController().navigate(R.id.action_to_homeFragment)
+        } else {
+            val action = when (destination) {
+                "test" -> LearnFragmentDirections.actionLearnFragmentToTestFragment(setNo)
+                else -> throw IllegalArgumentException("Invalid destination")
+            }
+            findNavController().navigate(action)
         }
-        findNavController().navigate(action)
     }
 
     private fun playButtonClickSound() {

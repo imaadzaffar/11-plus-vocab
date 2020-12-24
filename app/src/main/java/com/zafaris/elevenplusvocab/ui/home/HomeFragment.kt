@@ -143,11 +143,12 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         setLayoutManager.smoothScrollToPosition(setRv, null, 0)
         popupDialog.dismiss()
 
+        val setNo = clickedSetNo
         val action = when (destination) {
-            "learn" -> HomeFragmentDirections.actionHomeFragmentToLearnFragment(clickedSetNo)
-            "test" -> HomeFragmentDirections.actionHomeFragmentToTestFragment(clickedSetNo)
-            "stats" -> HomeFragmentDirections.actionHomeFragmentToStatsFragment(clickedSetNo)
-            else -> HomeFragmentDirections.actionHomeFragmentToLearnFragment(clickedSetNo)
+            "learn" -> HomeFragmentDirections.actionHomeFragmentToLearnFragment(setNo)
+            "test" -> HomeFragmentDirections.actionHomeFragmentToTestFragment(setNo)
+            "stats" -> HomeFragmentDirections.actionHomeFragmentToStatsFragment(setNo)
+            else -> throw IllegalArgumentException("Invalid destination")
         }
         findNavController().navigate(action)
     }

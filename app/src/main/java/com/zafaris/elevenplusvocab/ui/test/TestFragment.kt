@@ -15,7 +15,6 @@ import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -24,6 +23,7 @@ import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Question
 import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.data.model.Meaning
+import com.zafaris.elevenplusvocab.ui.learn.LearnFragmentDirections
 import com.zafaris.elevenplusvocab.util.*
 
 class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.OnItemClickListener {
@@ -148,7 +148,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
         viewQuestionsButton.setOnClickListener { viewQuestionsButtonClick() }
 
         val homeButton = scoreDialog.findViewById<Button>(R.id.test_homeButton)
-        homeButton.setOnClickListener { goToHome() }
+        homeButton.setOnClickListener { navigateAction("home") }
 
         scoreDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         scoreDialog.show()
@@ -386,9 +386,19 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
         mediaPlayer.start()
     }
 
-    private fun goToHome() {
+    private fun navigateAction(destination: String) {
+        playSound(R.raw.sfx_menu_click)
         scoreDialog.dismiss()
-        findNavController().navigate(R.id.action_testFragment_to_homeFragment)
+
+        if (destination == "home") {
+            findNavController().navigate(R.id.action_to_homeFragment)
+        } else {
+            val action = when (destination) {
+                "stats" -> TestFragmentDirections.actionTestFragmentToStatsFragment(setNo)
+                else -> throw IllegalArgumentException("Invalid destination")
+            }
+            findNavController().navigate(action)
+        }
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {

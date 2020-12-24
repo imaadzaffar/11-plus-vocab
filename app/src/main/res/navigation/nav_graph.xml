@@ -5,6 +5,14 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
+    <action
+        android:id="@+id/action_to_homeFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right"
+        app:popUpTo="@id/homeFragment" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.zafaris.elevenplusvocab.ui.home.HomeFragment"
@@ -53,20 +61,14 @@
         android:label="@string/label_fragment_learn"
         tools:layout="@layout/fragment_learn">
         <action
-            android:id="@+id/action_learnFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@id/homeFragment" />
-        <action
             android:id="@+id/action_learnFragment_to_testFragment"
             app:destination="@id/testFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@layout/fragment_learn"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_learnFragment_to_statsFragment"
             app:destination="@id/statsFragment"
@@ -86,14 +88,6 @@
         android:label="@string/label_fragment_test"
         tools:layout="@layout/fragment_test">
         <action
-            android:id="@+id/action_testFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@id/homeFragment" />
-        <action
             android:id="@+id/action_testFragment_to_statsFragment"
             app:destination="@id/statsFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -109,14 +103,6 @@
     <fragment
         android:id="@+id/statsFragment"
         android:label="@string/label_fragment_stats">
-        <action
-            android:id="@+id/action_statsFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
-            app:popUpTo="@id/homeFragment" />
         <argument
             android:name="setNo"
             app:argType="integer"
@@ -135,7 +121,9 @@
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
-    <fragment android:id="@+id/guideFragment" >
+    <fragment
+        android:id="@+id/guideFragment"
+        android:label="@string/label_fragment_guide">
         <action
             android:id="@+id/action_guideFragment_to_homeFragment"
             app:destination="@id/homeFragment"
