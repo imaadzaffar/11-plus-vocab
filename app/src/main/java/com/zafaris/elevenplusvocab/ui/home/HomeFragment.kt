@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +31,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
 
     private lateinit var setRv: RecyclerView
     private lateinit var setLayoutManager: GridLayoutManager
-    private var clickedSet = 0
+    private var clickedSetNo = 0
 
     private lateinit var popupDialog: Dialog
     private lateinit var popupTitle: TextView
@@ -83,6 +82,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
 
     override fun onItemSetClick(set: Set) {
         playMenuClickSound()
+        clickedSetNo = set.setNo
         when {
             set.isSetLocked -> {
                 showPopupLocked()
@@ -100,11 +100,11 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         popupDialog.setContentView(R.layout.home_dialog_set_locked)
         popupTitle = popupDialog.findViewById(R.id.popupTitle)
         unlockButton = popupDialog.findViewById(R.id.unlockButton)
-        val title = "Set $clickedSet locked"
+        val title = "Set $clickedSetNo locked"
         popupTitle.text = title
         unlockButton.setOnClickListener {
             Toast.makeText(context, "Unlock sets", Toast.LENGTH_SHORT).show()
-            //TODO: Show locked message and ask for payment
+            //TODO: Add payment
         }
         val noThanksButton = popupDialog.findViewById<TextView>(R.id.noThanksButton)
         noThanksButton.setOnClickListener {
@@ -120,11 +120,11 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         learnButton = popupDialog.findViewById(R.id.learnButton)
         testButton = popupDialog.findViewById(R.id.testButton)
         statsButton = popupDialog.findViewById(R.id.statsButton)
-        val title = "Set $clickedSet completed"
+        val title = "Set $clickedSetNo completed"
         popupTitle.text = title
-        learnButton.setOnClickListener { goToDestination(R.id.action_homeFragment_to_learnFragment) }
-        testButton.setOnClickListener { goToDestination(R.id.action_homeFragment_to_testFragment) }
-        statsButton.setOnClickListener { goToDestination(R.id.action_homeFragment_to_statsFragment) } //TODO: Intent to Stats Activity
+        learnButton.setOnClickListener { navigateAction(R.id.action_homeFragment_to_learnFragment) }
+        testButton.setOnClickListener { navigateAction(R.id.action_homeFragment_to_testFragment) }
+        statsButton.setOnClickListener { navigateAction(R.id.action_homeFragment_to_statsFragment) }
         popupDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupDialog.show()
     }
@@ -134,19 +134,19 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         popupTitle = popupDialog.findViewById(R.id.popupTitle)
         learnButton = popupDialog.findViewById(R.id.learnButton)
         testButton = popupDialog.findViewById(R.id.testButton)
-        val title = "Set $clickedSet"
+        val title = "Set $clickedSetNo"
         popupTitle.text = title
-        learnButton.setOnClickListener { goToDestination(R.id.action_homeFragment_to_learnFragment) }
-        testButton.setOnClickListener { goToDestination(R.id.action_homeFragment_to_testFragment) }
+        learnButton.setOnClickListener { navigateAction(R.id.action_homeFragment_to_learnFragment) }
+        testButton.setOnClickListener { navigateAction(R.id.action_homeFragment_to_testFragment) }
         popupDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupDialog.show()
     }
 
-    private fun goToDestination(destination: Int) {
+    private fun navigateAction(action: Int) {
         playMenuClickSound()
         popupDialog.dismiss()
 
-        navController.navigate(destination)
+        navController.navigate(action)
         setLayoutManager.smoothScrollToPosition(setRv, null, 0)
     }
 
