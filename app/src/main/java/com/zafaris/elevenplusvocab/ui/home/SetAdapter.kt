@@ -1,4 +1,4 @@
-package com.zafaris.elevenplusvocab.ui.main
+package com.zafaris.elevenplusvocab.ui.home
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Set
-import com.zafaris.elevenplusvocab.ui.main.SetAdapter.SetViewHolder
+import com.zafaris.elevenplusvocab.ui.home.SetAdapter.SetViewHolder
 import com.zafaris.elevenplusvocab.util.SET_SIZE
 import java.util.*
 

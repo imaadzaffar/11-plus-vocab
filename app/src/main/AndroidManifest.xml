@@ -20,12 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.learn.LearnActivity"
-            android:configChanges="orientation"
-            android:parentActivityName=".ui.main.MainActivity"
-            android:screenOrientation="user" />
-        <activity
-            android:name=".ui.test.TestActivity"
+            android:name=".ui.test.TestFragment"
             android:configChanges="orientation"
             android:parentActivityName=".ui.main.MainActivity"
             android:screenOrientation="user" />

@@ -8,14 +8,8 @@
     android:background="@color/colorWhite"
     android:clipChildren="false">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/learn_button_container"
+        android:id="@+id/test_button_container"
         android:layout_width="wrap_content"
         android:layout_height="80dp"
         android:clipChildren="false"
@@ -25,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/learn_back_button"
+            android:id="@+id/test_back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -36,14 +30,14 @@
             app:tint="@color/colorWhite"
             app:fabSize="auto"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/learn_next_button"
+            app:layout_constraintStart_toEndOf="@+id/test_next_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:rippleColor="@color/gradientOrange2"
             tools:visibility="visible" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/learn_next_button"
+            android:id="@+id/test_next_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -55,20 +49,21 @@
             app:fabSize="auto"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/learn_back_button"
+            app:layout_constraintStart_toEndOf="@+id/test_back_button"
             app:layout_constraintTop_toTopOf="parent"
             app:rippleColor="@color/gradientOrange2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.yuyakaido.android.cardstackview.CardStackView
-        android:id="@+id/learn_card_stack_view"
+        android:id="@+id/test_card_stack_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:padding="8dp"
-        app:layout_constraintBottom_toTopOf="@id/learn_button_container"
+        app:layout_constraintBottom_toTopOf="@id/test_button_container"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/test_card_question" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

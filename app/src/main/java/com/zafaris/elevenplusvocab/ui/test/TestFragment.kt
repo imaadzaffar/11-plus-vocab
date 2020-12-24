@@ -1,33 +1,34 @@
 package com.zafaris.elevenplusvocab.ui.test
 
 import android.app.Dialog
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Question
 import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.ui.learn.Meaning
-import com.zafaris.elevenplusvocab.ui.main.MainActivity
 import com.zafaris.elevenplusvocab.util.*
 
-class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackAdapter.OnItemClickListener {
+class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.OnItemClickListener {
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
-    private var setNumber = 0
+    private var setNumber = 1
     private var score = 0
     private var questionNo = 0
     private var answerWord = ""
@@ -38,45 +39,40 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
     private lateinit var randomWord: Word
     private lateinit var randomMeaning: Meaning
 
-    private val cardStackView by lazy { findViewById<CardStackView>(R.id.test_card_stack_view) }
-    private val manager by lazy { CardStackLayoutManager(this, this) }
+    private lateinit var cardStackView: CardStackView
+    private lateinit var manager: CardStackLayoutManager
     private lateinit var adapter: QuestionsCardStackAdapter
 
-    private val backButton by lazy { findViewById<View>(R.id.test_back_button) }
-    private val nextButton by lazy { findViewById<View>(R.id.test_next_button) }
+    private lateinit var backButton: View
+    private lateinit var nextButton: View
     private lateinit var scoreDialog: Dialog
 
     private lateinit var mediaPlayer: MediaPlayer
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_test)
+    private lateinit var navController: NavController
 
-        val intent = intent
-        setNumber = intent.getIntExtra("setNumber", 0)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view =  inflater.inflate(R.layout.fragment_test, container, false)
 
-        setupToolbar()
+        navController = this.findNavController()
+
+        cardStackView = view.findViewById(R.id.test_card_stack_view)
+
+        backButton = view.findViewById(R.id.test_back_button)
+        nextButton = view.findViewById(R.id.test_next_button)
 
         getWords()
         generateAllQuestions()
 
         setupCardStackView()
         setupButtons()
-    }
 
-    private fun setupToolbar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.context.setTheme(R.style.ToolbarThemeDark)
-        toolbar.setBackgroundColor(getColor(R.color.colorRed))
-        toolbar.setTitleTextColor(getColor(R.color.textOnDark))
-        window.statusBarColor = getColor(R.color.colorRedStatus)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.title = "Test: Set $setNumber"
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        return view
     }
 
     private fun setupCardStackView() {
         adapter = QuestionsCardStackAdapter(questionsList, this)
+        manager = CardStackLayoutManager(context, this)
 
         manager.setStackFrom(StackFrom.Right)
         manager.setVisibleCount(3)
@@ -136,9 +132,9 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
     }
 
     private fun showScoreDialog() {
-        scoreDialog = Dialog(this)
+        scoreDialog = Dialog(requireContext())
 
-        scoreDialog.setContentView(R.layout.test_popup_score)
+        scoreDialog.setContentView(R.layout.test_dialog_score)
         val scoreTitle = scoreDialog.findViewById<TextView>(R.id.test_scorePopupTitle)
         scoreTitle.text = "Score for Set $setNumber"
         val scoreText = scoreDialog.findViewById<TextView>(R.id.test_scoreText)
@@ -199,7 +195,7 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
     }
 
     private fun getWords() {
-        db = WordBankDbAccess.getInstance(applicationContext)
+        db = WordBankDbAccess.getInstance(requireActivity().applicationContext)
         db.open()
         wordsList = db.getWordsList(setNumber)
         db.close()
@@ -381,7 +377,7 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
     }
 
     private fun playSound(resourceId: Int) {
-        mediaPlayer = MediaPlayer.create(this@TestActivity, resourceId)
+        mediaPlayer = MediaPlayer.create(context, resourceId)
         if (mediaPlayer.isPlaying) {
             mediaPlayer.release()
         }
@@ -389,9 +385,8 @@ class TestActivity : AppCompatActivity(), CardStackListener, QuestionsCardStackA
     }
 
     private fun goToHome() {
-        val intent = Intent(this@TestActivity, MainActivity::class.java)
-        intent.putExtra("setNumber", setNumber)
-        startActivity(intent)
+        scoreDialog.dismiss()
+        navController.navigate(R.id.action_testFragment_to_homeFragment)
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {

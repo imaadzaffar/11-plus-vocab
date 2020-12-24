@@ -1,68 +1,76 @@
 package com.zafaris.elevenplusvocab.ui.learn
 
 import android.app.Dialog
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
-import com.zafaris.elevenplusvocab.ui.main.MainActivity
-import com.zafaris.elevenplusvocab.data.model.Set
-import com.zafaris.elevenplusvocab.ui.test.TestActivity
 import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.util.WordBankDbAccess
 
-class LearnActivity : AppCompatActivity(), CardStackListener {
+class LearnFragment : Fragment(), CardStackListener {
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
-    private var setNumber = 0
+    private var setNumber = 1
 
-    private val cardStackView by lazy { findViewById<CardStackView>(R.id.learn_card_stack_view) }
-    private val manager by lazy { CardStackLayoutManager(this, this) }
-    private val adapter by lazy { WordsCardStackAdapter( getWords()) }
+    private lateinit var cardStackView: CardStackView
+    private lateinit var manager: CardStackLayoutManager
+    private val adapter by lazy { WordsCardStackAdapter(getWords()) }
 
-    private val backButton by lazy { findViewById<View>(R.id.learn_back_button) }
-    private val nextButton by lazy { findViewById<View>(R.id.learn_next_button) }
+    private lateinit var backButton: View
+    private lateinit var nextButton: View
     private lateinit var finishDialog: Dialog
 
     private lateinit var mediaPlayer: MediaPlayer
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_learn)
+    private lateinit var navController: NavController
 
-        val intent = intent
-        setNumber = intent.getIntExtra("setNumber", 0)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view =  inflater.inflate(R.layout.fragment_learn, container, false)
+
+        navController = this.findNavController()
+
+        cardStackView = view.findViewById(R.id.learn_card_stack_view)
+
+        backButton = view.findViewById(R.id.learn_back_button)
+        nextButton = view.findViewById(R.id.learn_next_button)
 
         setupToolbar()
         setupCardStackView()
         setupButtons()
+
+        return view
     }
 
     private fun setupToolbar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.context.setTheme(R.style.ToolbarThemeDark)
-        toolbar.setBackgroundColor(getColor(R.color.colorBlue))
-        toolbar.setTitleTextColor(getColor(R.color.textOnDark))
-        window.statusBarColor = getColor(R.color.colorBlueStatus)
-        setSupportActionBar(toolbar)
-        supportActionBar?.title = "Learn: Set $setNumber"
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+//        toolbar.context.setTheme(R.style.ToolbarThemeDark)
+//        toolbar.setBackgroundColor(getColor(R.color.colorBlue))
+//        toolbar.setTitleTextColor(getColor(R.color.textOnDark))
+//        window.statusBarColor = getColor(R.color.colorBlueStatus)
+//        setSupportActionBar(toolbar)
+//        supportActionBar?.title = "Learn: Set $setNumber"
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun setupCardStackView() {
+        manager = CardStackLayoutManager(context, this)
+
         manager.setStackFrom(StackFrom.Right)
         manager.setVisibleCount(3)
         manager.setTranslationInterval(8.0f)
@@ -121,7 +129,7 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
 
     private fun getWords(): List<Word> {
         // open database and get wordsList
-        db = WordBankDbAccess.getInstance(applicationContext)
+        db = WordBankDbAccess.getInstance(requireActivity().applicationContext)
         db.open()
         wordsList = db.getWordsList(setNumber)
         db.close()
@@ -129,11 +137,11 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
     }
 
     private fun showFinishDialog() {
-        finishDialog = Dialog(this)
+        finishDialog = Dialog(requireContext())
 
-        finishDialog.setContentView(R.layout.learn_popup_finish)
+        finishDialog.setContentView(R.layout.learn_dialog_finish)
         val finishTitle = finishDialog.findViewById<TextView>(R.id.learn_finishTitle)
-        finishTitle.text = "Finished Set $setNumber!"
+        finishTitle.text = "Finished Set $setNumber"
 
         val testButton = finishDialog.findViewById<Button>(R.id.learn_testButton)
         testButton.setOnClickListener { goToTest() }
@@ -145,7 +153,7 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
     }
 
     private fun playButtonClickSound() {
-        mediaPlayer = MediaPlayer.create(this@LearnActivity, R.raw.sfx_menu_click)
+        mediaPlayer = MediaPlayer.create(context, R.raw.sfx_menu_click)
         if (mediaPlayer.isPlaying) {
             mediaPlayer.release()
         }
@@ -153,17 +161,15 @@ class LearnActivity : AppCompatActivity(), CardStackListener {
     }
 
     private fun goToTest() {
-        val intent = Intent(this@LearnActivity, TestActivity::class.java)
-        intent.putExtra("setNumber", setNumber)
-        startActivity(intent)
+        finishDialog.dismiss()
+
+        navController.navigate(R.id.action_learnFragment_to_testFragment)
     }
 
     private fun goToHome() {
-        MainActivity.setList[setNumber - 1] = Set(setNumber, isSetCompleted = true, isSetLocked = false)
-        MainActivity.setAdapter.notifyDataSetChanged()
-        val intent = Intent(this@LearnActivity, MainActivity::class.java)
-        intent.putExtra("setNumber", setNumber)
-        startActivity(intent)
+        finishDialog.dismiss()
+
+        navController.navigate(R.id.action_learnFragment_to_homeFragment)
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {
