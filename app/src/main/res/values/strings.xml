@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">11+ Learn Vocab</string>
-    <string name="home_dashboard_label">Home Dashboard</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="label_fragment_home">Home</string>
+    <string name="label_fragment_learn">Learn</string>
+    <string name="label_fragment_test">Test</string>
+    <string name="label_fragment_stats">Stats</string>
+    <string name="label_fragment_wordslist">Words List</string>
+    <string name="label_fragment_guide">Guide</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
