@@ -62,13 +62,17 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
         backButton = view.findViewById(R.id.test_back_button)
         nextButton = view.findViewById(R.id.test_next_button)
 
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         getWords()
         generateAllQuestions()
 
         setupCardStackView()
         setupButtons()
-
-        return view
     }
 
     private fun setupCardStackView() {

@@ -42,14 +42,17 @@ class LearnFragment : Fragment(), CardStackListener {
         val view =  inflater.inflate(R.layout.fragment_learn, container, false)
 
         cardStackView = view.findViewById(R.id.learn_card_stack_view)
-
         backButton = view.findViewById(R.id.learn_back_button)
         nextButton = view.findViewById(R.id.learn_next_button)
 
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         setupCardStackView()
         setupButtons()
-
-        return view
     }
 
     private fun setupCardStackView() {

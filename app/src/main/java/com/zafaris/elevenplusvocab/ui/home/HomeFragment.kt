@@ -40,21 +40,20 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
 
     private lateinit var mediaPlayer: MediaPlayer
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        popupDialog = Dialog(requireContext())
         setRv = view.findViewById(R.id.setRv)
-
-        generateDummySets()
-        buildSetRv()
+        popupDialog = Dialog(requireContext())
 
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        generateDummySets()
+        buildSetRv()
     }
 
     private fun generateDummySets() {
