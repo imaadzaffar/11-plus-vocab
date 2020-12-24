@@ -12,7 +12,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -50,8 +49,6 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         generateDummySets()
         buildSetRv()
     }
@@ -121,9 +118,9 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         statsButton = popupDialog.findViewById(R.id.statsButton)
         val title = "Set $clickedSetNo completed"
         popupTitle.text = title
-        learnButton.setOnClickListener { navigateAction(R.id.action_homeFragment_to_learnFragment) }
-        testButton.setOnClickListener { navigateAction(R.id.action_homeFragment_to_testFragment) }
-        statsButton.setOnClickListener { navigateAction(R.id.action_homeFragment_to_statsFragment) }
+        learnButton.setOnClickListener { navigateAction("learn") }
+        testButton.setOnClickListener { navigateAction("test") }
+        statsButton.setOnClickListener { navigateAction("stats") }
         popupDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupDialog.show()
     }
@@ -135,18 +132,24 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         testButton = popupDialog.findViewById(R.id.testButton)
         val title = "Set $clickedSetNo"
         popupTitle.text = title
-        learnButton.setOnClickListener { navigateAction(R.id.action_homeFragment_to_learnFragment) }
-        testButton.setOnClickListener { navigateAction(R.id.action_homeFragment_to_testFragment) }
+        learnButton.setOnClickListener { navigateAction("learn") }
+        testButton.setOnClickListener { navigateAction("test") }
         popupDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupDialog.show()
     }
 
-    private fun navigateAction(action: Int) {
+    private fun navigateAction(destination: String) {
         playMenuClickSound()
+        setLayoutManager.smoothScrollToPosition(setRv, null, 0)
         popupDialog.dismiss()
 
+        val action = when (destination) {
+            "learn" -> HomeFragmentDirections.actionHomeFragmentToLearnFragment(clickedSetNo)
+            "test" -> HomeFragmentDirections.actionHomeFragmentToTestFragment(clickedSetNo)
+            "stats" -> HomeFragmentDirections.actionHomeFragmentToStatsFragment(clickedSetNo)
+            else -> HomeFragmentDirections.actionHomeFragmentToLearnFragment(clickedSetNo)
+        }
         findNavController().navigate(action)
-        setLayoutManager.smoothScrollToPosition(setRv, null, 0)
     }
 
     private fun playMenuClickSound() {

@@ -15,18 +15,21 @@ import android.view.animation.LinearInterpolator
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Word
+import com.zafaris.elevenplusvocab.ui.test.TestFragmentDirections
 import com.zafaris.elevenplusvocab.util.WordBankDbAccess
 
 class LearnFragment : Fragment(), CardStackListener {
+    private val args: LearnFragmentArgs by navArgs()
+
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
-    private var setNumber = 1
+    private var setNo = 0
 
     private lateinit var cardStackView: CardStackView
     private lateinit var manager: CardStackLayoutManager
@@ -49,7 +52,7 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        setNo = args.setNo
 
         setupCardStackView()
         setupButtons()
@@ -118,7 +121,7 @@ class LearnFragment : Fragment(), CardStackListener {
         // open database and get wordsList
         db = WordBankDbAccess.getInstance(requireActivity().applicationContext)
         db.open()
-        wordsList = db.getWordsList(setNumber)
+        wordsList = db.getWordsList(setNo)
         db.close()
         return wordsList
     }
@@ -128,21 +131,25 @@ class LearnFragment : Fragment(), CardStackListener {
 
         finishDialog.setContentView(R.layout.learn_dialog_finish)
         val finishTitle = finishDialog.findViewById<TextView>(R.id.learn_finishTitle)
-        finishTitle.text = "Finished Set $setNumber"
+        finishTitle.text = "Finished Set $setNo"
 
         val testButton = finishDialog.findViewById<Button>(R.id.learn_testButton)
-        testButton.setOnClickListener { navigateAction(R.id.action_learnFragment_to_testFragment) }
+        testButton.setOnClickListener { navigateAction("test") }
         val homeButton = finishDialog.findViewById<Button>(R.id.learn_homeButton)
-        homeButton.setOnClickListener { navigateAction(R.id.action_learnFragment_to_homeFragment) }
+        homeButton.setOnClickListener { navigateAction("home") }
 
         finishDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         finishDialog.show()
     }
 
-    private fun navigateAction(action: Int) {
+    private fun navigateAction(destination: String) {
         playButtonClickSound()
         finishDialog.dismiss()
 
+        val action = when (destination) {
+            "test" -> LearnFragmentDirections.actionLearnFragmentToTestFragment(setNo)
+            else -> LearnFragmentDirections.actionLearnFragmentToHomeFragment()
+        }
         findNavController().navigate(action)
     }
 

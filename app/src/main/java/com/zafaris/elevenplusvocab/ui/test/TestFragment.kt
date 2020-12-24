@@ -17,6 +17,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
@@ -26,11 +27,11 @@ import com.zafaris.elevenplusvocab.data.model.Meaning
 import com.zafaris.elevenplusvocab.util.*
 
 class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.OnItemClickListener {
-    private lateinit var navController: NavController
+    private val args: TestFragmentArgs by navArgs()
 
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
-    private var setNumber = 1
+    private var setNo = 0
 
     private var score = 0
     private var questionNo = 0
@@ -55,8 +56,6 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view =  inflater.inflate(R.layout.fragment_test, container, false)
 
-        navController = this.findNavController()
-
         cardStackView = view.findViewById(R.id.test_card_stack_view)
 
         backButton = view.findViewById(R.id.test_back_button)
@@ -66,7 +65,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        setNo = args.setNo
 
         getWords()
         generateAllQuestions()
@@ -141,7 +140,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
 
         scoreDialog.setContentView(R.layout.test_dialog_score)
         val scoreTitle = scoreDialog.findViewById<TextView>(R.id.test_scorePopupTitle)
-        scoreTitle.text = "Score for Set $setNumber"
+        scoreTitle.text = "Score for Set $setNo"
         val scoreText = scoreDialog.findViewById<TextView>(R.id.test_scoreText)
         scoreText.text = "$score / $NO_OF_QUESTIONS"
 
@@ -202,7 +201,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     private fun getWords() {
         db = WordBankDbAccess.getInstance(requireActivity().applicationContext)
         db.open()
-        wordsList = db.getWordsList(setNumber)
+        wordsList = db.getWordsList(setNo)
         db.close()
     }
 
@@ -389,7 +388,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
 
     private fun goToHome() {
         scoreDialog.dismiss()
-        navController.navigate(R.id.action_testFragment_to_homeFragment)
+        findNavController().navigate(R.id.action_testFragment_to_homeFragment)
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {
