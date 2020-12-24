@@ -25,8 +25,6 @@ import com.zafaris.elevenplusvocab.util.WordBankDbAccess
 import java.util.*
 
 class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
-    private lateinit var navController: NavController
-
     private lateinit var db: WordBankDbAccess
 
     private lateinit var setRv: RecyclerView
@@ -46,8 +44,6 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        navController = this.findNavController()
-
         popupDialog = Dialog(requireContext())
         setRv = view.findViewById(R.id.setRv)
 
@@ -55,6 +51,10 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         buildSetRv()
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
     }
 
     private fun generateDummySets() {
@@ -146,7 +146,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         playMenuClickSound()
         popupDialog.dismiss()
 
-        navController.navigate(action)
+        findNavController().navigate(action)
         setLayoutManager.smoothScrollToPosition(setRv, null, 0)
     }
 

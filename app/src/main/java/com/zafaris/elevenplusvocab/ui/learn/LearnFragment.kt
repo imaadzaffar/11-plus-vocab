@@ -24,8 +24,6 @@ import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.util.WordBankDbAccess
 
 class LearnFragment : Fragment(), CardStackListener {
-    private lateinit var navController: NavController
-
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
     private var setNumber = 1
@@ -43,29 +41,15 @@ class LearnFragment : Fragment(), CardStackListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view =  inflater.inflate(R.layout.fragment_learn, container, false)
 
-        navController = this.findNavController()
-
         cardStackView = view.findViewById(R.id.learn_card_stack_view)
 
         backButton = view.findViewById(R.id.learn_back_button)
         nextButton = view.findViewById(R.id.learn_next_button)
 
-        setupToolbar()
         setupCardStackView()
         setupButtons()
 
         return view
-    }
-
-    private fun setupToolbar() {
-//        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-//        toolbar.context.setTheme(R.style.ToolbarThemeDark)
-//        toolbar.setBackgroundColor(getColor(R.color.colorBlue))
-//        toolbar.setTitleTextColor(getColor(R.color.textOnDark))
-//        window.statusBarColor = getColor(R.color.colorBlueStatus)
-//        setSupportActionBar(toolbar)
-//        supportActionBar?.title = "Learn: Set $setNumber"
-//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun setupCardStackView() {
@@ -144,12 +128,19 @@ class LearnFragment : Fragment(), CardStackListener {
         finishTitle.text = "Finished Set $setNumber"
 
         val testButton = finishDialog.findViewById<Button>(R.id.learn_testButton)
-        testButton.setOnClickListener { goToTest() }
+        testButton.setOnClickListener { navigateAction(R.id.action_learnFragment_to_testFragment) }
         val homeButton = finishDialog.findViewById<Button>(R.id.learn_homeButton)
-        homeButton.setOnClickListener { goToHome() }
+        homeButton.setOnClickListener { navigateAction(R.id.action_learnFragment_to_homeFragment) }
 
         finishDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         finishDialog.show()
+    }
+
+    private fun navigateAction(action: Int) {
+        playButtonClickSound()
+        finishDialog.dismiss()
+
+        findNavController().navigate(action)
     }
 
     private fun playButtonClickSound() {
@@ -158,18 +149,6 @@ class LearnFragment : Fragment(), CardStackListener {
             mediaPlayer.release()
         }
         mediaPlayer.start()
-    }
-
-    private fun goToTest() {
-        finishDialog.dismiss()
-
-        navController.navigate(R.id.action_learnFragment_to_testFragment)
-    }
-
-    private fun goToHome() {
-        finishDialog.dismiss()
-
-        navController.navigate(R.id.action_learnFragment_to_homeFragment)
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {

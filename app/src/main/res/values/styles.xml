@@ -8,7 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:fontFamily">@font/nunito</item>
         <item name="android:textColor">@color/textOnLight</item>
-<!--        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>-->
     </style>
 
     <style name="AppTheme.Launcher">
@@ -33,13 +32,6 @@
         <item name="android:textColorSecondary">@color/textOnDark</item>
         <item name="android:popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
-
-    <!--<style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
-        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
-        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
-        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
-        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
-    </style>-->
 
     <style name="errorToast">
         <item name="stTextBold">true</item>
