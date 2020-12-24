@@ -71,23 +71,23 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     }
 
     private fun buildSetRv() {
-        setAdapter = SetAdapter(setList)
+        setAdapter = SetAdapter(setList, this)
         setLayoutManager = GridLayoutManager(requireContext(), 2)
         setRv.layoutManager = setLayoutManager
         setRv.adapter = setAdapter
-        setAdapter.onItemClick = { set, position ->
-            clickedSet = position + 1
-            playMenuClickSound()
-            when {
-                setList[position].isSetLocked -> {
-                    showPopupLocked()
-                }
-                setList[position].isSetCompleted -> {
-                    showPopupCompleted()
-                }
-                else -> {
-                    showPopupPlay()
-                }
+    }
+
+    override fun onItemSetClick(set: Set) {
+        playMenuClickSound()
+        when {
+            set.isSetLocked -> {
+                showPopupLocked()
+            }
+            set.isSetCompleted -> {
+                showPopupCompleted()
+            }
+            else -> {
+                showPopupPlay()
             }
         }
     }

@@ -12,11 +12,11 @@ import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.ui.home.SetAdapter.SetViewHolder
 import com.zafaris.elevenplusvocab.util.SET_SIZE
-import java.util.*
 
-class SetAdapter (private val setsList: ArrayList<Set>) : RecyclerView.Adapter<SetViewHolder>() {
-
-    var onItemClick: ((Set, Int) -> Unit)? = null
+class SetAdapter (
+        private val sets: List<Set> = emptyList(),
+        private val listener: OnItemClickListener
+) : RecyclerView.Adapter<SetViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.home_item_set, parent, false)
@@ -24,49 +24,49 @@ class SetAdapter (private val setsList: ArrayList<Set>) : RecyclerView.Adapter<S
     }
 
     override fun onBindViewHolder(holder: SetViewHolder, position: Int) {
-        val (setNo, isSetCompleted, isSetLocked) = setsList[position]
-        val setNoText = StringBuilder("Set ")
-        setNoText.append(setNo)
-        holder.mSetNoText.text = setNoText
-        val setWordsText = StringBuilder("Words ")
-        setWordsText.append(position * SET_SIZE + 1)
-        setWordsText.append(" - ")
-        setWordsText.append((position + 1) * SET_SIZE)
-        setWordsText.append("")
-        holder.mSetWordsText.text = setWordsText
+        val (setNo, isSetCompleted, isSetLocked) = sets[position]
+        val setNoText = "Set $setNo"
+        holder.setNo.text = setNoText
+        val setWordsText = "Words ${position * SET_SIZE + 1} - ${(position + 1) * SET_SIZE}"
+        holder.setWords.text = setWordsText
 
-        // Set locked
         when {
             isSetLocked -> {
-                holder.mSetBackground.background = ContextCompat.getDrawable(holder.mSetBackground.context, R.drawable.home_set_locked)
-                holder.mSetIcon.setImageResource(R.drawable.ic_icon_locked)
+                holder.background.background = ContextCompat.getDrawable(holder.background.context, R.drawable.home_set_locked)
+                holder.icon.setImageResource(R.drawable.ic_icon_locked)
             }
             isSetCompleted -> {
-                holder.mSetBackground.background = ContextCompat.getDrawable(holder.mSetBackground.context, R.drawable.home_set_completed)
-                holder.mSetIcon.setImageResource(R.drawable.ic_icon_completed)
+                holder.background.background = ContextCompat.getDrawable(holder.background.context, R.drawable.home_set_completed)
+                holder.icon.setImageResource(R.drawable.ic_icon_completed)
             }
             else -> {
-                holder.mSetBackground.background = ContextCompat.getDrawable(holder.mSetBackground.context, R.drawable.home_set_play)
-                holder.mSetIcon.setImageResource(R.drawable.ic_icon_play)
+                holder.background.background = ContextCompat.getDrawable(holder.background.context, R.drawable.home_set_play)
+                holder.icon.setImageResource(R.drawable.ic_icon_play)
             }
         }
     }
 
     override fun getItemCount(): Int {
-        return setsList.size
+        return sets.size
     }
 
-    inner class SetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val mSetBackground: LinearLayout = itemView.findViewById(R.id.setBackground)
-        val mSetIcon: ImageView = itemView.findViewById(R.id.setIcon)
-        val mSetNoText: TextView = itemView.findViewById(R.id.setNoText)
-        val mSetWordsText: TextView = itemView.findViewById(R.id.setWordsText)
+    inner class SetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        val background: LinearLayout = itemView.findViewById(R.id.setBackground)
+        val icon: ImageView = itemView.findViewById(R.id.setIcon)
+        val setNo: TextView = itemView.findViewById(R.id.setNoText)
+        val setWords: TextView = itemView.findViewById(R.id.setWordsText)
 
         init {
-            itemView.setOnClickListener {
-                onItemClick?.invoke(setsList[adapterPosition], adapterPosition)
-            }
+            itemView.setOnClickListener(this)
         }
+
+        override fun onClick(v: View?) {
+            listener.onItemSetClick(sets[adapterPosition])
+        }
+    }
+
+    interface OnItemClickListener {
+        fun onItemSetClick(set: Set)
     }
 
 }
