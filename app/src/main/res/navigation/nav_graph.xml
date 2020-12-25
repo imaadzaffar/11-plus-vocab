@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/wordsListFragment">
 
     <action
         android:id="@+id/action_to_homeFragment"
@@ -111,10 +111,35 @@
 
     <fragment
         android:id="@+id/wordsListFragment"
-        android:label="@string/label_fragment_wordslist">
+        android:name="com.zafaris.elevenplusvocab.ui.wordslist.WordsListFragment"
+        android:label="@string/label_fragment_wordslist"
+        tools:layout="@layout/fragment_wordslist">
         <action
             android:id="@+id/action_wordsListFragment_to_homeFragment"
             app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/wordsListFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_wordsListFragment_to_learnFragment"
+            app:destination="@id/learnFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_wordsListFragment_to_testFragment"
+            app:destination="@id/testFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_wordsListFragment_to_statsFragment"
+            app:destination="@id/statsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"

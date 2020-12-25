@@ -30,7 +30,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     private lateinit var setLayoutManager: GridLayoutManager
     private var clickedSetNo = 0
 
-    private lateinit var popupDialog: Dialog
+    private lateinit var setDialog: Dialog
     private lateinit var popupTitle: TextView
     private lateinit var learnButton: Button
     private lateinit var testButton: Button
@@ -43,7 +43,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         setRv = view.findViewById(R.id.setRv)
-        popupDialog = Dialog(requireContext())
+        setDialog = Dialog(requireContext())
 
         return view
     }
@@ -93,55 +93,55 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     }
 
     private fun showPopupLocked() {
-        popupDialog.setContentView(R.layout.home_dialog_set_locked)
-        popupTitle = popupDialog.findViewById(R.id.popupTitle)
-        unlockButton = popupDialog.findViewById(R.id.unlockButton)
+        setDialog.setContentView(R.layout.home_dialog_set_locked)
+        popupTitle = setDialog.findViewById(R.id.popupTitle)
+        unlockButton = setDialog.findViewById(R.id.unlockButton)
         val title = "Set $clickedSetNo locked"
         popupTitle.text = title
         unlockButton.setOnClickListener {
             Toast.makeText(context, "Unlock sets", Toast.LENGTH_SHORT).show()
             //TODO: Add payment
         }
-        val noThanksButton = popupDialog.findViewById<TextView>(R.id.noThanksButton)
+        val noThanksButton = setDialog.findViewById<TextView>(R.id.noThanksButton)
         noThanksButton.setOnClickListener {
-            popupDialog.dismiss()
+            setDialog.dismiss()
         }
-        popupDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupDialog.show()
+        setDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        setDialog.show()
     }
 
     private fun showPopupCompleted() {
-        popupDialog.setContentView(R.layout.home_dialog_set_completed)
-        popupTitle = popupDialog.findViewById(R.id.popupTitle)
-        learnButton = popupDialog.findViewById(R.id.learnButton)
-        testButton = popupDialog.findViewById(R.id.testButton)
-        statsButton = popupDialog.findViewById(R.id.statsButton)
+        setDialog.setContentView(R.layout.home_dialog_set_completed)
+        popupTitle = setDialog.findViewById(R.id.popupTitle)
+        learnButton = setDialog.findViewById(R.id.learnButton)
+        testButton = setDialog.findViewById(R.id.testButton)
+        statsButton = setDialog.findViewById(R.id.statsButton)
         val title = "Set $clickedSetNo completed"
         popupTitle.text = title
         learnButton.setOnClickListener { navigateAction("learn") }
         testButton.setOnClickListener { navigateAction("test") }
         statsButton.setOnClickListener { navigateAction("stats") }
-        popupDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupDialog.show()
+        setDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        setDialog.show()
     }
 
     private fun showPopupPlay() {
-        popupDialog.setContentView(R.layout.home_dialog_set_play)
-        popupTitle = popupDialog.findViewById(R.id.popupTitle)
-        learnButton = popupDialog.findViewById(R.id.learnButton)
-        testButton = popupDialog.findViewById(R.id.testButton)
+        setDialog.setContentView(R.layout.home_dialog_set_play)
+        popupTitle = setDialog.findViewById(R.id.popupTitle)
+        learnButton = setDialog.findViewById(R.id.learnButton)
+        testButton = setDialog.findViewById(R.id.testButton)
         val title = "Set $clickedSetNo"
         popupTitle.text = title
         learnButton.setOnClickListener { navigateAction("learn") }
         testButton.setOnClickListener { navigateAction("test") }
-        popupDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupDialog.show()
+        setDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        setDialog.show()
     }
 
     private fun navigateAction(destination: String) {
         playMenuClickSound()
         setLayoutManager.smoothScrollToPosition(setRv, null, 0)
-        popupDialog.dismiss()
+        setDialog.dismiss()
 
         val setNo = clickedSetNo
         val action = when (destination) {
