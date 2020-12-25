@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Word
-import com.zafaris.elevenplusvocab.util.WordBankDbAccess
+import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 
 class LearnFragment : Fragment(), CardStackListener {
     private val args: LearnFragmentArgs by navArgs()

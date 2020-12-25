@@ -20,10 +20,10 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
+import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 import com.zafaris.elevenplusvocab.data.model.Question
 import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.data.model.Meaning
-import com.zafaris.elevenplusvocab.ui.learn.LearnFragmentDirections
 import com.zafaris.elevenplusvocab.util.*
 
 class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.OnItemClickListener {

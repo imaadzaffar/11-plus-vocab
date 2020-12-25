@@ -21,11 +21,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.data.model.Word
-import com.zafaris.elevenplusvocab.ui.home.HomeFragmentDirections
 import com.zafaris.elevenplusvocab.util.NO_OF_FREE_SETS
 import com.zafaris.elevenplusvocab.util.NO_OF_TOTAL_SETS
 import com.zafaris.elevenplusvocab.util.SET_SIZE
-import com.zafaris.elevenplusvocab.util.WordBankDbAccess
+import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 import java.util.ArrayList
 
 class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {

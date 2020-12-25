@@ -20,7 +20,7 @@ import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.util.NO_OF_FREE_SETS
 import com.zafaris.elevenplusvocab.util.NO_OF_TOTAL_SETS
 import com.zafaris.elevenplusvocab.util.SET_SIZE
-import com.zafaris.elevenplusvocab.util.WordBankDbAccess
+import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 import java.util.*
 
 class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {

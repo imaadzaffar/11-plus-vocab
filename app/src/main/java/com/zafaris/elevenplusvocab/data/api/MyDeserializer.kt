@@ -1,4 +1,4 @@
-package com.zafaris.elevenplusvocab.util
+package com.zafaris.elevenplusvocab.data.api
 
 import android.util.Log
 import com.google.gson.*
