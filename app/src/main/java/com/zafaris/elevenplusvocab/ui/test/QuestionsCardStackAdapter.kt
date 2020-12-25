@@ -110,7 +110,7 @@ class QuestionsCardStackAdapter(
         }
 
         override fun onClick(v: View?) {
-            val optionNo = Integer.parseInt(v?.tag.toString())
+            val optionNo = v?.tag.toString().toInt()
             listener.onOptionClick(optionNo)
         }
     }
