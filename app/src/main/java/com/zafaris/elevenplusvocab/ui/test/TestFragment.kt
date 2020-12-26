@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -391,7 +392,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
         scoreDialog.dismiss()
 
         if (destination == "home") {
-            findNavController().navigate(R.id.action_to_homeFragment)
+            findNavController().navigate(R.id.action_to_homeGraph)
         } else {
             val action = when (destination) {
                 "stats" -> TestFragmentDirections.actionTestFragmentToStatsFragment(setNo)

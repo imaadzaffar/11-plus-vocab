@@ -1,11 +1,17 @@
 package com.zafaris.elevenplusvocab.ui.home
 
 import android.app.Dialog
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -19,6 +25,7 @@ import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.databinding.FragmentHomeBinding
 import com.zafaris.elevenplusvocab.databinding.HomeDialogSetLockedBinding
 import com.zafaris.elevenplusvocab.databinding.HomeDialogSetUnlockedBinding
+import com.zafaris.elevenplusvocab.ui.settings.SettingsActivity
 import com.zafaris.elevenplusvocab.util.NO_OF_FREE_SETS
 import com.zafaris.elevenplusvocab.util.NO_OF_TOTAL_SETS
 import com.zafaris.elevenplusvocab.util.SET_SIZE
@@ -57,6 +64,8 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         generateDummySets()
         buildSetRv()
+
+        setHasOptionsMenu(true)
     }
 
     override fun onDestroyView() {
@@ -64,6 +73,50 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         _binding = null
         _setUnlockedBinding = null
         _setLockedBinding = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.home_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_share -> {
+                val sendIntent = Intent(Intent.ACTION_SEND)
+                val appPackageName = activity?.packageName //TODO: getPackageName();
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Download the 11+ Learn Vocab app at https://play.google.com/store/apps/details?id=$appPackageName")
+                sendIntent.type = "text/plain"
+
+                // intent to Share
+                val shareIntent = Intent.createChooser(sendIntent, "Share using")
+                startActivity(shareIntent)
+
+                true
+            }
+            R.id.menu_rate -> {
+                val appPackageName = activity?.packageName
+
+                // intent to Google Play Store
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName"))
+                    startActivity(intent)
+                } catch (e: ActivityNotFoundException) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName"))
+                    startActivity(intent)
+                }
+
+                true
+            }
+            R.id.menu_settings -> {
+                // intent to Settings Activity
+                val intent = Intent(requireContext(), SettingsActivity::class.java)
+                startActivity(intent)
+
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun generateDummySets() {

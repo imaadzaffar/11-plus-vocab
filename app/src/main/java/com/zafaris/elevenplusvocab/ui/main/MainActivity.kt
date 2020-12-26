@@ -74,48 +74,4 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.options_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_share -> {
-                val sendIntent = Intent(Intent.ACTION_SEND)
-                val appPackageName = packageName //TODO: getPackageName();
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "Download the 11+ Learn Vocab app at https://play.google.com/store/apps/details?id=$appPackageName")
-                sendIntent.type = "text/plain"
-
-                // intent to Share
-                val shareIntent = Intent.createChooser(sendIntent, "Share using")
-                startActivity(shareIntent)
-
-                true
-            }
-            R.id.menu_rate -> {
-                val appPackageName = packageName
-
-                // intent to Google Play Store
-                try {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$appPackageName"))
-                    startActivity(intent)
-                } catch (e: ActivityNotFoundException) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName"))
-                    startActivity(intent)
-                }
-
-                true
-            }
-            R.id.menu_settings -> {
-                // intent to Settings Activity
-                val intent = Intent(this@MainActivity, SettingsActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
 }
