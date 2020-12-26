@@ -11,9 +11,14 @@
         android:id="@+id/rv_sets"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:spanCount="2"
+        tools:itemCount="20"
         tools:listitem="@layout/home_item_set"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
