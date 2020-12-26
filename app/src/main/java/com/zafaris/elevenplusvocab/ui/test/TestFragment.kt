@@ -61,6 +61,8 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
 
         _scoreDialogBinding = TestDialogScoreBinding.inflate(inflater)
 
+        scoreDialog = Dialog(requireContext())
+
         return view
     }
 
@@ -142,8 +144,6 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     }
 
     private fun showScoreDialog() {
-        scoreDialog = Dialog(requireContext())
-
         scoreDialog.setContentView(scoreDialogBinding.root)
         scoreDialogBinding.titleDialog.text = "Score for Set $setNo"
         scoreDialogBinding.textScore.text = "$score / $NO_OF_QUESTIONS"
