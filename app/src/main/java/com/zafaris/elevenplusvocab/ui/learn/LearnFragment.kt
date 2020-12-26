@@ -166,7 +166,7 @@ class LearnFragment : Fragment(), CardStackListener {
         finishDialog.dismiss()
 
         if (destination == "home") {
-            findNavController().navigate(R.id.action_to_homeGraph)
+            findNavController().navigate(R.id.action_global_home)
         } else {
             val action = when (destination) {
                 "test" -> LearnFragmentDirections.actionLearnFragmentToTestFragment(setNo)

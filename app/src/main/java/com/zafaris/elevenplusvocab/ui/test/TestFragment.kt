@@ -392,7 +392,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
         scoreDialog.dismiss()
 
         if (destination == "home") {
-            findNavController().navigate(R.id.action_to_homeGraph)
+            findNavController().navigate(R.id.action_global_home)
         } else {
             val action = when (destination) {
                 "stats" -> TestFragmentDirections.actionTestFragmentToStatsFragment(setNo)

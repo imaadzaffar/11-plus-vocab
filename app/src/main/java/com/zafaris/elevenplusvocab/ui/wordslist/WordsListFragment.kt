@@ -262,9 +262,9 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 
 		val setNo = clickedSetNo
 		val action = when (destination) {
-			"learn" -> HomeGraphDirections.actionGlobalLearnFragment(setNo)
-			"test" -> HomeFragmentDirections.actionGlobalTestFragment(setNo)
-			"stats" -> HomeFragmentDirections.actionGlobalStatsFragment(setNo)
+			"learn" -> HomeGraphDirections.actionGlobalLearn(setNo)
+			"test" -> HomeFragmentDirections.actionGlobalTest(setNo)
+			"stats" -> HomeFragmentDirections.actionGlobalStats(setNo)
 			else -> throw IllegalArgumentException("Invalid destination")
 		}
 		findNavController().navigate(action)

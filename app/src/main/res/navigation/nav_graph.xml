@@ -6,12 +6,8 @@
     app:startDestination="@id/homeGraph">
 
     <action
-        android:id="@+id/action_to_homeGraph"
-        app:enterAnim="@anim/slide_in_right"
-        app:exitAnim="@anim/slide_out_left"
-        app:popEnterAnim="@anim/slide_in_left"
-        app:popExitAnim="@anim/slide_out_right"
-        app:popUpTo="@id/homeGraph" />
+        android:id="@+id/action_global_home"
+        app:popUpTo="@id/homeFragment" />
 
     <fragment
         android:id="@+id/learnFragment"
@@ -91,21 +87,21 @@
             android:label="@string/label_fragment_wordslist"
             tools:layout="@layout/fragment_wordslist"/>
         <action
-            android:id="@+id/action_global_learnFragment"
+            android:id="@+id/action_global_learn"
             app:destination="@id/learnFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_global_testFragment"
+            android:id="@+id/action_global_test"
             app:destination="@id/testFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_global_statsFragment"
+            android:id="@+id/action_global_stats"
             app:destination="@id/statsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
