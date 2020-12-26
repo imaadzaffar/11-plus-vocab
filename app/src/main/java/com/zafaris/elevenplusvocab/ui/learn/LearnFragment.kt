@@ -74,7 +74,6 @@ class LearnFragment : Fragment(), CardStackListener {
 
         setupCardStackView()
         setupButtons()
-
     }
 
     override fun onDestroyView() {
