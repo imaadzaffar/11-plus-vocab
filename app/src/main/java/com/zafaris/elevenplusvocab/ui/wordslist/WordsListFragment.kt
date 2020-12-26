@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.zafaris.elevenplusvocab.HomeGraphDirections
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 import com.zafaris.elevenplusvocab.data.model.Set
@@ -21,6 +22,7 @@ import com.zafaris.elevenplusvocab.databinding.FragmentWordslistBinding
 import com.zafaris.elevenplusvocab.databinding.HomeDialogSetLockedBinding
 import com.zafaris.elevenplusvocab.databinding.HomeDialogSetUnlockedBinding
 import com.zafaris.elevenplusvocab.databinding.WordslistDialogWordBinding
+import com.zafaris.elevenplusvocab.ui.home.HomeFragmentDirections
 import com.zafaris.elevenplusvocab.util.NO_OF_FREE_SETS
 import com.zafaris.elevenplusvocab.util.NO_OF_TOTAL_SETS
 import com.zafaris.elevenplusvocab.util.SET_SIZE
@@ -207,9 +209,9 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 
 		val setNo = clickedSetNo
 		val action = when (destination) {
-			"learn" -> WordsListFragmentDirections.actionWordsListFragmentToLearnFragment(setNo)
-			"test" -> WordsListFragmentDirections.actionWordsListFragmentToTestFragment(setNo)
-			"stats" -> WordsListFragmentDirections.actionWordsListFragmentToStatsFragment(setNo)
+			"learn" -> HomeGraphDirections.actionGlobalLearnFragment(setNo)
+			"test" -> HomeFragmentDirections.actionGlobalTestFragment(setNo)
+			"stats" -> HomeFragmentDirections.actionGlobalStatsFragment(setNo)
 			else -> throw IllegalArgumentException("Invalid destination")
 		}
 		findNavController().navigate(action)

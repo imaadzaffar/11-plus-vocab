@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.zafaris.elevenplusvocab.HomeGraphDirections
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 import com.zafaris.elevenplusvocab.data.model.Set
@@ -133,9 +134,9 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
 
         val setNo = clickedSetNo
         val action = when (destination) {
-            "learn" -> HomeFragmentDirections.actionHomeFragmentToLearnFragment(setNo)
-            "test" -> HomeFragmentDirections.actionHomeFragmentToTestFragment(setNo)
-            "stats" -> HomeFragmentDirections.actionHomeFragmentToStatsFragment(setNo)
+            "learn" -> HomeGraphDirections.actionGlobalLearnFragment(setNo)
+            "test" -> HomeFragmentDirections.actionGlobalTestFragment(setNo)
+            "stats" -> HomeFragmentDirections.actionGlobalStatsFragment(setNo)
             else -> throw IllegalArgumentException("Invalid destination")
         }
         findNavController().navigate(action)
