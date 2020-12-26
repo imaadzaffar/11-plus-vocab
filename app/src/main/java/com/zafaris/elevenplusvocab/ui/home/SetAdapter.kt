@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Set
+import com.zafaris.elevenplusvocab.databinding.HomeItemSetBinding
 import com.zafaris.elevenplusvocab.ui.home.SetAdapter.SetViewHolder
 import com.zafaris.elevenplusvocab.util.SET_SIZE
 
@@ -19,42 +20,42 @@ class SetAdapter (
 ) : RecyclerView.Adapter<SetViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.home_item_set, parent, false)
-        return SetViewHolder(itemView)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = HomeItemSetBinding.inflate(inflater, parent, false)
+        return SetViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: SetViewHolder, position: Int) {
-        val (setNo, isSetCompleted, isSetLocked) = sets[position]
-        val setNoText = "Set $setNo"
-        holder.setNo.text = setNoText
-        val setWordsText = "Words ${position * SET_SIZE + 1} - ${(position + 1) * SET_SIZE}"
-        holder.setWords.text = setWordsText
-
-        when {
-            isSetLocked -> {
-                holder.background.background = ContextCompat.getDrawable(holder.background.context, R.drawable.home_set_locked)
-                holder.icon.setImageResource(R.drawable.ic_icon_locked)
-            }
-            isSetCompleted -> {
-                holder.background.background = ContextCompat.getDrawable(holder.background.context, R.drawable.home_set_completed)
-                holder.icon.setImageResource(R.drawable.ic_icon_completed)
-            }
-            else -> {
-                holder.background.background = ContextCompat.getDrawable(holder.background.context, R.drawable.home_set_play)
-                holder.icon.setImageResource(R.drawable.ic_icon_play)
-            }
-        }
+        val set = sets[position]
+        holder.bind(set)
     }
 
     override fun getItemCount(): Int {
         return sets.size
     }
 
-    inner class SetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val background: LinearLayout = itemView.findViewById(R.id.setBackground)
-        val icon: ImageView = itemView.findViewById(R.id.setIcon)
-        val setNo: TextView = itemView.findViewById(R.id.setNoText)
-        val setWords: TextView = itemView.findViewById(R.id.setWordsText)
+    inner class SetViewHolder(private val binding: HomeItemSetBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+        fun bind(set: Set) {
+            val setNoText = "Set ${set.setNo}"
+            binding.textSetNo.text = setNoText
+            val setWordsText = "Words ${adapterPosition * SET_SIZE + 1} - ${(adapterPosition + 1) * SET_SIZE}"
+            binding.textWords.text = setWordsText
+
+            when {
+                set.isSetLocked -> {
+                    binding.layoutSet.background = ContextCompat.getDrawable(binding.layoutSet.context, R.drawable.home_set_locked)
+                    binding.iconSet.setImageResource(R.drawable.ic_icon_locked)
+                }
+                set.isSetCompleted -> {
+                    binding.layoutSet.background = ContextCompat.getDrawable(binding.layoutSet.context, R.drawable.home_set_completed)
+                    binding.iconSet.setImageResource(R.drawable.ic_icon_completed)
+                }
+                else -> {
+                    binding.layoutSet.background = ContextCompat.getDrawable(binding.layoutSet.context, R.drawable.home_set_play)
+                    binding.iconSet.setImageResource(R.drawable.ic_icon_play)
+                }
+            }
+        }
 
         init {
             itemView.setOnClickListener(this)

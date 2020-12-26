@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Question
+import com.zafaris.elevenplusvocab.databinding.TestCardQuestionBinding
 
 class QuestionsCardStackAdapter(
         private val questions: List<Question> = emptyList(),
@@ -17,101 +18,95 @@ class QuestionsCardStackAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, itemViewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return ViewHolder(inflater.inflate(R.layout.test_card_question, parent, false))
+        val binding = TestCardQuestionBinding.inflate(inflater, parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = questions[position]
-        holder.questionNo.text = (position + 1).toString()
-
-        val word = item.word
-        val questionTypeString = if (item.questionType == 0) "synonym" else "antonym"
-
-        holder.questionType.text = questionTypeString
-        val questionString = "Choose the $questionTypeString for $word"
-        holder.questionText.text = questionString
-        holder.example.text = item.example
-
-        holder.option1.text = item.option1
-        holder.option2.text = item.option2
-        holder.option3.text = item.option3
-        holder.option4.text = item.option4
-
-        if (item.isAnswered) {
-            when (item.answerNo) {
-                1 -> {
-                    holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_green)
-                    holder.option1.setIconResource(R.drawable.ic_icon_correct)
-                }
-                2 -> {
-                    holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_green)
-                    holder.option2.setIconResource(R.drawable.ic_icon_correct)
-                }
-                3 -> {
-                    holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_green)
-                    holder.option3.setIconResource(R.drawable.ic_icon_correct)
-                }
-                4 -> {
-                    holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_green)
-                    holder.option4.setIconResource(R.drawable.ic_icon_correct)
-                }
-            }
-            if (item.userAnswerNo != item.answerNo) {
-                when (item.userAnswerNo) {
-                    1 -> {
-                        holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_red)
-                        holder.option1.setIconResource(R.drawable.ic_icon_incorrect)
-                    }
-                    2 -> {
-                        holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_red)
-                        holder.option2.setIconResource(R.drawable.ic_icon_incorrect)
-                    }
-                    3 -> {
-                        holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_red)
-                        holder.option3.setIconResource(R.drawable.ic_icon_incorrect)
-                    }
-                    4 -> {
-                        holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_red)
-                        holder.option4.setIconResource(R.drawable.ic_icon_incorrect)
-                    }
-                }
-            }
-        } else {
-            holder.option1.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_blue)
-            holder.option1.icon = null
-            holder.option2.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_blue)
-            holder.option2.icon = null
-            holder.option3.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_blue)
-            holder.option3.icon = null
-            holder.option4.background = ContextCompat.getDrawable(holder.questionNo.context, R.drawable.button_blue)
-            holder.option4.icon = null
-        }
+        val question = questions[position]
+        holder.bind(question)
     }
 
     override fun getItemCount(): Int {
         return questions.size
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val questionNo: TextView = itemView.findViewById(R.id.card_test_questionNoText)
-        val questionType: TextView = itemView.findViewById(R.id.card_test_questionTypeText)
-        val questionText: TextView = itemView.findViewById(R.id.card_test_questionText)
-        val example: TextView = itemView.findViewById(R.id.card_test_exampleText)
-        val option1: MaterialButton = itemView.findViewById(R.id.card_test_option1)
-        val option2: MaterialButton = itemView.findViewById(R.id.card_test_option2)
-        val option3: MaterialButton = itemView.findViewById(R.id.card_test_option3)
-        val option4: MaterialButton = itemView.findViewById(R.id.card_test_option4)
+    inner class ViewHolder(private val binding: TestCardQuestionBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+        fun bind(question: Question) {
+            binding.textNumber.text = (adapterPosition + 1).toString()
 
-        init {
-            option1.setOnClickListener(this)
-            option2.setOnClickListener(this)
-            option3.setOnClickListener(this)
-            option4.setOnClickListener(this)
+            val word = question.word
+            val questionTypeString = if (question.questionType == 0) "synonym" else "antonym"
+
+            binding.textType.text = questionTypeString
+            val questionString = "Choose the $questionTypeString for $word"
+            binding.textQuestion.text = questionString
+            binding.textExample.text = question.example
+
+            binding.buttonOption1.text = question.option1
+            binding.buttonOption2.text = question.option2
+            binding.buttonOption3.text = question.option3
+            binding.buttonOption4.text = question.option4
+
+            binding.buttonOption1.setOnClickListener(this)
+            binding.buttonOption2.setOnClickListener(this)
+            binding.buttonOption3.setOnClickListener(this)
+            binding.buttonOption4.setOnClickListener(this)
+
+            if (question.isAnswered) {
+                when (question.answerNo) {
+                    1 -> {
+                        binding.buttonOption1.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_green)
+                        binding.buttonOption1.setIconResource(R.drawable.ic_icon_correct)
+                    }
+                    2 -> {
+                        binding.buttonOption2.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_green)
+                        binding.buttonOption2.setIconResource(R.drawable.ic_icon_correct)
+                    }
+                    3 -> {
+                        binding.buttonOption3.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_green)
+                        binding.buttonOption3.setIconResource(R.drawable.ic_icon_correct)
+                    }
+                    4 -> {
+                        binding.buttonOption4.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_green)
+                        binding.buttonOption4.setIconResource(R.drawable.ic_icon_correct)
+                    }
+                }
+                if (question.userAnswerNo != question.answerNo) {
+                    when (question.userAnswerNo) {
+                        1 -> {
+                            binding.buttonOption1.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_red)
+                            binding.buttonOption1.setIconResource(R.drawable.ic_icon_incorrect)
+                        }
+                        2 -> {
+                            binding.buttonOption2.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_red)
+                            binding.buttonOption2.setIconResource(R.drawable.ic_icon_incorrect)
+                        }
+                        3 -> {
+                            binding.buttonOption3.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_red)
+                            binding.buttonOption3.setIconResource(R.drawable.ic_icon_incorrect)
+                        }
+                        4 -> {
+                            binding.buttonOption4.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_red)
+                            binding.buttonOption4.setIconResource(R.drawable.ic_icon_incorrect)
+                        }
+                    }
+                }
+            } else {
+                binding.buttonOption1.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_blue)
+                binding.buttonOption1.icon = null
+                binding.buttonOption2.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_blue)
+                binding.buttonOption2.icon = null
+                binding.buttonOption3.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_blue)
+                binding.buttonOption3.icon = null
+                binding.buttonOption4.background = ContextCompat.getDrawable(binding.textQuestion.context, R.drawable.button_blue)
+                binding.buttonOption4.icon = null
+            }
         }
 
         override fun onClick(v: View?) {
-            val optionNo = v?.tag.toString().toInt()
-            listener.onOptionClick(optionNo)
+            val buttonOptionNo = v?.tag.toString().toInt()
+            listener.onOptionClick(buttonOptionNo)
         }
     }
 

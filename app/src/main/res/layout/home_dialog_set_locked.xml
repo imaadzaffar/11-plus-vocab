@@ -20,7 +20,7 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/unlockButton"
+                android:id="@+id/button_unlock"
                 android:layout_width="250dp"
                 android:layout_height="65dp"
                 android:layout_marginStart="16dp"
@@ -34,21 +34,21 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/unlockText" />
+                app:layout_constraintTop_toBottomOf="@+id/text_unlock" />
 
             <TextView
-                android:id="@+id/unlockText"
+                android:id="@+id/text_unlock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="- Unlock all 20 sets\n- Add your own words\n- Detailed statistics for tests\n- Help to support us"
                 android:textColor="@color/textOnLight"
                 android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="@+id/unlockHeader"
-                app:layout_constraintTop_toBottomOf="@id/unlockHeader" />
+                app:layout_constraintStart_toStartOf="@+id/title_unlock"
+                app:layout_constraintTop_toBottomOf="@id/title_unlock" />
 
             <TextView
-                android:id="@+id/unlockHeader"
+                android:id="@+id/title_unlock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -60,10 +60,10 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/constraintLayout" />
+                app:layout_constraintTop_toBottomOf="@id/layout_top" />
 
             <Button
-                android:id="@+id/noThanksButton"
+                android:id="@+id/button_dismiss"
                 style="@android:style/Widget.Material.Button.Borderless.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,13 +72,13 @@
                 android:text="No Thanks"
                 android:textColor="@color/textOnLight"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/unlockButton"
-                app:layout_constraintStart_toStartOf="@id/unlockButton"
-                app:layout_constraintTop_toBottomOf="@id/unlockButton" />
+                app:layout_constraintEnd_toEndOf="@id/button_unlock"
+                app:layout_constraintStart_toStartOf="@id/button_unlock"
+                app:layout_constraintTop_toBottomOf="@id/button_unlock" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout"
+                android:id="@+id/layout_top"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_gradient_orange"
@@ -88,7 +88,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/popupTitle"
+                    android:id="@+id/title_dialog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Set 1 locked"

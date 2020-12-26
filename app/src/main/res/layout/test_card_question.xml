@@ -15,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/card_test_option1"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_option1"
             android:layout_width="0dp"
             android:layout_height="65dp"
             android:layout_marginStart="16dp"
@@ -34,10 +34,10 @@
             app:iconGravity="textEnd"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_test_exampleText" />
+            app:layout_constraintTop_toBottomOf="@+id/text_example" />
 
-        <Button
-            android:id="@+id/card_test_option2"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_option2"
             android:layout_width="0dp"
             android:layout_height="65dp"
             android:layout_marginStart="16dp"
@@ -56,10 +56,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_test_option1" />
+            app:layout_constraintTop_toBottomOf="@+id/button_option1" />
 
-        <Button
-            android:id="@+id/card_test_option3"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_option3"
             android:layout_width="0dp"
             android:layout_height="65dp"
             android:layout_marginStart="16dp"
@@ -77,10 +77,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_test_option2" />
+            app:layout_constraintTop_toBottomOf="@+id/button_option2" />
 
-        <Button
-            android:id="@+id/card_test_option4"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_option4"
             android:layout_width="0dp"
             android:layout_height="65dp"
             android:layout_marginStart="16dp"
@@ -100,10 +100,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_test_option3" />
+            app:layout_constraintTop_toBottomOf="@+id/button_option3" />
 
         <TextView
-            android:id="@+id/card_test_questionText"
+            android:id="@+id/text_question"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -115,10 +115,10 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_test_layoutTop" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_top" />
 
         <TextView
-            android:id="@+id/card_test_exampleText"
+            android:id="@+id/text_example"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -129,10 +129,10 @@
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_test_questionText" />
+            app:layout_constraintTop_toBottomOf="@+id/text_question" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/card_test_layoutTop"
+            android:id="@+id/layout_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_gradient_orange"
@@ -140,7 +140,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/card_test_questionNoText"
+                android:id="@+id/text_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -151,11 +151,11 @@
                 android:textSize="18sp"
                 android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="@+id/card_test_questionTitle"
-                app:layout_constraintTop_toTopOf="@+id/card_test_questionTitle" />
+                app:layout_constraintBottom_toBottomOf="@+id/text_title"
+                app:layout_constraintTop_toTopOf="@+id/text_title" />
 
             <TextView
-                android:id="@+id/card_test_questionTitle"
+                android:id="@+id/text_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -168,7 +168,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/card_test_questionTypeText"
+                android:id="@+id/text_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -179,7 +179,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/card_test_questionTitle" />
+                app:layout_constraintTop_toBottomOf="@+id/text_title" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

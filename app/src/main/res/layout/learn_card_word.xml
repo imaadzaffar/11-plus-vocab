@@ -16,7 +16,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/card_definitionText"
+            android:id="@+id/text_definition"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -28,10 +28,10 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_layout_top" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_top" />
 
         <TextView
-            android:id="@+id/card_exampleText"
+            android:id="@+id/text_example"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -43,10 +43,10 @@
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_definitionText" />
+            app:layout_constraintTop_toBottomOf="@+id/text_definition" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/card_layout_top"
+            android:id="@+id/layout_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_gradient_orange"
@@ -54,7 +54,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/card_idText"
+                android:id="@+id/text_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -64,12 +64,12 @@
                 android:textColor="@color/textOnLight"
                 android:textSize="18sp"
                 android:textStyle="normal"
-                app:layout_constraintBottom_toBottomOf="@+id/card_wordText"
+                app:layout_constraintBottom_toBottomOf="@+id/text_word"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/card_wordText" />
+                app:layout_constraintTop_toTopOf="@+id/text_word" />
 
             <TextView
-                android:id="@+id/card_wordText"
+                android:id="@+id/text_word"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -82,7 +82,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/card_typeText"
+                android:id="@+id/text_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -93,26 +93,28 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/card_wordText" />
+                app:layout_constraintTop_toBottomOf="@+id/text_word" />
 
             <ImageButton
-                android:id="@+id/card_audioButton"
+                android:id="@+id/button_audio"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
                 android:background="?android:selectableItemBackgroundBorderless"
-                app:layout_constraintBottom_toBottomOf="@+id/card_wordText"
+                app:layout_constraintBottom_toBottomOf="@+id/text_word"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/card_wordText"
+                app:layout_constraintTop_toTopOf="@+id/text_word"
                 app:srcCompat="@drawable/ic_icon_audio" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/card_synonymsCard"
+            android:id="@+id/card_synonyms"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true"
             android:background="?attr/selectableItemBackground"
             android:foreground="?attr/selectableItemBackground"
             app:cardCornerRadius="20dp"
@@ -121,19 +123,19 @@
             app:cardUseCompatPadding="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_exampleText">
+            app:layout_constraintTop_toBottomOf="@id/text_example">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/card_synonymsLayout"
+                android:id="@+id/layout_synonyms"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_gradient_blue"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/card_exampleText">
+                app:layout_constraintTop_toBottomOf="@+id/text_example">
 
                 <TextView
-                    android:id="@+id/card_synonymsTitle"
+                    android:id="@+id/title_synonyms"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -146,7 +148,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/card_synonymsText"
+                    android:id="@+id/text_syononyms"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -159,16 +161,18 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/card_synonymsTitle" />
+                    app:layout_constraintTop_toBottomOf="@id/title_synonyms" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/card_antonymsCard"
+            android:id="@+id/card_antonyms"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:background="?attr/selectableItemBackground"
             android:foreground="?attr/selectableItemBackground"
             app:cardCornerRadius="20dp"
@@ -178,19 +182,19 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_synonymsCard">
+            app:layout_constraintTop_toBottomOf="@id/card_synonyms">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/card_antonymsLayout"
+                android:id="@+id/layout_antonyms"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_gradient_red"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/card_synonymsLayout">
+                app:layout_constraintTop_toBottomOf="@+id/layout_synonyms">
 
                 <TextView
-                    android:id="@+id/card_antonymsTitle"
+                    android:id="@+id/title_antonyms"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -203,7 +207,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/card_antonymsText"
+                    android:id="@+id/text_antonyms"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -216,7 +220,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/card_antonymsTitle" />
+                    app:layout_constraintTop_toBottomOf="@+id/title_antonyms" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>

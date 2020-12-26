@@ -21,13 +21,13 @@
             android:layout_height="wrap_content"
             android:clipChildren="false"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/learn_button_container"
+            app:layout_constraintBottom_toTopOf="@+id/container_buttons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
 
             <Button
-                android:id="@+id/test_homeButton"
+                android:id="@+id/button_home"
                 style="@android:style/Widget.Material.Button.Borderless.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,10 +37,10 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/test_viewQuestionsButton" />
+                app:layout_constraintTop_toBottomOf="@+id/button_view_questions" />
 
             <Button
-                android:id="@+id/test_viewQuestionsButton"
+                android:id="@+id/button_view_questions"
                 style="@android:style/Widget.Material.Button.Borderless.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,10 +49,10 @@
                 android:textColor="@color/textOnLight"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/test_scoreCardView" />
+                app:layout_constraintTop_toBottomOf="@+id/card_score" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/test_scoreCardView"
+                android:id="@+id/card_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
@@ -63,23 +63,23 @@
                 app:cardUseCompatPadding="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/test_scoreTitle">
+                app:layout_constraintTop_toBottomOf="@+id/title_score">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/test_scoreLayoutCard"
+                    android:id="@+id/layout_score"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/bg_gradient_red">
 
                     <TextView
-                        android:id="@+id/test_scoreText"
+                        android:id="@+id/text_score"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginBottom="8dp"
-                        android:text="5 / 5"
+                        tools:text="5 / 5"
                         android:textColor="@color/textOnDark"
                         android:textSize="40sp"
                         android:textStyle="bold"
@@ -91,7 +91,7 @@
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/test_scoreTitle"
+                android:id="@+id/title_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -100,10 +100,10 @@
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/test_scoreLayoutTop" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_top" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/test_scoreLayoutTop"
+                android:id="@+id/layout_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_gradient_orange"
@@ -113,10 +113,10 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/test_scorePopupTitle"
+                    android:id="@+id/title_dialog"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
-                    android:text="Score for Set 1"
+                    tools:text="Score for Set 1"
                     android:textAlignment="center"
                     android:textColor="@color/textOnDark"
                     android:textSize="24sp"

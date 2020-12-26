@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -20,7 +21,7 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/learn_testButton"
+                android:id="@+id/button_test"
                 android:layout_width="250dp"
                 android:layout_height="65dp"
                 android:layout_marginStart="16dp"
@@ -35,10 +36,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/learn_finishLayoutTop" />
+                app:layout_constraintTop_toBottomOf="@+id/layout_top" />
 
             <Button
-                android:id="@+id/learn_homeButton"
+                android:id="@+id/button_home"
                 style="@android:style/Widget.Material.Button.Borderless.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -50,10 +51,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/learn_testButton" />
+                app:layout_constraintTop_toBottomOf="@+id/button_test" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/learn_finishLayoutTop"
+                android:id="@+id/layout_top"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_gradient_orange"
@@ -63,10 +64,10 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/learn_finishTitle"
+                    android:id="@+id/title_dialog"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Finished Set 1"
+                    tools:text="Finished Set 1"
                     android:textColor="@color/textOnDark"
                     android:textSize="24sp"
                     android:textStyle="bold"

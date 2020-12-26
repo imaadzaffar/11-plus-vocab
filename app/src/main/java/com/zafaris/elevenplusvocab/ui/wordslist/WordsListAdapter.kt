@@ -64,8 +64,8 @@ class WordsListAdapter(
     inner class WordViewHolder(itemView: View) : BaseViewHolder<Word>(itemView), View.OnClickListener {
 
         override fun bind(item: Word) {
-            val idText: TextView = itemView.findViewById(R.id.wordslist_idText)
-            val wordText: TextView = itemView.findViewById(R.id.wordslist_wordText)
+            val idText: TextView = itemView.findViewById(R.id.text_id)
+            val wordText: TextView = itemView.findViewById(R.id.text_word)
             idText.text = "${item.id}."
             wordText.text = item.word
         }
@@ -82,11 +82,11 @@ class WordsListAdapter(
     inner class SetViewHolder(itemView: View) : BaseViewHolder<Set>(itemView), View.OnClickListener {
 
         override fun bind(item: Set) {
-            val set: TextView = itemView.findViewById(R.id.wordslist_setText)
+            val set: TextView = itemView.findViewById(R.id.title_set)
             set.text = "Set ${item.setNo}"
 
-            val layout: ConstraintLayout = itemView.findViewById(R.id.wordslist_setLayout)
-            val icon: ImageView = itemView.findViewById(R.id.wordslist_setIcon)
+            val layout: ConstraintLayout = itemView.findViewById(R.id.layout_set)
+            val icon: ImageView = itemView.findViewById(R.id.icon_set)
 
             when {
                 item.isSetLocked -> {

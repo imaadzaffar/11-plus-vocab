@@ -12,40 +12,48 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.yuyakaido.android.cardstackview.*
+import com.yuyakaido.android.cardstackview.CardStackLayoutManager
+import com.yuyakaido.android.cardstackview.CardStackListener
+import com.yuyakaido.android.cardstackview.RewindAnimationSetting
+import com.yuyakaido.android.cardstackview.StackFrom
+import com.yuyakaido.android.cardstackview.SwipeAnimationSetting
+import com.yuyakaido.android.cardstackview.SwipeableMethod
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
+import com.zafaris.elevenplusvocab.databinding.FragmentLearnBinding
+import com.zafaris.elevenplusvocab.databinding.LearnDialogFinishBinding
 
 class LearnFragment : Fragment(), CardStackListener {
     private val args: LearnFragmentArgs by navArgs()
+    private var _binding: FragmentLearnBinding? = null
+    private var _finishDialogBinding: LearnDialogFinishBinding? = null
+    private val binding get() = _binding!!
+    private val finishDialogBinding get() = _finishDialogBinding!!
 
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
     private var setNo = 0
 
-    private lateinit var cardStackView: CardStackView
+    private lateinit var finishDialog: Dialog
+    private lateinit var mediaPlayer: MediaPlayer
+
     private lateinit var manager: CardStackLayoutManager
     private val adapter by lazy { WordsCardStackAdapter(getWords()) }
 
-    private lateinit var backButton: View
-    private lateinit var nextButton: View
-    private lateinit var finishDialog: Dialog
-
-    private lateinit var mediaPlayer: MediaPlayer
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view =  inflater.inflate(R.layout.fragment_learn, container, false)
+        _binding = FragmentLearnBinding.inflate(inflater, container, false)
+        val view =  binding.root
 
-        cardStackView = view.findViewById(R.id.learn_card_stack_view)
-        backButton = view.findViewById(R.id.learn_back_button)
-        nextButton = view.findViewById(R.id.learn_next_button)
+        _finishDialogBinding = LearnDialogFinishBinding.inflate(inflater)
+
+        finishDialog = Dialog(requireContext())
 
         return view
     }
@@ -55,6 +63,11 @@ class LearnFragment : Fragment(), CardStackListener {
 
         setupCardStackView()
         setupButtons()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun setupCardStackView() {
@@ -71,9 +84,9 @@ class LearnFragment : Fragment(), CardStackListener {
         manager.setCanScrollVertical(false)
         manager.setSwipeableMethod(SwipeableMethod.Automatic)
         manager.setOverlayInterpolator(LinearInterpolator())
-        cardStackView.layoutManager = manager
-        cardStackView.adapter = adapter
-        cardStackView.itemAnimator.apply {
+        binding.cardsWords.layoutManager = manager
+        binding.cardsWords.adapter = adapter
+        binding.cardsWords.itemAnimator.apply {
             if (this is DefaultItemAnimator) {
                 supportsChangeAnimations = false
             }
@@ -88,11 +101,11 @@ class LearnFragment : Fragment(), CardStackListener {
                 .build()
         manager.setRewindAnimationSetting(rewindSetting)
 
-        backButton.setOnClickListener {
+        binding.buttonBack.setOnClickListener {
             playButtonClickSound()
-            cardStackView.rewind()
+            binding.cardsWords.rewind()
             if (manager.topPosition == 0) {
-                backButton.visibility = View.INVISIBLE
+                binding.buttonBack.visibility = View.INVISIBLE
             }
         }
 
@@ -103,14 +116,14 @@ class LearnFragment : Fragment(), CardStackListener {
                 .build()
         manager.setSwipeAnimationSetting(swipeSetting)
 
-        nextButton.setOnClickListener {
+        binding.buttonNext.setOnClickListener {
             playButtonClickSound()
             if (manager.topPosition == wordsList.size - 1) {
                 showFinishDialog()
             } else {
-                cardStackView.swipe()
+                binding.cardsWords.swipe()
                 if (manager.topPosition == 0) {
-                    backButton.visibility = View.VISIBLE
+                    binding.buttonBack.visibility = View.VISIBLE
                 }
             }
         }
@@ -126,16 +139,11 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     private fun showFinishDialog() {
-        finishDialog = Dialog(requireContext())
+        finishDialog.setContentView(finishDialogBinding.root)
+        finishDialogBinding.titleDialog.text = "Finished Set $setNo"
 
-        finishDialog.setContentView(R.layout.learn_dialog_finish)
-        val finishTitle = finishDialog.findViewById<TextView>(R.id.learn_finishTitle)
-        finishTitle.text = "Finished Set $setNo"
-
-        val testButton = finishDialog.findViewById<Button>(R.id.learn_testButton)
-        testButton.setOnClickListener { navigateAction("test") }
-        val homeButton = finishDialog.findViewById<Button>(R.id.learn_homeButton)
-        homeButton.setOnClickListener { navigateAction("home") }
+        finishDialogBinding.buttonTest.setOnClickListener { navigateAction("test") }
+        finishDialogBinding.buttonHome.setOnClickListener { navigateAction("home") }
 
         finishDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         finishDialog.show()
@@ -181,12 +189,12 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     override fun onCardAppeared(view: View?, position: Int) {
-        val textView = view?.findViewById<TextView>(R.id.card_wordText)
+        val textView = view?.findViewById<TextView>(R.id.text_word)
         Log.d("CardStackView", "onCardAppeared: ($position) ${textView?.text}")
     }
 
     override fun onCardDisappeared(view: View?, position: Int) {
-        val textView = view?.findViewById<TextView>(R.id.card_wordText)
+        val textView = view?.findViewById<TextView>(R.id.text_word)
         Log.d("CardStackView", "onCardDisappeared: ($position) ${textView?.text}")
     }
 }

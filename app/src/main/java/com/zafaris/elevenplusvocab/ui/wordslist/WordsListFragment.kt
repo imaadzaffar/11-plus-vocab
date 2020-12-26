@@ -9,42 +9,52 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.zafaris.elevenplusvocab.R
+import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.data.model.Word
+import com.zafaris.elevenplusvocab.databinding.FragmentWordslistBinding
+import com.zafaris.elevenplusvocab.databinding.HomeDialogSetLockedBinding
+import com.zafaris.elevenplusvocab.databinding.HomeDialogSetUnlockedBinding
+import com.zafaris.elevenplusvocab.databinding.WordslistDialogWordBinding
 import com.zafaris.elevenplusvocab.util.NO_OF_FREE_SETS
 import com.zafaris.elevenplusvocab.util.NO_OF_TOTAL_SETS
 import com.zafaris.elevenplusvocab.util.SET_SIZE
-import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
-import java.util.ArrayList
+import java.util.*
 
 class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
-	private lateinit var db: WordBankDbAccess
+	private var _binding: FragmentWordslistBinding? = null
+	private var _setUnlockedBinding: HomeDialogSetUnlockedBinding? = null
+	private var _setLockedBinding: HomeDialogSetLockedBinding? = null
+	private var _wordDialogBinding: WordslistDialogWordBinding? = null
+	private val binding get() = _binding!!
+	private val setUnlockedBinding get() = _setUnlockedBinding!!
+	private val setLockedBinding get() = _setLockedBinding!!
+	private val wordDialogBinding get() = _wordDialogBinding!!
 
-	private lateinit var recyclerView: RecyclerView
-	private lateinit var manager: RecyclerView.LayoutManager
-	private lateinit var adapter: WordsListAdapter
+	private lateinit var db: WordBankDbAccess
 	private var clickedSetNo = 0
 
-	private lateinit var itemsList: MutableList<Any>
 	private lateinit var setDialog: Dialog
 	private lateinit var wordDialog: Dialog
-
 	private lateinit var mediaPlayer: MediaPlayer
+	
+	private lateinit var itemsList: MutableList<Any>
+	private lateinit var adapter: WordsListAdapter
+	private lateinit var manager: LinearLayoutManager
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-		val view = inflater.inflate(R.layout.fragment_wordslist, container, false)
+		_binding = FragmentWordslistBinding.inflate(inflater, container, false)
+		val view = binding.root
 
-		recyclerView = view.findViewById(R.id.wordslist_recyclerView)
+		_setUnlockedBinding = HomeDialogSetUnlockedBinding.inflate(inflater)
+		_setLockedBinding = HomeDialogSetLockedBinding.inflate(inflater)
+		_wordDialogBinding = WordslistDialogWordBinding.inflate(inflater)
+
 		setDialog = Dialog(requireContext())
 		wordDialog = Dialog(requireContext())
 
@@ -54,6 +64,14 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		generateDummyList()
 		buildRv()
+	}
+
+	override fun onDestroyView() {
+		super.onDestroyView()
+		_binding = null
+		_setUnlockedBinding = null
+		_setLockedBinding = null
+		_wordDialogBinding = null
 	}
 
 	private fun generateDummyList() {
@@ -94,8 +112,8 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	private fun buildRv() {
 		adapter = WordsListAdapter(itemsList, this)
 		manager = LinearLayoutManager(context)
-		recyclerView.layoutManager = manager
-		recyclerView.adapter = adapter
+		binding.rvItems.layoutManager = manager
+		binding.rvItems.adapter = adapter
 	}
 
 	override fun onItemWordClick(word: Word, position: Int) {
@@ -104,50 +122,37 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	}
 
 	private fun showWordDialog(word: Word) {
-		wordDialog.setContentView(R.layout.wordslist_dialog_word)
+		wordDialog.setContentView(wordDialogBinding.root)
 
-		val id: TextView = wordDialog.findViewById(R.id.card_idText)
-		val wordText: TextView = wordDialog.findViewById(R.id.card_wordText)
-		val type: TextView = wordDialog.findViewById(R.id.card_typeText)
-		val audioButton: ImageButton = wordDialog.findViewById(R.id.card_audioButton)
-		val definition: TextView = wordDialog.findViewById(R.id.card_definitionText)
-		val example: TextView = wordDialog.findViewById(R.id.card_exampleText)
-		val synonymsCard: CardView = wordDialog.findViewById(R.id.card_synonymsCard)
-		val synonymsTitle: TextView = wordDialog.findViewById(R.id.card_synonymsTitle)
-		val synonymsText: TextView = wordDialog.findViewById(R.id.card_synonymsText)
-		val antonymsCard: CardView = wordDialog.findViewById(R.id.card_antonymsCard)
-		val antonymsTitle: TextView = wordDialog.findViewById(R.id.card_antonymsTitle)
-		val antonymsText: TextView = wordDialog.findViewById(R.id.card_antonymsText)
+		wordDialogBinding.textId.text = word.id.toString()
+		wordDialogBinding.textWord.text = word.word
+		wordDialogBinding.textType.text = word.type
 
-		id.text = word.id.toString()
-		wordText.text = word.word
-		type.text = word.type
-
-		audioButton.setOnClickListener { v ->
+		wordDialogBinding.buttonAudio.setOnClickListener { v ->
 			//TODO: Add audio sound for word
 			Toast.makeText(v.context, "Play audio for word", Toast.LENGTH_SHORT).show()
 		}
 
-		definition.text = word.meanings[0].definition
-		example.text = word.meanings[0].example
+		wordDialogBinding.textDefinition.text = word.meanings[0].definition
+		wordDialogBinding.textExample.text = word.meanings[0].example
 
 		val synonyms = word.meanings[0].synonyms
 		if (synonyms == "N/A") {
-			synonymsCard.visibility = View.INVISIBLE
+			wordDialogBinding.cardSynonyms.visibility = View.INVISIBLE
 		} else {
 			val size = synonyms.split(", ").size
-			synonymsCard.visibility = View.VISIBLE
-			synonymsTitle.text = "Synonyms ($size):"
-			synonymsText.text = word.meanings[0].synonyms
+			wordDialogBinding.cardSynonyms.visibility = View.VISIBLE
+			wordDialogBinding.titleSynonyms.text = "Synonyms ($size):"
+			wordDialogBinding.textSyononyms.text = word.meanings[0].synonyms
 		}
 		val antonyms = word.meanings[0].antonyms
 		if (antonyms == "N/A") {
-			antonymsCard.visibility = View.INVISIBLE
+			wordDialogBinding.cardAntonyms.visibility = View.INVISIBLE
 		} else {
 			val size = antonyms.split(", ").size
-			antonymsCard.visibility = View.VISIBLE
-			antonymsTitle.text = "Antonyms ($size):"
-			antonymsText.text = word.meanings[0].antonyms
+			wordDialogBinding.cardAntonyms.visibility = View.VISIBLE
+			wordDialogBinding.titleAntonyms.text = "Antonyms ($size):"
+			wordDialogBinding.textAntonyms.text = word.meanings[0].antonyms
 		}
 
 		wordDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -163,65 +168,41 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 		clickedSetNo = set.setNo
 		when {
 			set.isSetLocked -> {
-				showPopupLocked()
-			}
-			set.isSetCompleted -> {
-				showPopupCompleted()
+				showLockedDialog()
 			}
 			else -> {
-				showPopupPlay()
+				showUnlockedDialog()
 			}
 		}
 	}
 
-	private fun showPopupLocked() {
-		setDialog.setContentView(R.layout.home_dialog_set_locked)
-		val popupTitle = setDialog.findViewById<TextView>(R.id.popupTitle)
-		val unlockButton = setDialog.findViewById<Button>(R.id.unlockButton)
-		val title = "Set $clickedSetNo locked"
-		popupTitle.text = title
-		unlockButton.setOnClickListener {
+	private fun showUnlockedDialog() {
+		setDialog.setContentView(setUnlockedBinding.root)
+		setUnlockedBinding.titleDialog.text = "Set $clickedSetNo"
+		setUnlockedBinding.buttonLearn.setOnClickListener { navigateAction("learn") }
+		setUnlockedBinding.buttonTest.setOnClickListener { navigateAction("test") }
+		setUnlockedBinding.buttonStats.setOnClickListener { navigateAction("stats") }
+		setDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+		setDialog.show()
+	}
+
+	private fun showLockedDialog() {
+		setDialog.setContentView(setLockedBinding.root)
+		setLockedBinding.titleDialog.text = "Set $clickedSetNo locked"
+		setLockedBinding.buttonUnlock.setOnClickListener {
 			Toast.makeText(context, "Unlock sets", Toast.LENGTH_SHORT).show()
 			//TODO: Add payment
 		}
-		val noThanksButton = setDialog.findViewById<TextView>(R.id.noThanksButton)
-		noThanksButton.setOnClickListener {
+		setLockedBinding.buttonDismiss.setOnClickListener {
 			setDialog.dismiss()
 		}
 		setDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 		setDialog.show()
 	}
 
-	private fun showPopupCompleted() {
-		setDialog.setContentView(R.layout.home_dialog_set_completed)
-		val popupTitle = setDialog.findViewById<TextView>(R.id.popupTitle)
-		val learnButton = setDialog.findViewById<Button>(R.id.learnButton)
-		val testButton = setDialog.findViewById<Button>(R.id.testButton)
-		val statsButton = setDialog.findViewById<Button>(R.id.statsButton)
-		val title = "Set $clickedSetNo completed"
-		popupTitle.text = title
-		learnButton.setOnClickListener { navigateAction("learn") }
-		testButton.setOnClickListener { navigateAction("test") }
-		statsButton.setOnClickListener { navigateAction("stats") }
-		setDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-		setDialog.show()
-	}
-
-	private fun showPopupPlay() {
-		setDialog.setContentView(R.layout.home_dialog_set_play)
-		val popupTitle = setDialog.findViewById<TextView>(R.id.popupTitle)
-		val learnButton = setDialog.findViewById<Button>(R.id.learnButton)
-		val testButton = setDialog.findViewById<Button>(R.id.testButton)
-		val title = "Set $clickedSetNo"
-		popupTitle.text = title
-		learnButton.setOnClickListener { navigateAction("learn") }
-		testButton.setOnClickListener { navigateAction("test") }
-		setDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-		setDialog.show()
-	}
-
 	private fun navigateAction(destination: String) {
 		playMenuClickSound()
+		manager.smoothScrollToPosition(binding.rvItems, null, 0)
 		setDialog.dismiss()
 
 		val setNo = clickedSetNo

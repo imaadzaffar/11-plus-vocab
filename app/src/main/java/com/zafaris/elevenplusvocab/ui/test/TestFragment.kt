@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -24,14 +23,26 @@ import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 import com.zafaris.elevenplusvocab.data.model.Question
 import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.data.model.Meaning
+import com.zafaris.elevenplusvocab.databinding.FragmentTestBinding
+import com.zafaris.elevenplusvocab.databinding.TestDialogScoreBinding
 import com.zafaris.elevenplusvocab.util.*
 
 class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.OnItemClickListener {
     private val args: TestFragmentArgs by navArgs()
+    private var _binding: FragmentTestBinding? = null
+    private var _scoreDialogBinding: TestDialogScoreBinding? = null
+    private val binding get() = _binding!!
+    private val scoreDialogBinding get() = _scoreDialogBinding!!
 
     private lateinit var db: WordBankDbAccess
     private lateinit var wordsList: List<Word>
     private var setNo = 0
+
+    private lateinit var scoreDialog: Dialog
+    private lateinit var mediaPlayer: MediaPlayer
+
+    private lateinit var manager: CardStackLayoutManager
+    private lateinit var adapter: QuestionsCardStackAdapter
 
     private var score = 0
     private var questionNo = 0
@@ -43,23 +54,11 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     private lateinit var randomWord: Word
     private lateinit var randomMeaning: Meaning
 
-    private lateinit var cardStackView: CardStackView
-    private lateinit var manager: CardStackLayoutManager
-    private lateinit var adapter: QuestionsCardStackAdapter
-
-    private lateinit var backButton: View
-    private lateinit var nextButton: View
-    private lateinit var scoreDialog: Dialog
-
-    private lateinit var mediaPlayer: MediaPlayer
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view =  inflater.inflate(R.layout.fragment_test, container, false)
+        _binding = FragmentTestBinding.inflate(inflater, container, false)
+        val view =  binding.root
 
-        cardStackView = view.findViewById(R.id.test_card_stack_view)
-
-        backButton = view.findViewById(R.id.test_back_button)
-        nextButton = view.findViewById(R.id.test_next_button)
+        _scoreDialogBinding = TestDialogScoreBinding.inflate(inflater)
 
         return view
     }
@@ -72,6 +71,12 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
 
         setupCardStackView()
         setupButtons()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        _scoreDialogBinding = null
     }
 
     private fun setupCardStackView() {
@@ -89,9 +94,9 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
         manager.setCanScrollVertical(false)
         manager.setSwipeableMethod(SwipeableMethod.Automatic)
         manager.setOverlayInterpolator(LinearInterpolator())
-        cardStackView.layoutManager = manager
-        cardStackView.adapter = adapter
-        cardStackView.itemAnimator.apply {
+        binding.cardsQuestions.layoutManager = manager
+        binding.cardsQuestions.adapter = adapter
+        binding.cardsQuestions.itemAnimator.apply {
             if (this is DefaultItemAnimator) {
                 supportsChangeAnimations = false
             }
@@ -123,7 +128,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
                 .build()
         manager.setRewindAnimationSetting(rewindSetting)
 
-        backButton.setOnClickListener { backButtonClick() }
+        binding.buttonBack.setOnClickListener { backButtonClick() }
 
         val swipeSetting = SwipeAnimationSetting.Builder()
                 .setDirection(Direction.Left)
@@ -132,23 +137,18 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
                 .build()
         manager.setSwipeAnimationSetting(swipeSetting)
 
-        nextButton.setOnClickListener { nextButtonClick() }
+        binding.buttonNext.setOnClickListener { nextButtonClick() }
     }
 
     private fun showScoreDialog() {
         scoreDialog = Dialog(requireContext())
 
-        scoreDialog.setContentView(R.layout.test_dialog_score)
-        val scoreTitle = scoreDialog.findViewById<TextView>(R.id.test_scorePopupTitle)
-        scoreTitle.text = "Score for Set $setNo"
-        val scoreText = scoreDialog.findViewById<TextView>(R.id.test_scoreText)
-        scoreText.text = "$score / $NO_OF_QUESTIONS"
+        scoreDialog.setContentView(scoreDialogBinding.root)
+        scoreDialogBinding.titleDialog.text = "Score for Set $setNo"
+        scoreDialogBinding.textScore.text = "$score / $NO_OF_QUESTIONS"
 
-        val viewQuestionsButton = scoreDialog.findViewById<Button>(R.id.test_viewQuestionsButton)
-        viewQuestionsButton.setOnClickListener { viewQuestionsButtonClick() }
-
-        val homeButton = scoreDialog.findViewById<Button>(R.id.test_homeButton)
-        homeButton.setOnClickListener { navigateAction("home") }
+        scoreDialogBinding.buttonViewQuestions.setOnClickListener { viewQuestionsButtonClick() }
+        scoreDialogBinding.buttonHome.setOnClickListener { navigateAction("home") }
 
         scoreDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         scoreDialog.show()
@@ -157,11 +157,11 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     private fun backButtonClick() {
         playSound(R.raw.sfx_menu_click)
 
-        cardStackView.rewind()
+        binding.cardsQuestions.rewind()
         questionNo = manager.topPosition
         Log.d("questionNo", questionNo.toString())
         if (manager.topPosition == 0) {
-            backButton.visibility = View.INVISIBLE
+            binding.buttonBack.visibility = View.INVISIBLE
         }
     }
 
@@ -176,10 +176,10 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
             if (manager.topPosition == questionsList.size - 1) {
                 onTestComplete()
             } else {
-                cardStackView.swipe()
+                binding.cardsQuestions.swipe()
                 questionNo = manager.topPosition + 1
                 if (manager.topPosition == 0 && completedState) {
-                    backButton.visibility = View.VISIBLE
+                    binding.buttonBack.visibility = View.VISIBLE
                 }
             }
             Log.d("questionNo", questionNo.toString())
@@ -188,14 +188,14 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
 
     private fun onTestComplete() {
         completedState = true
-        backButton.visibility = View.VISIBLE
+        binding.buttonBack.visibility = View.VISIBLE
         showScoreDialog()
     }
 
     private fun viewQuestionsButtonClick() {
         scoreDialog.dismiss()
-        manager.smoothScrollToPosition(cardStackView, null, 0)
-        backButton.visibility = View.INVISIBLE
+        manager.smoothScrollToPosition(binding.cardsQuestions, null, 0)
+        binding.buttonBack.visibility = View.INVISIBLE
     }
 
     private fun getWords() {
@@ -418,12 +418,12 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     }
 
     override fun onCardAppeared(view: View?, position: Int) {
-        val textView = view?.findViewById<TextView>(R.id.card_test_questionText)
+        val textView = view?.findViewById<TextView>(R.id.text_question)
         Log.d("CardStackView", "onCardAppeared: ($position) ${textView?.text}")
     }
 
     override fun onCardDisappeared(view: View?, position: Int) {
-        val textView = view?.findViewById<TextView>(R.id.card_test_questionText)
+        val textView = view?.findViewById<TextView>(R.id.text_question)
         Log.d("CardStackView", "onCardDisappeared: ($position) ${textView?.text}")
     }
 }
