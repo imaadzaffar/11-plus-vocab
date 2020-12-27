@@ -113,7 +113,7 @@ class LearnFragment : Fragment(), CardStackListener {
         manager.setRewindAnimationSetting(rewindSetting)
 
         binding.buttonBack.setOnClickListener {
-            playButtonClickSound()
+            playSound(R.raw.sfx_click_button_2)
             binding.cardsWords.rewind()
             if (manager.topPosition == 0) {
                 binding.buttonBack.visibility = View.INVISIBLE
@@ -128,7 +128,7 @@ class LearnFragment : Fragment(), CardStackListener {
         manager.setSwipeAnimationSetting(swipeSetting)
 
         binding.buttonNext.setOnClickListener {
-            playButtonClickSound()
+            playSound(R.raw.sfx_click_button_2)
             if (manager.topPosition == wordsList.size - 1) {
                 showFinishDialog()
             } else {
@@ -161,7 +161,7 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     private fun navigateAction(destination: String) {
-        playButtonClickSound()
+        playSound(R.raw.sfx_click_button)
         finishDialog.dismiss()
 
         if (destination == "home") {
@@ -175,8 +175,8 @@ class LearnFragment : Fragment(), CardStackListener {
         }
     }
 
-    private fun playButtonClickSound() {
-        mediaPlayer = MediaPlayer.create(context, R.raw.sfx_menu_click)
+    private fun playSound(resourceId: Int) {
+        mediaPlayer = MediaPlayer.create(context, resourceId)
         if (mediaPlayer.isPlaying) {
             mediaPlayer.release()
         }

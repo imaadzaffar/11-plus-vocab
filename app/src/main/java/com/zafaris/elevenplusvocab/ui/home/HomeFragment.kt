@@ -144,7 +144,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     }
 
     override fun onItemSetClick(set: Set) {
-        playMenuClickSound()
+        playSound(R.raw.sfx_click_set)
         clickedSetNo = set.setNo
         when {
             set.isSetLocked -> {
@@ -181,7 +181,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     }
 
     private fun navigateAction(destination: String) {
-        playMenuClickSound()
+        playSound(R.raw.sfx_click_button)
         manager.smoothScrollToPosition(binding.rvSets, null, 0)
         setDialog.dismiss()
 
@@ -195,8 +195,8 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         findNavController().navigate(action)
     }
 
-    private fun playMenuClickSound() {
-        mediaPlayer = MediaPlayer.create(context, R.raw.sfx_menu_click)
+    private fun playSound(resourceId: Int) {
+        mediaPlayer = MediaPlayer.create(context, resourceId)
         if (mediaPlayer.isPlaying) {
             mediaPlayer.release()
         }

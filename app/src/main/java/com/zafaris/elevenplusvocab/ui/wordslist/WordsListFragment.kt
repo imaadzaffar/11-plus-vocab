@@ -172,7 +172,7 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	}
 
 	override fun onItemWordClick(word: Word, position: Int) {
-		playMenuClickSound()
+		playSound(R.raw.sfx_click_button_2)
 		showWordDialog(word)
 	}
 
@@ -215,7 +215,7 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	}
 
 	override fun onItemSetClick(set: Set, position: Int) {
-		playMenuClickSound()
+		playSound(R.raw.sfx_click_set)
 		showSetDialog(set)
 	}
 	
@@ -256,7 +256,7 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	}
 
 	private fun navigateAction(destination: String) {
-		playMenuClickSound()
+		playSound(R.raw.sfx_click_button)
 		manager.smoothScrollToPosition(binding.rvItems, null, 0)
 		setDialog.dismiss()
 
@@ -270,12 +270,11 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 		findNavController().navigate(action)
 	}
 
-	private fun playMenuClickSound() {
-		mediaPlayer = MediaPlayer.create(context, R.raw.sfx_menu_click)
+	private fun playSound(resourceId: Int) {
+		mediaPlayer = MediaPlayer.create(context, resourceId)
 		if (mediaPlayer.isPlaying) {
 			mediaPlayer.release()
 		}
 		mediaPlayer.start()
 	}
-
 }

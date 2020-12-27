@@ -156,7 +156,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     }
 
     private fun backButtonClick() {
-        playSound(R.raw.sfx_menu_click)
+        playSound(R.raw.sfx_click_button_2)
 
         binding.cardsQuestions.rewind()
         questionNo = manager.topPosition
@@ -167,24 +167,20 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     }
 
     private fun nextButtonClick() {
-        playSound(R.raw.sfx_menu_click)
+        playSound(R.raw.sfx_click_button_2)
 
-        if (!answeredState && !completedState) {
-            //StyleableToast.makeText(this@TestActivity, "Please select an answer", R.style.errorToast).show()
+        answeredState = false
+        // completed test
+        if (manager.topPosition == questionsList.size - 1) {
+            onTestComplete()
         } else {
-            answeredState = false
-            // completed test
-            if (manager.topPosition == questionsList.size - 1) {
-                onTestComplete()
-            } else {
-                binding.cardsQuestions.swipe()
-                questionNo = manager.topPosition + 1
-                if (manager.topPosition == 0 && completedState) {
-                    binding.buttonBack.visibility = View.VISIBLE
-                }
+            binding.cardsQuestions.swipe()
+            questionNo = manager.topPosition + 1
+            if (manager.topPosition == 0 && completedState) {
+                binding.buttonBack.visibility = View.VISIBLE
             }
-            Log.d("questionNo", questionNo.toString())
         }
+        Log.d("questionNo", questionNo.toString())
     }
 
     private fun onTestComplete() {
@@ -379,16 +375,8 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
         return option
     }
 
-    private fun playSound(resourceId: Int) {
-        mediaPlayer = MediaPlayer.create(context, resourceId)
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.release()
-        }
-        mediaPlayer.start()
-    }
-
     private fun navigateAction(destination: String) {
-        playSound(R.raw.sfx_menu_click)
+        playSound(R.raw.sfx_click_button)
         scoreDialog.dismiss()
 
         if (destination == "home") {
@@ -400,6 +388,14 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
             }
             findNavController().navigate(action)
         }
+    }
+
+    private fun playSound(resourceId: Int) {
+        mediaPlayer = MediaPlayer.create(context, resourceId)
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.release()
+        }
+        mediaPlayer.start()
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {
