@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zafaris.elevenplusvocab.HomeGraphDirections
@@ -40,14 +41,12 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	private val setLockedBinding get() = _setLockedBinding!!
 	private val wordDialogBinding get() = _wordDialogBinding!!
 
-	private lateinit var db: WordBankDbAccess
-	private var clickedSetNo = 0
+	val model: WordsListViewModel by activityViewModels()
 
 	private lateinit var setDialog: Dialog
 	private lateinit var wordDialog: Dialog
 	private lateinit var mediaPlayer: MediaPlayer
-	
-	private lateinit var itemsList: MutableList<Any>
+
 	private lateinit var adapter: WordsListAdapter
 	private lateinit var manager: LinearLayoutManager
 
@@ -66,7 +65,6 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		generateDummyList()
 		buildRv()
 
 		setHasOptionsMenu(true)
@@ -129,43 +127,8 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 		}
 	}
 
-	private fun generateDummyList() {
-		itemsList = ArrayList()
-
-		db = WordBankDbAccess.getInstance(requireContext())
-		db.open()
-
-		val noOfSets = db.getNoOfSets(SET_SIZE)
-
-		for (i in 1..NO_OF_TOTAL_SETS) {
-			if (i <= NO_OF_FREE_SETS) {
-				itemsList.add(Set(i))
-			} else {
-				itemsList.add(Set(i, isSetLocked = true))
-			}
-			try {
-				val wordsList = db.getWordsList(i)
-				itemsList.addAll(wordsList)
-			} catch (e: Exception) {
-				val wordsList = MutableList(SET_SIZE) { index ->
-					Word(
-						(i - 1) * SET_SIZE + (index + 1),
-						i,
-						"example",
-						"",
-						emptyList()
-					)
-				}
-				itemsList.addAll(wordsList)
-			}
-			Log.d("listRecyclerView", itemsList.toString())
-		}
-
-		db.close()
-	}
-
 	private fun buildRv() {
-		adapter = WordsListAdapter(itemsList, this)
+		adapter = WordsListAdapter(model.generateDummyList(), this)
 		manager = LinearLayoutManager(context)
 		binding.rvItems.layoutManager = manager
 		binding.rvItems.adapter = adapter
@@ -216,11 +179,11 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 
 	override fun onItemSetClick(set: Set, position: Int) {
 		playSound(R.raw.sfx_click_set)
+		model.clickedSetNo = set.setNo
 		showSetDialog(set)
 	}
 	
 	private fun showSetDialog(set: Set) {
-		clickedSetNo = set.setNo
 		when {
 			set.isSetLocked -> {
 				showLockedDialog()
@@ -233,7 +196,7 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 
 	private fun showUnlockedDialog() {
 		setDialog.setContentView(setUnlockedBinding.root)
-		setUnlockedBinding.titleDialog.text = "Set $clickedSetNo"
+		setUnlockedBinding.titleDialog.text = "Set ${model.clickedSetNo}"
 		setUnlockedBinding.buttonLearn.setOnClickListener { navigateAction("learn") }
 		setUnlockedBinding.buttonTest.setOnClickListener { navigateAction("test") }
 		setUnlockedBinding.buttonStats.setOnClickListener { navigateAction("stats") }
@@ -243,7 +206,7 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 
 	private fun showLockedDialog() {
 		setDialog.setContentView(setLockedBinding.root)
-		setLockedBinding.titleDialog.text = "Set $clickedSetNo locked"
+		setLockedBinding.titleDialog.text = "Set ${model.clickedSetNo} locked"
 		setLockedBinding.buttonUnlock.setOnClickListener {
 			Toast.makeText(context, "Unlock sets", Toast.LENGTH_SHORT).show()
 			//TODO: Add payment
@@ -260,11 +223,10 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 		manager.smoothScrollToPosition(binding.rvItems, null, 0)
 		setDialog.dismiss()
 
-		val setNo = clickedSetNo
 		val action = when (destination) {
-			"learn" -> HomeGraphDirections.actionGlobalLearn(setNo)
-			"test" -> HomeFragmentDirections.actionGlobalTest(setNo)
-			"stats" -> HomeFragmentDirections.actionGlobalStats(setNo)
+			"learn" -> HomeGraphDirections.actionGlobalLearn(model.clickedSetNo)
+			"test" -> HomeFragmentDirections.actionGlobalTest(model.clickedSetNo)
+			"stats" -> HomeFragmentDirections.actionGlobalStats(model.clickedSetNo)
 			else -> throw IllegalArgumentException("Invalid destination")
 		}
 		findNavController().navigate(action)

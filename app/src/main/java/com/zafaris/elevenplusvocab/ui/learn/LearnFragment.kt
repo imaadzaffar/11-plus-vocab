@@ -1,6 +1,7 @@
 package com.zafaris.elevenplusvocab.ui.learn
 
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
@@ -15,19 +16,19 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
-import com.yuyakaido.android.cardstackview.*
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
+import com.yuyakaido.android.cardstackview.Direction
+import com.yuyakaido.android.cardstackview.Duration
 import com.yuyakaido.android.cardstackview.RewindAnimationSetting
 import com.yuyakaido.android.cardstackview.StackFrom
 import com.yuyakaido.android.cardstackview.SwipeAnimationSetting
 import com.yuyakaido.android.cardstackview.SwipeableMethod
 import com.zafaris.elevenplusvocab.R
-import com.zafaris.elevenplusvocab.data.model.Word
-import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 import com.zafaris.elevenplusvocab.databinding.FragmentLearnBinding
 import com.zafaris.elevenplusvocab.databinding.LearnDialogFinishBinding
 
@@ -38,15 +39,13 @@ class LearnFragment : Fragment(), CardStackListener {
     private val binding get() = _binding!!
     private val finishDialogBinding get() = _finishDialogBinding!!
 
-    private lateinit var db: WordBankDbAccess
-    private lateinit var wordsList: List<Word>
-    private var setNo = 0
+    private val model: LearnViewModel by viewModels()
 
     private lateinit var finishDialog: Dialog
     private lateinit var mediaPlayer: MediaPlayer
 
     private lateinit var manager: CardStackLayoutManager
-    private val adapter by lazy { WordsCardStackAdapter(getWords()) }
+    private lateinit var adapter: WordsCardStackAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,10 +69,18 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setNo = args.setNo
+        super.onViewCreated(view, savedInstanceState)
+
+        model.setNo = args.setNo
+        model.getWords()
 
         setupCardStackView()
         setupButtons()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        model.setNo = args.setNo
     }
 
     override fun onDestroyView() {
@@ -82,6 +89,7 @@ class LearnFragment : Fragment(), CardStackListener {
     }
 
     private fun setupCardStackView() {
+        adapter = WordsCardStackAdapter(model.wordsList)
         manager = CardStackLayoutManager(context, this)
 
         manager.setStackFrom(StackFrom.Right)
@@ -129,7 +137,7 @@ class LearnFragment : Fragment(), CardStackListener {
 
         binding.buttonNext.setOnClickListener {
             playSound(R.raw.sfx_click_button_2)
-            if (manager.topPosition == wordsList.size - 1) {
+            if (manager.topPosition == model.getWordsListSize() - 1) {
                 showFinishDialog()
             } else {
                 binding.cardsWords.swipe()
@@ -140,18 +148,10 @@ class LearnFragment : Fragment(), CardStackListener {
         }
     }
 
-    private fun getWords(): List<Word> {
-        // open database and get wordsList
-        db = WordBankDbAccess.getInstance(requireActivity().applicationContext)
-        db.open()
-        wordsList = db.getWordsList(setNo)
-        db.close()
-        return wordsList
-    }
 
     private fun showFinishDialog() {
         finishDialog.setContentView(finishDialogBinding.root)
-        finishDialogBinding.titleDialog.text = "Finished Set $setNo"
+        finishDialogBinding.titleDialog.text = "Finished Set ${model.setNo}"
 
         finishDialogBinding.buttonTest.setOnClickListener { navigateAction("test") }
         finishDialogBinding.buttonHome.setOnClickListener { navigateAction("home") }
@@ -168,7 +168,7 @@ class LearnFragment : Fragment(), CardStackListener {
             findNavController().navigate(R.id.action_global_home)
         } else {
             val action = when (destination) {
-                "test" -> LearnFragmentDirections.actionLearnFragmentToTestFragment(setNo)
+                "test" -> LearnFragmentDirections.actionLearnFragmentToTestFragment(model.setNo)
                 else -> throw IllegalArgumentException("Invalid destination")
             }
             findNavController().navigate(action)

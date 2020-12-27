@@ -16,20 +16,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.zafaris.elevenplusvocab.HomeGraphDirections
 import com.zafaris.elevenplusvocab.R
-import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.databinding.FragmentHomeBinding
 import com.zafaris.elevenplusvocab.databinding.HomeDialogSetLockedBinding
 import com.zafaris.elevenplusvocab.databinding.HomeDialogSetUnlockedBinding
 import com.zafaris.elevenplusvocab.ui.settings.SettingsActivity
-import com.zafaris.elevenplusvocab.util.NO_OF_FREE_SETS
-import com.zafaris.elevenplusvocab.util.NO_OF_TOTAL_SETS
-import com.zafaris.elevenplusvocab.util.SET_SIZE
-import java.util.*
 
 class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     private var _binding: FragmentHomeBinding? = null
@@ -39,13 +35,11 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     private val setUnlockedBinding get() = _setUnlockedBinding!!
     private val setLockedBinding get() = _setLockedBinding!!
 
-    private lateinit var db: WordBankDbAccess
-    private var clickedSetNo = 0
+    private val model: HomeViewModel by activityViewModels()
 
     private lateinit var setDialog: Dialog
     private lateinit var mediaPlayer: MediaPlayer
 
-    private lateinit var sets: ArrayList<Set>
     private lateinit var adapter: SetAdapter
     private lateinit var manager: GridLayoutManager
 
@@ -62,7 +56,6 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        generateDummySets()
         buildSetRv()
 
         setHasOptionsMenu(true)
@@ -119,24 +112,8 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         }
     }
 
-    private fun generateDummySets() {
-        db = WordBankDbAccess.getInstance(requireContext())
-        db.open()
-        val noOfSets = db.getNoOfSets(SET_SIZE)
-        db.close()
-        sets = ArrayList()
-
-        for (i in 1..NO_OF_TOTAL_SETS) {
-            if (i <= NO_OF_FREE_SETS) {
-                sets.add(Set(setNo = i))
-            } else {
-                sets.add(Set(setNo = i, isSetLocked = true))
-            }
-        }
-    }
-
     private fun buildSetRv() {
-        adapter = SetAdapter(sets, this)
+        adapter = SetAdapter(model.generateDummySets(), this)
         manager = GridLayoutManager(requireContext(), 2)
         binding.rvSets.addItemDecoration(SpacingItemDecoration(resources.getDimensionPixelSize(R.dimen.set_spacing), 2, true))
         binding.rvSets.layoutManager = manager
@@ -145,7 +122,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
 
     override fun onItemSetClick(set: Set) {
         playSound(R.raw.sfx_click_set)
-        clickedSetNo = set.setNo
+        model.clickedSetNo = set.setNo
         when {
             set.isSetLocked -> {
                 showLockedDialog()
@@ -158,7 +135,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
 
     private fun showUnlockedDialog() {
         setDialog.setContentView(setUnlockedBinding.root)
-        setUnlockedBinding.titleDialog.text = "Set $clickedSetNo"
+        setUnlockedBinding.titleDialog.text = "Set ${model.clickedSetNo}"
         setUnlockedBinding.buttonLearn.setOnClickListener { navigateAction("learn") }
         setUnlockedBinding.buttonTest.setOnClickListener { navigateAction("test") }
         setUnlockedBinding.buttonStats.setOnClickListener { navigateAction("stats") }
@@ -168,7 +145,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
 
     private fun showLockedDialog() {
         setDialog.setContentView(setLockedBinding.root)
-        setLockedBinding.titleDialog.text = "Set $clickedSetNo locked"
+        setLockedBinding.titleDialog.text = "Set ${model.clickedSetNo} locked"
         setLockedBinding.buttonUnlock.setOnClickListener {
             Toast.makeText(context, "Unlock sets", Toast.LENGTH_SHORT).show()
             //TODO: Add payment
@@ -185,11 +162,10 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         manager.smoothScrollToPosition(binding.rvSets, null, 0)
         setDialog.dismiss()
 
-        val setNo = clickedSetNo
         val action = when (destination) {
-            "learn" -> HomeGraphDirections.actionGlobalLearn(setNo)
-            "test" -> HomeFragmentDirections.actionGlobalTest(setNo)
-            "stats" -> HomeFragmentDirections.actionGlobalStats(setNo)
+            "learn" -> HomeGraphDirections.actionGlobalLearn(model.clickedSetNo)
+            "test" -> HomeFragmentDirections.actionGlobalTest(model.clickedSetNo)
+            "stats" -> HomeFragmentDirections.actionGlobalStats(model.clickedSetNo)
             else -> throw IllegalArgumentException("Invalid destination")
         }
         findNavController().navigate(action)
