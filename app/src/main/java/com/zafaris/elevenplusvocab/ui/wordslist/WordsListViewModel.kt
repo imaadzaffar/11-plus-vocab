@@ -13,6 +13,7 @@ import java.util.ArrayList
 
 class WordsListViewModel(application: Application) : AndroidViewModel(application) {
 	var itemsList: MutableList<Any> = ArrayList()
+	var sets: MutableList<Set> = ArrayList()
 	var clickedSetNo: Int = 0
 
 	fun generateDummyList(): MutableList<Any> {
@@ -25,8 +26,10 @@ class WordsListViewModel(application: Application) : AndroidViewModel(applicatio
 
 		for (i in 1..NO_OF_TOTAL_SETS) {
 			if (i <= NO_OF_FREE_SETS) {
+				sets.add(Set(i))
 				itemsList.add(Set(i))
 			} else {
+				sets.add(Set(i, isSetLocked = true))
 				itemsList.add(Set(i, isSetLocked = true))
 			}
 			try {

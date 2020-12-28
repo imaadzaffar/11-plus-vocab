@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zafaris.elevenplusvocab.HomeGraphDirections
 import com.zafaris.elevenplusvocab.R
@@ -130,13 +131,20 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	private fun buildRv() {
 		adapter = WordsListAdapter(model.generateDummyList(), this)
 		manager = LinearLayoutManager(context)
+
+		binding.rvItems.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 		binding.rvItems.layoutManager = manager
 		binding.rvItems.adapter = adapter
 	}
 
 	override fun onItemWordClick(word: Word, position: Int) {
 		playSound(R.raw.sfx_click_button_2)
-		showWordDialog(word)
+		val set = model.sets[position / SET_SIZE]
+		if (set.isSetLocked) {
+			showLockedDialog(set.setNo)
+		} else {
+			showWordDialog(word)
+		}
 	}
 
 	private fun showWordDialog(word: Word) {
@@ -186,7 +194,7 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	private fun showSetDialog(set: Set) {
 		when {
 			set.isSetLocked -> {
-				showLockedDialog()
+				showLockedDialog(set.setNo)
 			}
 			else -> {
 				showUnlockedDialog()
@@ -204,9 +212,9 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 		setDialog.show()
 	}
 
-	private fun showLockedDialog() {
+	private fun showLockedDialog(setNo: Int) {
 		setDialog.setContentView(setLockedBinding.root)
-		setLockedBinding.titleDialog.text = "Set ${model.clickedSetNo} locked"
+		setLockedBinding.titleDialog.text = "Set ${setNo} locked"
 		setLockedBinding.buttonUnlock.setOnClickListener {
 			Toast.makeText(context, "Unlock sets", Toast.LENGTH_SHORT).show()
 			//TODO: Add payment

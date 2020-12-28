@@ -115,6 +115,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     private fun buildSetRv() {
         adapter = SetAdapter(model.generateDummySets(), this)
         manager = GridLayoutManager(requireContext(), 2)
+
         binding.rvSets.addItemDecoration(SpacingItemDecoration(resources.getDimensionPixelSize(R.dimen.set_spacing), 2, true))
         binding.rvSets.layoutManager = manager
         binding.rvSets.adapter = adapter
