@@ -5,12 +5,18 @@
         android:id="@+id/homeFragment"
         android:enabled="true"
         android:icon="@drawable/ic_icon_home"
-        android:title="Home" />
+        android:title="@string/label_fragment_home" />
 
     <item
         android:id="@+id/wordsListFragment"
         android:enabled="true"
         android:icon="@drawable/ic_icon_list"
-        android:title="Words List" />
+        android:title="@string/label_fragment_wordslist" />
+
+    <item
+        android:id="@+id/guideFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_icon_help"
+        android:title="@string/label_fragment_guide" />
 
 </menu>

@@ -49,43 +49,32 @@
 
     <fragment
         android:id="@+id/statsFragment"
-        android:label="@string/label_fragment_stats">
+        android:name="com.zafaris.elevenplusvocab.ui.stats.StatsFragment"
+        android:label="@string/label_fragment_stats"
+        tools:layout="@layout/fragment_stats">
         <argument
             android:name="setNo"
-            app:argType="integer"
-            android:defaultValue="0"/>
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
 
     <navigation android:id="@+id/homeGraph"
         app:startDestination="@id/homeFragment">
         <fragment
-            android:id="@+id/guideFragment"
-            android:label="@string/label_fragment_guide"/>
-        <fragment
             android:id="@+id/homeFragment"
             android:name="com.zafaris.elevenplusvocab.ui.home.HomeFragment"
             android:label="@string/label_fragment_home"
-            tools:layout="@layout/fragment_home">
-            <action
-                android:id="@+id/action_homeFragment_to_wordsListFragment"
-                app:destination="@id/wordsListFragment"
-                app:enterAnim="@anim/nav_default_enter_anim"
-                app:exitAnim="@anim/nav_default_exit_anim"
-                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-                app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-            <action
-                android:id="@+id/action_homeFragment_to_guideFragment"
-                app:destination="@id/guideFragment"
-                app:enterAnim="@anim/nav_default_enter_anim"
-                app:exitAnim="@anim/nav_default_exit_anim"
-                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-                app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        </fragment>
+            tools:layout="@layout/fragment_home"/>
         <fragment
             android:id="@+id/wordsListFragment"
             android:name="com.zafaris.elevenplusvocab.ui.wordslist.WordsListFragment"
             android:label="@string/label_fragment_wordslist"
             tools:layout="@layout/fragment_wordslist"/>
+        <fragment
+            android:id="@+id/guideFragment"
+            android:name="com.zafaris.elevenplusvocab.ui.guide.GuideFragment"
+            android:label="@string/label_fragment_guide"
+            tools:layout="@layout/fragment_guide"/>
         <action
             android:id="@+id/action_global_learn"
             app:destination="@id/learnFragment"
