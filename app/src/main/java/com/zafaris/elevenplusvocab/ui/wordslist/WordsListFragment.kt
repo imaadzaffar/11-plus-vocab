@@ -150,11 +150,12 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	}
 
 	override fun onItemWordClick(word: Word, position: Int) {
-		playSound(R.raw.sfx_click_button_2)
 		val set = model.sets[position / SET_SIZE]
 		if (set.isSetLocked) {
+			playSound(R.raw.sfx_locked)
 			showLockedDialog(set.setNo)
 		} else {
+			playSound(R.raw.sfx_click_button_2)
 			showWordDialog(word)
 		}
 	}
@@ -198,7 +199,6 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	}
 
 	override fun onItemSetClick(set: Set, position: Int) {
-		playSound(R.raw.sfx_click_set)
 		model.clickedSetNo = set.setNo
 		showSetDialog(set)
 	}
@@ -206,9 +206,11 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	private fun showSetDialog(set: Set) {
 		when {
 			set.isSetLocked -> {
+				playSound(R.raw.sfx_locked)
 				showLockedDialog(set.setNo)
 			}
 			else -> {
+				playSound(R.raw.sfx_click_set)
 				showUnlockedDialog()
 			}
 		}

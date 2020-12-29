@@ -8,12 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -122,13 +117,14 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     }
 
     override fun onItemSetClick(set: Set) {
-        playSound(R.raw.sfx_click_set)
         model.clickedSetNo = set.setNo
         when {
             set.isSetLocked -> {
+                playSound(R.raw.sfx_locked)
                 showLockedDialog()
             }
             else -> {
+                playSound(R.raw.sfx_click_set)
                 showUnlockedDialog()
             }
         }
