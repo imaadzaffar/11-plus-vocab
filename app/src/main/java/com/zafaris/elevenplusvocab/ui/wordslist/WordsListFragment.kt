@@ -8,9 +8,11 @@ import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -18,7 +20,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.zafaris.elevenplusvocab.HomeGraphDirections
 import com.zafaris.elevenplusvocab.R
-import com.zafaris.elevenplusvocab.data.database.WordBankDbAccess
 import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.data.model.Word
 import com.zafaris.elevenplusvocab.databinding.FragmentWordslistBinding
@@ -27,10 +28,7 @@ import com.zafaris.elevenplusvocab.databinding.HomeDialogSetUnlockedBinding
 import com.zafaris.elevenplusvocab.databinding.WordslistDialogWordBinding
 import com.zafaris.elevenplusvocab.ui.home.HomeFragmentDirections
 import com.zafaris.elevenplusvocab.ui.settings.SettingsActivity
-import com.zafaris.elevenplusvocab.util.NO_OF_FREE_SETS
-import com.zafaris.elevenplusvocab.util.NO_OF_TOTAL_SETS
 import com.zafaris.elevenplusvocab.util.SET_SIZE
-import java.util.*
 
 class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	private var _binding: FragmentWordslistBinding? = null
@@ -82,15 +80,29 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 		super.onCreateOptionsMenu(menu, inflater)
 		inflater.inflate(R.menu.wordslist_menu, menu)
+
+		val searchItem = menu.findItem(R.id.menu_search)
+		val searchView = searchItem.actionView as SearchView
+
+		searchView.queryHint = "Search for word"
+		val searchText = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+		searchText.setTextColor(ContextCompat.getColor(requireContext(), R.color.textOnLight))
+		searchText.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.colorLightGrey))
+
+		searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+			override fun onQueryTextSubmit(query: String?): Boolean {
+				return false
+			}
+
+			override fun onQueryTextChange(newText: String?): Boolean {
+				adapter.filter.filter(newText)
+				return true
+			}
+		})
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		return when (item.itemId) {
-			R.id.menu_search -> {
-				Toast.makeText(context, "Search for word", Toast.LENGTH_SHORT).show()
-
-				true
-			}
 			R.id.menu_share -> {
 				val sendIntent = Intent(Intent.ACTION_SEND)
 				val appPackageName = activity?.packageName //TODO: getPackageName();

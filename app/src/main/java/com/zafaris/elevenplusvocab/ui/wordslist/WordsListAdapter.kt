@@ -3,6 +3,8 @@ package com.zafaris.elevenplusvocab.ui.wordslist
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -13,9 +15,15 @@ import com.zafaris.elevenplusvocab.data.model.Set
 import com.zafaris.elevenplusvocab.data.model.Word
 
 class WordsListAdapter(
-        private val itemsList: List<Any> = emptyList(),
+        private val itemsList: List<Any>,
         private val listener: OnItemClickListener
-) : RecyclerView.Adapter<WordsListAdapter.BaseViewHolder<*>>() {
+) : RecyclerView.Adapter<WordsListAdapter.BaseViewHolder<*>>(), Filterable {
+
+    var filteredItems = emptyList<Any>()
+
+    init {
+        filteredItems = itemsList
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
         return when (viewType) {
@@ -32,7 +40,7 @@ class WordsListAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
-        val item = itemsList[position]
+        val item = filteredItems[position]
         when (holder) {
             is WordViewHolder -> {
                 holder.bind(item as Word)
@@ -45,7 +53,7 @@ class WordsListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        val item = itemsList[position]
+        val item = filteredItems[position]
         return when (item) {
             is Word -> TYPE_WORD
             is Set -> TYPE_SET
@@ -54,7 +62,7 @@ class WordsListAdapter(
     }
 
     override fun getItemCount(): Int {
-        return itemsList.size
+        return filteredItems.size
     }
 
     abstract class BaseViewHolder<T>(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -75,7 +83,7 @@ class WordsListAdapter(
         }
 
         override fun onClick(v: View?) {
-            listener.onItemWordClick(itemsList[adapterPosition] as Word, adapterPosition)
+            listener.onItemWordClick(filteredItems[adapterPosition] as Word, adapterPosition)
         }
     }
     
@@ -109,9 +117,39 @@ class WordsListAdapter(
         }
         
         override fun onClick(v: View?) {
-            listener.onItemSetClick(itemsList[adapterPosition] as Set, adapterPosition)
+            listener.onItemSetClick(filteredItems[adapterPosition] as Set, adapterPosition)
         }
+    }
 
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charSearch = constraint
+                filteredItems =
+                    if (charSearch == null || charSearch.isEmpty()) {
+                        itemsList
+                    } else {
+                        val resultsList = ArrayList<Word>()
+                        for (item in itemsList) {
+                            if (item is Word) {
+                                val wordString = item.word
+                                if (wordString.contains(charSearch)) {
+                                    resultsList.add(item)
+                                }
+                            }
+                        }
+                        resultsList
+                    }
+                    val results = FilterResults()
+                    results.values = filteredItems
+                    return results
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                filteredItems = results?.values as ArrayList<*>
+                notifyDataSetChanged()
+            }
+        }
     }
 
     interface OnItemClickListener {
