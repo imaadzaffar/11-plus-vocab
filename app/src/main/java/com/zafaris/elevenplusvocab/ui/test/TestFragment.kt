@@ -18,14 +18,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
-import com.yuyakaido.android.cardstackview.CardStackLayoutManager
-import com.yuyakaido.android.cardstackview.CardStackListener
-import com.yuyakaido.android.cardstackview.Direction
-import com.yuyakaido.android.cardstackview.Duration
-import com.yuyakaido.android.cardstackview.RewindAnimationSetting
-import com.yuyakaido.android.cardstackview.StackFrom
-import com.yuyakaido.android.cardstackview.SwipeAnimationSetting
-import com.yuyakaido.android.cardstackview.SwipeableMethod
+import com.yuyakaido.android.cardstackview.*
 import com.zafaris.elevenplusvocab.R
 import com.zafaris.elevenplusvocab.databinding.FragmentTestBinding
 import com.zafaris.elevenplusvocab.databinding.TestDialogScoreBinding
@@ -161,7 +154,7 @@ class TestFragment : Fragment(), CardStackListener, QuestionsCardStackAdapter.On
     }
 
     private fun nextButtonClick() {
-        if (model.answeredState) {
+        if (model.completedState || model.answeredState) {
             playSound(R.raw.sfx_click_button_2)
 
             model.answeredState = false
