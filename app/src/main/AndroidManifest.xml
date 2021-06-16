@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.zafaris.elevenplusvocab">
+    package="com.zafaris.learnvocab">
 
     <application
         android:allowBackup="true"
@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Launcher">
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name="com.zafaris.learnvocab.ui.main.MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="user">
             <intent-filter>
@@ -20,9 +20,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name="com.zafaris.learnvocab.ui.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".ui.main.MainActivity" />
+            android:parentActivityName="com.zafaris.learnvocab.ui.main.MainActivity" />
     </application>
 
 </manifest>
