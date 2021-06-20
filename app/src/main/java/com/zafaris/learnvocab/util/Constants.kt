@@ -6,3 +6,6 @@ const val NO_OF_FREE_SETS = 2
 
 const val NO_OF_QUESTIONS = 5
 const val NO_OF_OPTIONS = 4
+
+const val API_KEY = "gpTUrVnBSXfAwjroDEWEdtJSdYdmqiKp"
+const val ENTITLEMENT_ID = "premium"

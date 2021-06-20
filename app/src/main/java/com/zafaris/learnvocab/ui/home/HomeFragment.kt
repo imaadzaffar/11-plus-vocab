@@ -8,18 +8,22 @@ import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.zafaris.learnvocab.HomeGraphDirections
+import com.qonversion.android.sdk.*
+import com.qonversion.android.sdk.dto.QPermission
+import com.qonversion.android.sdk.dto.offerings.QOfferings
 import com.zafaris.learnvocab.R
 import com.zafaris.learnvocab.data.model.Set
 import com.zafaris.learnvocab.databinding.FragmentHomeBinding
 import com.zafaris.learnvocab.databinding.HomeDialogSetLockedBinding
 import com.zafaris.learnvocab.databinding.HomeDialogSetUnlockedBinding
+import com.zafaris.learnvocab.extensions.buildError
 import com.zafaris.learnvocab.ui.settings.SettingsActivity
 
 class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
@@ -54,6 +58,8 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         buildSetRv()
 
         setHasOptionsMenu(true)
+
+        fetchOfferings()
     }
 
     override fun onDestroyView() {
@@ -118,6 +124,16 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
 
     override fun onItemSetClick(set: Set) {
         model.clickedSetNo = set.setNo
+        //TODO: Check if user has premium, then show correct dialog
+        /*Purchases.sharedInstance.getPurchaserInfoWith({
+            buildError(context, it.message)
+        }, {
+            if (it.entitlements[ENTITLEMENT_ID]?.isActive == true) {
+                Toast.makeText(context, "Entitled to do action", Toast.LENGTH_LONG).show()
+            } else {
+                showLockedDialog()
+            }
+        })*/
         when {
             set.isSetLocked -> {
                 playSound(R.raw.sfx_locked)
@@ -135,7 +151,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         setUnlockedBinding.titleDialog.text = "Set ${model.clickedSetNo}"
         setUnlockedBinding.buttonLearn.setOnClickListener { navigateAction("learn") }
         setUnlockedBinding.buttonTest.setOnClickListener { navigateAction("test") }
-        setUnlockedBinding.buttonStats.setOnClickListener { navigateAction("stats") }
+//        setUnlockedBinding.buttonStats.setOnClickListener { navigateAction("stats") }
         setDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         setDialog.show()
     }
@@ -144,8 +160,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         setDialog.setContentView(setLockedBinding.root)
         setLockedBinding.titleDialog.text = "Set ${model.clickedSetNo} locked"
         setLockedBinding.buttonUnlock.setOnClickListener {
-            Toast.makeText(context, "Unlock sets", Toast.LENGTH_SHORT).show()
-            //TODO: Add payment
+            purchasePackage()
         }
         setLockedBinding.buttonDismiss.setOnClickListener {
             setDialog.dismiss()
@@ -160,7 +175,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         setDialog.dismiss()
 
         val action = when (destination) {
-            "learn" -> HomeGraphDirections.actionGlobalLearn(model.clickedSetNo)
+            "learn" -> HomeFragmentDirections.actionGlobalLearn(model.clickedSetNo)
             "test" -> HomeFragmentDirections.actionGlobalTest(model.clickedSetNo)
             "stats" -> HomeFragmentDirections.actionGlobalStats(model.clickedSetNo)
             else -> throw IllegalArgumentException("Invalid destination")
@@ -175,4 +190,77 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
         }
         mediaPlayer.start()
     }
+
+    private fun fetchOfferings() {
+        Qonversion.offerings(object: QonversionOfferingsCallback {
+            override fun onSuccess(offerings: QOfferings) {
+                val mainOffering = offerings.main
+                if (mainOffering != null && mainOffering.products.isNotEmpty()) {
+                    model.mainProduct = mainOffering?.products[0]
+                }
+            }
+            override fun onError(error: QonversionError) {
+                // handle error here
+                Log.e("QonversionError", error.description)
+                buildError(context, error.description)
+            }
+        })
+    }
+
+    private fun purchasePackage() {
+        if (model.mainProduct != null) {
+            Log.d("qonversionID", model.mainProduct!!.qonversionID)
+            Qonversion.purchase(requireActivity(), model.mainProduct!!.qonversionID, callback = object : QonversionPermissionsCallback {
+                override fun onSuccess(permissions: Map<String, QPermission>) {
+                    val premiumPermission = permissions["premium"]
+                    if (premiumPermission != null && premiumPermission.isActive()) {
+                        // handle active permission here
+                        Toast.makeText(context, "Premium purchase successful", Toast.LENGTH_LONG).show()
+                    }
+                }
+
+                override fun onError(error: QonversionError) {
+                    // handle error here
+                    if (error.code != QonversionErrorCode.CanceledPurchase) {
+                        Log.e("QonversionError", error.description)
+                        buildError(context, error.description)
+                    }
+                }
+            })
+        }
+    }
+
+    /* Revenue Cat
+    private fun fetchOfferings() {
+        Purchases.sharedInstance.getOfferingsWith(
+            onError = { error ->
+                buildError(context, error.message)
+            },
+            onSuccess = { offerings ->
+                model.currentPackage = offerings.current?.availablePackages?.get(0)
+            }
+        )
+    }
+
+    private fun purchasePackage() {
+        if (model.currentPackage != null) {
+            Purchases.sharedInstance.purchasePackageWith(
+                requireActivity(),
+                model.currentPackage!!,
+                onError = { error, userCancelled -> (
+                    if (!userCancelled) {
+                        buildError(context, error.message)
+                    }
+                )},
+                onSuccess = { product, purchaserInfo ->
+                    if (purchaserInfo.entitlements[ENTITLEMENT_ID]?.isActive == true) {
+                        // Unlock that great "pro" content
+                        Toast.makeText(context, "Premium purchase successful", Toast.LENGTH_LONG).show()
+                    }
+                }
+            )
+        }
+    }
+    */
+
 }

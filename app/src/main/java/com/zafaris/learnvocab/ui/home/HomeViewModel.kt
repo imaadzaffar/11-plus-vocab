@@ -2,6 +2,7 @@ package com.zafaris.learnvocab.ui.home
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.qonversion.android.sdk.dto.products.QProduct
 import com.zafaris.learnvocab.data.database.WordBankDbAccess
 import com.zafaris.learnvocab.data.model.Set
 import com.zafaris.learnvocab.util.NO_OF_FREE_SETS
@@ -10,6 +11,8 @@ import com.zafaris.learnvocab.util.SET_SIZE
 import java.util.*
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
+//	var currentPackage: Package? = null
+	var mainProduct: QProduct? = null
 	var sets: MutableList<Set> = ArrayList()
 	var clickedSetNo: Int = 0
 

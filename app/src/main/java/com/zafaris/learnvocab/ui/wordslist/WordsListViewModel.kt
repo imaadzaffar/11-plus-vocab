@@ -3,6 +3,7 @@ package com.zafaris.learnvocab.ui.wordslist
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import com.qonversion.android.sdk.dto.products.QProduct
 import com.zafaris.learnvocab.data.database.WordBankDbAccess
 import com.zafaris.learnvocab.data.model.Set
 import com.zafaris.learnvocab.data.model.Word
@@ -12,6 +13,8 @@ import com.zafaris.learnvocab.util.SET_SIZE
 import java.util.*
 
 class WordsListViewModel(application: Application) : AndroidViewModel(application) {
+	//	var currentPackage: Package? = null
+	var mainProduct: QProduct? = null
 	var itemsList: MutableList<Any> = ArrayList()
 	var sets: MutableList<Set> = ArrayList()
 	var clickedSetNo: Int = 0

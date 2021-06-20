@@ -29,7 +29,7 @@
                 android:layout_marginEnd="16dp"
                 app:backgroundTint="@null"
                 android:background="@drawable/button_green"
-                android:text="Unlock"
+                android:text="Upgrade"
                 android:textColor="@color/textOnDark"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -42,10 +42,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="- Unlock all 20 sets\n- Add your own words\n- Detailed statistics for tests\n- Help to support us"
+                android:text="@string/set_locked_benefits"
                 android:textColor="@color/textOnLight"
                 android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="@+id/title_unlock"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/title_unlock" />
 
             <TextView
@@ -55,10 +56,11 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Pay to unlock this set + more!"
+                android:text="@string/set_locked_title"
                 android:textColor="@color/textOnLight"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layout_top" />

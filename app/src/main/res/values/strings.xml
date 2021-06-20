@@ -8,6 +8,9 @@
     <string name="label_fragment_wordslist">Words List</string>
     <string name="label_fragment_guide">Guide</string>
 
+    <string name="set_locked_title">Ready to upgrade?</string>
+    <string name="set_locked_benefits">- Lifetime access to all features\n- Unlock all sets\n- Help to support us</string>
+
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>

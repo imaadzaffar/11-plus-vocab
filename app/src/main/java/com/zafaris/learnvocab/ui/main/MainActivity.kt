@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.qonversion.android.sdk.Qonversion
 import com.zafaris.learnvocab.R
 import com.zafaris.learnvocab.databinding.ActivityMainBinding
 
@@ -27,6 +28,14 @@ class MainActivity : AppCompatActivity() {
         setupToolbar()
         setupBottomNavigation()
         visibilityNavElements()
+
+        /* Revenue Cat
+        Purchases.debugLogsEnabled = true
+        Purchases.configure(this, API_KEY, null, false)
+        */
+
+        Qonversion.setDebugMode()
+        Qonversion.launch(application, "r1QyocKPvI7UI6O8hjrnrYou9sIlPIjd", false)
     }
 
     private fun setupToolbar() {

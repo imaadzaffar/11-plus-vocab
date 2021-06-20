@@ -44,6 +44,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="24dp"
                 app:backgroundTint="@null"
                 android:background="@drawable/button_red"
                 android:text="Test"
@@ -52,26 +53,29 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button_learn" />
+                app:layout_constraintTop_toBottomOf="@+id/button_learn"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-            <Button
-                android:id="@+id/button_stats"
-                android:layout_width="250dp"
-                android:layout_height="65dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/button_purple"
-                android:text="Stats"
-                android:textColor="@color/textOnDark"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:backgroundTint="@null"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/button_test" />
+<!--
+                <Button
+                    android:id="@+id/button_stats"
+                    android:layout_width="250dp"
+                    android:layout_height="65dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="24dp"
+                    android:background="@drawable/button_purple"
+                    android:text="Stats"
+                    android:textColor="@color/textOnDark"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@null"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/button_test" />
+-->
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_top"
