@@ -32,7 +32,8 @@ import com.zafaris.learnvocab.databinding.WordslistDialogWordBinding
 import com.zafaris.learnvocab.extensions.buildError
 import com.zafaris.learnvocab.ui.home.HomeFragmentDirections
 import com.zafaris.learnvocab.ui.settings.SettingsActivity
-import com.zafaris.learnvocab.util.SET_SIZE
+import com.zafaris.learnvocab.util.NO_OF_FREE_SETS
+import com.zafaris.learnvocab.util.PERMISSION_ID
 
 class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	private var _binding: FragmentWordslistBinding? = null
@@ -156,13 +157,13 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	}
 
 	override fun onItemWordClick(word: Word, position: Int) {
-		val set = model.sets[position / SET_SIZE]
-		if (set.isSetLocked) {
-			playSound(R.raw.sfx_locked)
-			showLockedDialog(set.setNo)
-		} else {
+		val setNo = word.set
+		if (setNo <= NO_OF_FREE_SETS) {
 			playSound(R.raw.sfx_click_button_2)
 			showWordDialog(word)
+		} else {
+			playSound(R.raw.sfx_locked)
+			showLockedDialog(setNo)
 		}
 	}
 
@@ -210,24 +211,14 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 	}
 	
 	private fun showSetDialog(set: Set) {
-		//TODO: Check if user has premium, then show correct dialog
-		/*Purchases.sharedInstance.getPurchaserInfoWith({
-            buildError(context, it.message)
-        }, {
-            if (it.entitlements[ENTITLEMENT_ID]?.isActive == true) {
-                Toast.makeText(context, "Entitled to do action", Toast.LENGTH_LONG).show()
-            } else {
-                showLockedDialog()
-            }
-        })*/
 		when {
-			set.isSetLocked -> {
-				playSound(R.raw.sfx_locked)
-				showLockedDialog(set.setNo)
-			}
-			else -> {
+			set.setNo <= NO_OF_FREE_SETS -> {
 				playSound(R.raw.sfx_click_set)
 				showUnlockedDialog()
+			}
+			else -> {
+				playSound(R.raw.sfx_locked)
+				showLockedDialog(set.setNo)
 			}
 		}
 	}
@@ -285,6 +276,7 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 					model.mainProduct = mainOffering?.products[0]
 				}
 			}
+
 			override fun onError(error: QonversionError) {
 				// handle error here
 				Log.e("QonversionError", error.description)
@@ -295,12 +287,11 @@ class WordsListFragment : Fragment(), WordsListAdapter.OnItemClickListener {
 
 	private fun purchasePackage() {
 		if (model.mainProduct != null) {
-			Log.d("qonversionID", model.mainProduct!!.qonversionID)
 			Qonversion.purchase(requireActivity(), model.mainProduct!!.qonversionID, callback = object : QonversionPermissionsCallback {
 				override fun onSuccess(permissions: Map<String, QPermission>) {
-					val premiumPermission = permissions["premium"]
+					val premiumPermission = permissions[PERMISSION_ID]
 					if (premiumPermission != null && premiumPermission.isActive()) {
-						// handle active permission here
+						//TODO: handle active permission here
 						Toast.makeText(context, "Premium purchase successful", Toast.LENGTH_LONG).show()
 					}
 				}

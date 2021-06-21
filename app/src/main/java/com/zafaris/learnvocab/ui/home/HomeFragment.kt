@@ -25,6 +25,7 @@ import com.zafaris.learnvocab.databinding.HomeDialogSetLockedBinding
 import com.zafaris.learnvocab.databinding.HomeDialogSetUnlockedBinding
 import com.zafaris.learnvocab.extensions.buildError
 import com.zafaris.learnvocab.ui.settings.SettingsActivity
+import com.zafaris.learnvocab.util.PERMISSION_ID
 
 class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
     private var _binding: FragmentHomeBinding? = null
@@ -199,6 +200,7 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
                     model.mainProduct = mainOffering?.products[0]
                 }
             }
+
             override fun onError(error: QonversionError) {
                 // handle error here
                 Log.e("QonversionError", error.description)
@@ -209,10 +211,9 @@ class HomeFragment : Fragment(), SetAdapter.OnItemClickListener {
 
     private fun purchasePackage() {
         if (model.mainProduct != null) {
-            Log.d("qonversionID", model.mainProduct!!.qonversionID)
             Qonversion.purchase(requireActivity(), model.mainProduct!!.qonversionID, callback = object : QonversionPermissionsCallback {
                 override fun onSuccess(permissions: Map<String, QPermission>) {
-                    val premiumPermission = permissions["premium"]
+                    val premiumPermission = permissions[PERMISSION_ID]
                     if (premiumPermission != null && premiumPermission.isActive()) {
                         // handle active permission here
                         Toast.makeText(context, "Premium purchase successful", Toast.LENGTH_LONG).show()

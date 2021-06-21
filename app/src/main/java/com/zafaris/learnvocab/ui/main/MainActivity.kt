@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.qonversion.android.sdk.Qonversion
 import com.zafaris.learnvocab.R
 import com.zafaris.learnvocab.databinding.ActivityMainBinding
+import com.zafaris.learnvocab.util.API_KEY
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         */
 
         Qonversion.setDebugMode()
-        Qonversion.launch(application, "r1QyocKPvI7UI6O8hjrnrYou9sIlPIjd", false)
+        Qonversion.launch(application, API_KEY, false)
     }
 
     private fun setupToolbar() {

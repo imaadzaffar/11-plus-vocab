@@ -38,6 +38,17 @@ class WordsListViewModel(application: Application) : AndroidViewModel(applicatio
 			try {
 				val wordsList = db.getWordsList(i)
 				itemsList.addAll(wordsList)
+				if (wordsList.size < SET_SIZE) {
+					for (j in 1..(SET_SIZE - wordsList.size)) {
+						itemsList.add(Word(
+							(i - 1) * SET_SIZE + wordsList.size + j,
+							i,
+							"example",
+							"",
+							emptyList()
+						))
+					}
+				}
 			} catch (e: Exception) {
 				val wordsList = MutableList(SET_SIZE) { index ->
 					Word(
